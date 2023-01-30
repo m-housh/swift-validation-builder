@@ -73,7 +73,7 @@ jobs:
             then
               echo "✅ Documentation for "$tag" already exists.";
             else
-              git checkout.;
+              git checkout .;
               git checkout "$tag";
               mkdir -p Sources/Validations/Documentation.docc;
               swift build \
