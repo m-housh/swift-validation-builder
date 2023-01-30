@@ -10,18 +10,15 @@ concurrency:
   group: format-${{ github.ref }}
   cancel-in-progress: true
 
-# Sets permissions to allow deployment to Github Pages
-#permissions:
-#  contents: read
-#  pages: write
-#  id-token: write
-
 jobs:
   swift_format:
     name: swift-format
     runs-on: macos-12
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
       - name: Xcode Select
         run: sudo xcode-select -s /Applications/Xcode_14.0.1.app
       - name: Tap
