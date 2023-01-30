@@ -2,23 +2,6 @@ import XCTest
 import CasePaths
 @testable import Validations
 
-struct User {
-  var id: Int
-  var name: String
-  var email: String
-}
-
-extension Int {
-  var zero: Int { 0 }
-}
-
-//extension Contains {
-//
-//  init<Parent>(_ lhs: KeyPath<Parent, Value>, _ rhs: KeyPath<Parent, Value.Element>) {
-//    self.init({ $0[keyPath: lhs] }, { $0[keyPath: rhs] })
-//  }
-//}
-
 final class ValidationTests: XCTestCase {
   
   func testSanity() {
@@ -27,8 +10,8 @@ final class ValidationTests: XCTestCase {
   
   func test_or_validator() throws {
     let validators = [
-      Validation {
-        Always()
+      ValidatorOf<Int> {
+        Always<Int>()
         GreaterThan(10).or(Equals(5))
       },
       Validation {
@@ -52,7 +35,7 @@ final class ValidationTests: XCTestCase {
   
   func test_empty() throws {
     let emptyString = ValidatorOf<String> {
-      Empty()
+      Empty<String>()
     }
     
     XCTAssertNoThrow(try emptyString.validate(""))
@@ -249,5 +232,94 @@ final class ValidationTests: XCTestCase {
     XCTAssertNoThrow(try sut.validate(-10))
     XCTAssertNoThrow(try sut.validate(1))
   }
-
+  
+  func test_documenation() {
+    
+    struct User: Validatable {
+      
+      let name: String
+      let email: String
+      
+      var body: some Validator<Self> {
+        Validation {
+          Validate(\.name, using: NotEmpty())
+          Validate(\.email) {
+            NotEmpty()
+            Contains("@")
+          }
+        }
+      }
+    }
+    
+    XCTAssertNoThrow(try User(name: "blob", email: "blob@example.com").validate())
+    XCTAssertThrowsError(try User(name: "", email: "blob@example.com").validate())
+    
+    struct HoldsUser: Validatable {
+      let user: User
+      
+      var body: some Validator<Self> {
+        Validate(\.user)
+      }
+    }
+    
+    XCTAssertNoThrow(try HoldsUser(user: .init(name: "blob", email: "blob@example.com")).validate())
+    XCTAssertThrowsError(try HoldsUser(user: .init(name: "blob", email: "blob.example.com")).validate())
+  }
+  
+  func test_builder_either() {
+   
+    struct Sut: Validator {
+      
+      typealias Value = String
+      
+      let onlyBlobs: Bool
+      
+      var body: some Validator<String> {
+        Validation {
+          if onlyBlobs {
+            Equals("Blob")
+          } else {
+            NotEmpty()
+          }
+        }
+      }
+    }
+    
+    XCTAssertNoThrow(try Sut(onlyBlobs: false).validate("foo"))
+    XCTAssertThrowsError(try Sut(onlyBlobs: false).validate(""))
+    
+    XCTAssertNoThrow(try Sut(onlyBlobs: true).validate("Blob"))
+    XCTAssertThrowsError(try Sut(onlyBlobs: true).validate("foo"))
+    
+  }
+  
+  func test_builder_if() {
+   
+    struct Sut: Validator {
+      
+      typealias Value = String
+      
+      let onlyBlobs: Bool
+      
+      var body: some Validator<String> {
+        Validation {
+          Always()
+          if onlyBlobs {
+            Equals("Blob")
+          }
+        }
+      }
+    }
+    
+    XCTAssertNoThrow(try Sut(onlyBlobs: false).validate("foo"))
+    XCTAssertNoThrow(try Sut(onlyBlobs: true).validate("Blob"))
+    XCTAssertThrowsError(try Sut(onlyBlobs: true).validate("foo"))
+    
+  }
+  
 }
+
+extension Int {
+  var zero: Int { 0 }
+}
+

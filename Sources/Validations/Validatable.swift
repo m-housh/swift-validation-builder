@@ -21,13 +21,15 @@
 /// let invalid = User(name: "", email: "blob.jr@example.com")
 /// try invalid.validate() // error.
 /// ```
-/// 
+///
 public protocol Validatable: Validator where Value == Self {
+
+  /// Validate an instance.
   func validate() throws
 }
 
 extension Validatable {
-  
+
   @inlinable
   public func validate() throws {
     try self.validate(self)

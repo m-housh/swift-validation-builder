@@ -1,4 +1,3 @@
-
 /// Validates a collection is empty.
 ///
 /// ```
@@ -10,9 +9,9 @@
 ///  try emptyValidator.validate("foo") // fails.
 ///  ```
 public struct Empty<Value: Collection>: Validator {
-  
-  public init() { }
-  
+
+  public init() {}
+
   public var body: some Validator<Value> {
     Equals(\.isEmpty, true)
   }

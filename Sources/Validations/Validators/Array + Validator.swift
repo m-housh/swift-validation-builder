@@ -1,5 +1,3 @@
-
-
 extension Array where Element: Validator {
 
   /// Create a validator from an array of validators.

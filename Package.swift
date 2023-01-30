@@ -7,16 +7,16 @@ let package = Package(
   name: "swift-validation-builder",
   platforms: [.macOS(.v10_15)],
   products: [
-    .library(name: "Validations", targets: ["Validations"]),
+    .library(name: "Validations", targets: ["Validations"])
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "0.4.0"),
+    .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "0.4.0")
   ],
   targets: [
     .target(
       name: "Validations",
       dependencies: [
-        .product(name: "CasePaths", package: "swift-case-paths"),
+        .product(name: "CasePaths", package: "swift-case-paths")
       ]
     ),
     .testTarget(

@@ -4,7 +4,7 @@ import Foundation
 /// implementing the `validate(_: Value)` method, or by supplying a validator in the `body`
 /// property.
 ///
-///  *Example using the `validate(_: Value)` implementatin.*
+///  **Example using the `validate(_: Value)` implementatin.**
 ///  ```
 ///     struct Always<Value>: Validator {
 ///        func validate(_ value: Value>) throws {
@@ -13,7 +13,7 @@ import Foundation
 ///     }
 ///  ```
 ///
-///   *Example using the `body` property.*
+///   **Example using the `body` property.**
 ///   ```
 ///   struct User {
 ///     let name: String
@@ -40,24 +40,24 @@ import Foundation
 ///   ```
 ///
 public protocol Validator<Value> {
-  
+
   associatedtype Value
   associatedtype _Body
   typealias Body = _Body
-  
+
   /// Validate the value or throw an error.
   ///
   /// - Parameters:
   ///   - value: The value to validate.
   func validate(_ value: Value) throws
-  
+
   /// Implement the validation using / building a validator.
   @ValidationBuilder<Value>
   var body: Body { get }
 }
 
 extension Validator where Body == Never {
-  
+
   @_transparent
   public var body: Body {
     fatalError("\(Self.self) has no body.")
@@ -65,10 +65,9 @@ extension Validator where Body == Never {
 }
 
 extension Validator where Body: Validator, Body.Value == Value {
-  
+
   @inlinable
   public func validate(_ value: Value) throws {
     try self.body.validate(value)
   }
 }
-

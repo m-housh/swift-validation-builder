@@ -4,19 +4,19 @@ import CasePaths
 public struct Case<Parent, Child> {
   @usableFromInline
   let casePath: CasePath<Parent, Child>
-  
+
   @usableFromInline
   let file: StaticString
-  
+
   @usableFromInline
   let fileID: StaticString
-  
+
   @usableFromInline
   let line: UInt
-  
+
   @usableFromInline
   let validator: any Validator<Child>
-  
+
   @inlinable
   public init(
     _ casePath: CasePath<Parent, Child>,
@@ -31,7 +31,7 @@ public struct Case<Parent, Child> {
     self.fileID = fileID
     self.line = line
   }
-  
+
   @inlinable
   public init<V: Validator>(
     _ casePath: CasePath<Parent, Child>,
@@ -46,13 +46,13 @@ public struct Case<Parent, Child> {
 
 extension Case: Validator {
   public typealias Value = Parent
-  
+
   @inlinable
   public func validate(_ value: Parent) throws {
     guard let child = casePath.extract(from: value) else {
       let message = """
         A "Case" validation at "\(self.fileID):\(self.line)" does not handle the current case.
-        
+
         Current case is: \(value)
         """
       throw ValidationError(message: message)

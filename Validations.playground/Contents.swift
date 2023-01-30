@@ -2,21 +2,19 @@ import Validations
 
 var greeting = "Hello, playground"
 
-struct Deeply {
-  let nested = Nested()
-  struct Nested {
-    let value = 10
+struct User: Validatable {
+  let name: String
+  let email: String
+  
+  var body: some Validator<Self> {
+    Validation {
+      Validate(\.name, using: NotEmpty())
+      Validate(\.email) {
+        NotEmpty()
+        Contains("@")
+      }
+    }
   }
 }
 
-struct Parent {
-  let count: Int
-  let deeply = Deeply()
-}
-
-let countValidator = ValidatorOf<Parent> {
-  Equals({ $0.count}, { $0.deeply.nested.value })
-}
-
-try countValidator.validate(.init(count: 10)) // success.
-try countValidator.validate(.init(count: 11)) // fails.
+//try User(name: "blob", email: "blob@example.com").validate()
