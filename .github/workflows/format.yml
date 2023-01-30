@@ -10,6 +10,12 @@ concurrency:
   group: format-${{ github.ref }}
   cancel-in-progress: true
 
+# Sets permissions to allow deployment to Github Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   swift_format:
     name: swift-format
