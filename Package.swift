@@ -10,11 +10,14 @@ let package = Package(
     .library(name: "Validations", targets: ["Validations"]),
   ],
   dependencies: [
+    .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "0.4.0"),
   ],
   targets: [
     .target(
       name: "Validations",
-      dependencies: []
+      dependencies: [
+        .product(name: "CasePaths", package: "swift-case-paths"),
+      ]
     ),
     .testTarget(
       name: "ValidationTests",

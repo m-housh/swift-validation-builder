@@ -1,4 +1,5 @@
 import XCTest
+import CasePaths
 @testable import Validations
 
 struct User {
@@ -41,12 +42,30 @@ final class ValidationTests: XCTestCase {
     ]
     
     for validator in validators {
-      XCTAssertNoThrow(try validator.validator.validate(11))
+      XCTAssertNoThrow(try validator.validate(11))
       XCTAssertNoThrow(try validator.validate(5))
       XCTAssertThrowsError(try validator.validate(4))
     }
     
     XCTAssertNoThrow(try validators.validator.validate(11))
+  }
+  
+  func test_empty() throws {
+    let emptyString = ValidatorOf<String> {
+      Empty()
+    }
+    
+    XCTAssertNoThrow(try emptyString.validate(""))
+    XCTAssertThrowsError(try emptyString.validate("foo"))
+  }
+  
+  func test_notEmpty() {
+    let notEmptyString = ValidatorOf<String> {
+      NotEmpty()
+    }
+    
+    XCTAssertNoThrow(try notEmptyString.validate("foo"))
+    XCTAssertThrowsError(try notEmptyString.validate(""))
   }
   
   func test_contains_validator() throws {
@@ -63,9 +82,7 @@ final class ValidationTests: XCTestCase {
     }
     
     let sut = ValidatorOf<Sut> {
-      Validate(\.one) { parent in
-        Contains(parent.two)
-      }
+      Contains(\.one, \.two)
     }
     
     XCTAssertNoThrow(
@@ -199,54 +216,38 @@ final class ValidationTests: XCTestCase {
     
     await XCTAssertThrowsAsyncError(try await Sut(one: 13, two: 13).validate())
     await XCTAssertThrowsAsyncError(try await Sut(one: 3, two: 2).validate())
-//    XCTAssertNoThrow(try Sut(one: 10, two: 11).validate())
   }
   
-//  func test_validator() throws {
-//    let validator = Validator {
-//      EmptyValidator<Capacity.Cooling>()
-//      Equals(\Capacity.Cooling.sensible, \.sensible)
-//      Equals(\Capacity.Cooling.sensible, 10_000)
-//      GreaterThan(\Capacity.Cooling.total, \.sensible)
-//      GreaterThan(\Capacity.Cooling.total, 10)
-//    }
-//
-//    try validator.validate(Capacity.Cooling.test)
-//  }
-//
-//  func test_greaterThanValidator_fails() throws {
-//
-//    let validator = Validator {
-//      GreaterThan(\Capacity.Cooling.total, 100_000)
-//    }
-//
-//    XCTAssertThrowsError(try validator.validate(.test))
-//
-//  }
-//
-//  func test_not_validator_fails() throws {
-//    let validator = Validator {
-//      Not(Equals(\Capacity.Cooling.total, 12_000))
-//    }
-//    XCTAssertThrowsError(try validator.validate(.test))
-//  }
-//
-//  func test_not_validator() throws {
-//    let validator = Validator {
-//      Not {
-//        GreaterThan(\Capacity.Cooling.sensible, 11_000)
-//      }
-//    }
-//
-//    do {
-//      try validator.validate(.test)
-//    } catch {
-//      XCTFail()
-//    }
-//
-//  }
-}
+  func test_case() throws {
+    enum Sut: Equatable {
+      case one(Int)
+      case two(Int)
+      case three(Int)
+    }
+    
+    let sut = OneOf {
+      Case(/Sut.one, using: GreaterThan(0))
+      Case(/Sut.two) {
+        GreaterThan(10)
+      }
+    }
+    
+    XCTAssertThrowsError(try sut.validate(.one(0)))
+    XCTAssertThrowsError(try sut.validate(.two(0)))
+    XCTAssertThrowsError(try sut.validate(.three(0)))
+    XCTAssertNoThrow(try sut.validate(.one(1)))
+    XCTAssertNoThrow(try sut.validate(.two(11)))
+  }
+  
+  func test_oneOF() throws {
+    let sut = OneOf {
+      GreaterThan(0)
+      Equals(-10)
+    }
+    
+    XCTAssertThrowsError(try sut.validate(-1))
+    XCTAssertNoThrow(try sut.validate(-10))
+    XCTAssertNoThrow(try sut.validate(1))
+  }
 
-//extension Capacity.Cooling {
-//  static let test = Self.init(total: 12_000, sensible: 10_000)
-//}
+}

@@ -10,7 +10,7 @@ public struct Validate<Parent, Child>: Validator {
   @usableFromInline
   init(
     _ child: @escaping (Parent) -> Child,
-    _ validator: @escaping (Parent) -> any Validator<Child>
+    validator: @escaping (Parent) -> any Validator<Child>
   ) {
     self.child = child
     self.validator = validator
@@ -19,19 +19,19 @@ public struct Validate<Parent, Child>: Validator {
   @inlinable
   public init(
     _ toChild: KeyPath<Parent, Child>,
-    @ValidationBuilder<Child> _ validator: () -> some Validator<Child>
+    @ValidationBuilder<Child> build: () -> some Validator<Child>
   ) {
-    self.init(toChild, validator())
+    self.init(toChild, using: build())
   }
   
   @inlinable
   public init(
     _ toChild: KeyPath<Parent, Child>,
-    _ validator: some Validator<Child>
+    using validator: some Validator<Child>
   ) {
     self.init(
       toChild.value(from:),
-      { _ in validator }
+      validator: { _ in validator }
     )
   }
   
@@ -39,7 +39,7 @@ public struct Validate<Parent, Child>: Validator {
   public init(
     _ toChild: KeyPath<Parent, Child>
   ) where Child: Validatable {
-    self.init(toChild.value(from:), toChild.value(from:))
+    self.init(toChild.value(from:), validator: toChild.value(from:))
   }
 
   @inlinable
