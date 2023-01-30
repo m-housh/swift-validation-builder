@@ -10,6 +10,11 @@ concurrency:
   group: format-${{ github.ref }}
   cancel-in-progress: true
 
+# Sets permissions to allow deployment to Github Pages
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   swift_format:
     name: swift-format
@@ -18,7 +23,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
-          token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          # using the personal access token causes workflows to run
+          # after formatting.
+          #token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
       - name: Xcode Select
         run: sudo xcode-select -s /Applications/Xcode_14.0.1.app
       - name: Tap
