@@ -12,6 +12,7 @@ struct _Or<Validate: Validator>: Validator {
     self.rhs = rhs
   }
 
+  @inlinable
   public func validate(_ value: Validate.Value) throws {
     do {
       try lhs.validate(value)

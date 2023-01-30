@@ -8,7 +8,7 @@
 ///
 /// extension User: AsyncValidatable {
 ///   var body: some AsyncValidator<Self> {
-///     Validation {
+///     AsyncValidation {
 ///       Not(Equals(\.name, ""))
 ///       Not(Equals(\.email, ""))
 ///     }

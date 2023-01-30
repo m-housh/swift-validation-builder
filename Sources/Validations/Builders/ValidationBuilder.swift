@@ -25,8 +25,8 @@ public enum ValidationBuilder<Value> {
   }
 
   @inlinable
-  public static func buildIf<V: Validator>(_ validator: V?) -> _Optional<V> {
-    .init(validator)
+  public static func buildIf<V: Validator>(_ validator: V?) -> V? {
+    validator
   }
 
   @inlinable
@@ -70,25 +70,6 @@ public enum ValidationBuilder<Value> {
       case let .second(second):
         return try second.validate(value)
       }
-    }
-  }
-
-  public struct _Optional<V: Validator>: Validator {
-
-    @usableFromInline
-    let optionalValidator: V?
-
-    @inlinable
-    init(_ optionalValidator: V?) {
-      self.optionalValidator = optionalValidator
-    }
-
-    @inlinable
-    public func validate(_ value: V.Value) throws {
-      guard let optionalValidator = optionalValidator else {
-        return
-      }
-      try optionalValidator.validate(value)
     }
   }
 

@@ -21,7 +21,7 @@
 ///
 /// ```
 ///
-/// It can also be used with a `KeyPath` when the value is `Validatable`
+/// It can also be used with only a `KeyPath` when the value is `Validatable`
 ///
 ///  **Example**
 /// ```
