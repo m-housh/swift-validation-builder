@@ -124,6 +124,10 @@ final class ValidationTests: XCTestCase {
           LessThan(\.one, 12)
           LessThanOrEquals(\.one, \.two)
           LessThan(1, \.two)
+          LessThan(\.one, \.two).or {
+            Equals(\.one, \.two)
+          }
+          LessThanOrEquals(\.one, 13)
         }
       }
     }
@@ -131,6 +135,20 @@ final class ValidationTests: XCTestCase {
     XCTAssertThrowsError(try Sut(one: 13, two: 13).validate())
     XCTAssertThrowsError(try Sut(one: 3, two: 2).validate())
     XCTAssertNoThrow(try Sut(one: 10, two: 11).validate())
+    
+    let lessThanOrEqualsOne = ValidatorOf<Int> {
+      LessThanOrEquals(1)
+    }
+    
+    XCTAssertThrowsError(try lessThanOrEqualsOne.validate(2))
+    XCTAssertNoThrow(try lessThanOrEqualsOne.validate(1))
+    
+    let lessThan12 = ValidatorOf<Int> {
+      LessThan(12)
+    }
+    
+    XCTAssertThrowsError(try lessThan12.validate(12))
+    XCTAssertNoThrow(try lessThan12.validate(11))
     
   }
   

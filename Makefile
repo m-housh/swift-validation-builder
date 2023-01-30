@@ -14,3 +14,13 @@ format:
 		--recursive \
 		./Package.swift \
 		./Sources
+
+build-documentation:
+	@swift package \
+		--allow-writing-to-directory ./docs \
+		generate-documentation \
+		--target Validations \
+		--disable-indexing \
+		--transform-for-static-hosting \
+		--hosting-base-path swift-validation-builder \
+		--output-path ./docs

@@ -57,10 +57,6 @@ extension LessThan where Value == Element {
     self.init(\.self, rhs)
   }
 
-  @inlinable
-  public init(_ rhs: KeyPath<Value, Element>) {
-    self.init(\.self, rhs)
-  }
 }
 
 public struct LessThanOrEquals<Value, Element>: Validator
