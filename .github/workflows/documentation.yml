@@ -17,16 +17,45 @@ concurrency:
 
 jobs:
   build:
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     steps:
-      - name: Select Xcode 14.1
-        run: sudo xcode-select -s /Applications/Xcode_14.1.app
-
       - name: Checkout Package
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
+      - name: Download Swift 5.5.1
+        run: wget -q https://download.swift.org/swift-5.5.1-release/ubuntu2004/swift-5.5.1-RELEASE/swift-5.5.1-RELEASE-ubuntu20.04.tar.gz
+      - name: Extract Swift 5.5.1
+        run: tar xzf swift-5.5.1-RELEASE-ubuntu20.04.tar.gz
+      - name: Add Swift toolchain to PATH
+        run: |
+          echo "$GITHUB_WORKSPACE/swift-5.5.1-RELEASE-ubuntu20.04/usr/bin" >> $GITHUB_PATH
+      - name: Checkout swift-docc
+        uses: actions/checkout@v2
+        with:
+          repository: apple/swift-docc
+          ref: main
+          path: swift-docc
+      - name: Cache DocC
+        id: cache-docc
+        uses: actions/cache@v2
+        with:
+          key: swift-url-docc-build
+          path: swift-docc/.build
+      - name: Build swift-docc
+        if: ${{ !steps.cache-docc.outputs.cache-hit }}
+        run: |
+          cd swift-docc; swift build --product docc -c release; cd ..
+      - name: Checkout swift-docc-render
+        uses: actions/checkout@v2
+        with:
+          repository: apple/swift-docc-render
+          ref: main
+          path: swift-docc-render
+      - name: Build swift-docc-render
+        run: |
+          cd swift-docc-render; npm install && npm run build; cd ..
       - name: Checkout gh-pages Branch
         uses: actions/checkout@v2
         with:
