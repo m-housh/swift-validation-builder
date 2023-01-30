@@ -11,12 +11,12 @@
 enum ValidationError: Error {
   case failed(message: String)
   case manyFailed(messages: [String])
-  
+
   @inlinable
   init(message: String) {
     self = .failed(message: message)
   }
-  
+
   @inlinable
   init(messages: [String]) {
     self = .manyFailed(messages: messages)
@@ -24,7 +24,7 @@ enum ValidationError: Error {
 }
 
 extension ValidationError: CustomDebugStringConvertible {
-  
+
   @usableFromInline
   var debugDescription: String {
     switch self {
@@ -33,9 +33,9 @@ extension ValidationError: CustomDebugStringConvertible {
     case let .manyFailed(messages: messages):
       let messageString = messages.joined(separator: "\n")
       return """
-      Validation Error:
-      \(messageString)
-      """
+        Validation Error:
+        \(messageString)
+        """
     }
   }
 }
