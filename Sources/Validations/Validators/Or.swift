@@ -20,7 +20,7 @@ struct _Or<Validate: Validator>: Validator {
       do {
         try rhs.validate(value)
       } catch {
-        throw ValidationError(message: "Did not pass any of the validations.")
+        throw ValidationError.failed(summary: "Did not pass any of the validations.")
       }
     }
   }

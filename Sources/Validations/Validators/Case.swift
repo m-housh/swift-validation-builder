@@ -55,7 +55,7 @@ extension Case: Validator {
 
         Current case is: \(value)
         """
-      throw ValidationError(message: message)
+      throw ValidationError.failed(summary: message)
     }
     try validator.validate(child)
   }

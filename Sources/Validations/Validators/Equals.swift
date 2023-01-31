@@ -116,7 +116,7 @@ public struct Equals<Value, Element: Equatable>: Validator {
     let rhs = self.rhs(value)
 
     guard lhs == rhs else {
-      throw ValidationError(message: "\(lhs) is not equal to \(rhs)")
+      throw ValidationError.failed(summary: "\(lhs) is not equal to \(rhs)")
     }
   }
 

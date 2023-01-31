@@ -7,7 +7,7 @@ struct User: Validatable {
   let email: String
   
   var body: some Validator<Self> {
-    Validation {
+    Validation.accumulating {
       Validate(\.name, using: NotEmpty())
       Validate(\.email) {
         NotEmpty()
@@ -17,4 +17,5 @@ struct User: Validatable {
   }
 }
 
-//try User(name: "blob", email: "blob@example.com").validate()
+try User(name: "blob", email: "blob@example.com").validate()
+try User(name: "", email: "blob.example.com").validate()

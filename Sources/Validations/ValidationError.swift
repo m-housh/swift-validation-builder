@@ -1,25 +1,33 @@
-//public struct ValidationError: Error, Equatable {
-//  public let message: String
-//
-//  @inlinable
-//  public init(message: String) {
-//    self.message = message
-//  }
-//}
+import Foundation
 
 @usableFromInline
 enum ValidationError: Error {
-  case failed(message: String)
-  case manyFailed(messages: [String])
-
-  @inlinable
-  init(message: String) {
-    self = .failed(message: message)
+  case failed(Context)
+  case manyFailed([Error], Context)
+  
+  @usableFromInline
+  static func failed(summary: String) -> Self {
+    .failed(.init(debugDescription: summary))
   }
-
-  @inlinable
-  init(messages: [String]) {
-    self = .manyFailed(messages: messages)
+  
+  @usableFromInline
+  static func manyFailed(_ errors: [Error]) -> Self {
+    .manyFailed(errors, .init(debugDescription: ""))
+  }
+ 
+  @usableFromInline
+  struct Context {
+    let debugDescription: String
+    let underlyingError: Error?
+    
+    @usableFromInline
+    init(
+      debugDescription: String,
+      underlyingError: Error? = nil
+    ) {
+      self.debugDescription = debugDescription
+      self.underlyingError = underlyingError
+    }
   }
 }
 
@@ -28,14 +36,25 @@ extension ValidationError: CustomDebugStringConvertible {
   @usableFromInline
   var debugDescription: String {
     switch self {
-    case let .failed(message: message):
-      return "Validation Error: \(message)"
-    case let .manyFailed(messages: messages):
-      let messageString = messages.joined(separator: "\n")
-      return """
-        Validation Error:
-        \(messageString)
-        """
+    case let .failed(context):
+      return context.debugDescription
+    case let .manyFailed(errors, _):
+      return errors
+        .map(formatError(_:))
+        .joined(separator: "\n")
     }
+  }
+}
+
+private func formatError(_ error: Error) -> String {
+  switch error {
+  case let error as ValidationError:
+    return error.debugDescription
+
+  case let error as LocalizedError:
+    return error.localizedDescription
+
+  default:
+    return "\(error)"
   }
 }

@@ -3,15 +3,16 @@
 public enum OneOfBuilder<Value> {
 
   @inlinable
-  public static func buildBlock<V: Validator>(_ components: V) -> _SequenceMany<V>
-  where V.Value == Value {
-    _SequenceMany([components])
+  public static func buildBlock<V: Validator>(_ components: V...) -> _SequenceMany<V>
+  where V.Value == Value
+  {
+    .oneOf(components)
   }
 
   @inlinable
   public static func buildArray<V: Validator>(_ components: [V]) -> _SequenceMany<V>
   where V.Value == Value {
-    _SequenceMany(components)
+    .oneOf(components)
   }
 
   @inlinable
@@ -24,7 +25,7 @@ public enum OneOfBuilder<Value> {
     accumulated: V0,
     next: V1
   ) -> _Sequence<V0, V1> {
-    _Sequence(accumulated, next)
+    .oneOf(accumulated, next)
   }
 
   @inlinable
@@ -36,49 +37,33 @@ public enum OneOfBuilder<Value> {
   public static func buildFinalResult<V: Validator>(_ component: V) -> V where V.Value == Value {
     component
   }
-
-  public struct _Sequence<V0: Validator, V1: Validator>: Validator where V0.Value == V1.Value {
-
-    @usableFromInline
-    let v0: V0
-
-    @usableFromInline
-    let v1: V1
-
-    @inlinable
-    init(_ v0: V0, _ v1: V1) {
-      self.v0 = v0
-      self.v1 = v1
-    }
-
-    @inlinable
-    public func validate(_ value: V0.Value) throws {
-      do {
-        try v0.validate(value)
-        return  // early out if successful.
-      } catch {
-        try v1.validate(value)
-      }
-    }
+  
+  @inlinable
+  public static func buildOptional<V: Validator>(_ component: V?) -> Optional<V> where V.Value == Value {
+    component
   }
-
-  public struct _SequenceMany<Element: Validator>: Validator {
-    @usableFromInline
-    let elements: [Element]
-
-    @inlinable
-    public init(_ elements: [Element]) {
-      self.elements = elements
-    }
-
-    @inlinable
-    public func validate(_ value: Element.Value) throws {
-      for element in elements {
-        do {
-          try element.validate(value)
-          return  // early out if successful.
-        }
-      }
-    }
+  
+  @inlinable
+  public static func buildLimitedAvailability<V: Validator>(_ component: V) -> V where V.Value == Value {
+    component
   }
+  
+  @inlinable
+  public static func buildEither<True: Validator, False: Validator>(
+    first component: True
+  ) -> _Conditional<True, False>
+  where True.Value == Value, False.Value == Value
+  {
+    .first(component)
+  }
+  
+  @inlinable
+  public static func buildEither<True: Validator, False: Validator>(
+    second component: False
+  ) -> _Conditional<True, False>
+  where True.Value == Value, False.Value == Value
+  {
+    .second(component)
+  }
+  
 }

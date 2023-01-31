@@ -20,7 +20,7 @@ public struct OneOf<Value>: Validator {
   let validator: any Validator<Value>
 
   @inlinable
-  init(_ validator: any Validator<Value>) {
+  public init<V: Validator>(_ validator: V) where V.Value == Value {
     self.validator = validator
   }
 

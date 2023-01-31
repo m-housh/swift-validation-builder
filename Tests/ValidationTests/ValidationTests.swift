@@ -30,7 +30,7 @@ final class ValidationTests: XCTestCase {
       XCTAssertThrowsError(try validator.validate(4))
     }
     
-    XCTAssertNoThrow(try validators.validator.validate(11))
+    XCTAssertNoThrow(try validators.validator().validate(11))
   }
   
   func test_empty() throws {
@@ -333,6 +333,34 @@ final class ValidationTests: XCTestCase {
     XCTAssertNoThrow(try Sut(onlyBlobs: true).validate("Blob"))
     XCTAssertThrowsError(try Sut(onlyBlobs: true).validate("foo"))
     
+  }
+  
+  func test_accumulating_errors() {
+    struct User: Validatable {
+      let name: String
+      let email: String
+      
+      var body: some Validator<Self> {
+        Validation.accumulating {
+          Validate(\.name, using: NotEmpty())
+          Validate(\.email) {
+            NotEmpty()
+            Contains("@")
+          }
+        }
+      }
+    }
+
+    XCTAssertNoThrow(try User(name: "blob", email: "blob@example.com").validate())
+    do {
+      try User(name: "", email: "blob.example.com").validate()
+    } catch {
+      guard case let .manyFailed(validationErrors, _) = error as! ValidationError else {
+        XCTFail()
+        return
+      }
+      XCTAssertEqual(validationErrors.count, 2)
+    }
   }
   
 }

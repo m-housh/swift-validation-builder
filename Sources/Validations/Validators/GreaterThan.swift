@@ -45,7 +45,7 @@ public struct GreaterThan<Value, Element: Comparable>: Validator {
     let rhs = self.rhs(value)
 
     guard lhs > rhs else {
-      throw ValidationError(message: "\(lhs) is not greater than \(rhs)")
+      throw ValidationError.failed(summary: "\(lhs) is not greater than \(rhs)")
     }
   }
 }

@@ -58,6 +58,36 @@ public struct Validation<Value>: Validator {
   public init<V: Validator>(@ValidationBuilder<Value> _ build: () -> V) where Value == V.Value {
     self.init(build())
   }
+  
+  ///  Create a validation that accumulates errors for the supplied validators.
+  ///
+  ///  **Example**
+  /// ```
+  ///  struct User: Validatable {
+  ///    let name: String
+  ///    let email: String
+  ///
+  ///    var body: some Validator<Self> {
+  ///      Validation.accumulating {
+  ///        Validate(\.name, using: NotEmpty())
+  ///        Validate(\.email) {
+  ///          NotEmpty()
+  ///          Contains("@")
+  ///        }
+  ///      }
+  ///    }
+  ///  }
+  ///
+  ///   try User(name: "blob", email: "blob@example.com").validate() // success.
+  ///   try User(name: "", email: "blob.example.com").validate() // fails with 2 errors.
+  /// ```
+  public static func accumulating<V: Validator>(
+    @AccumulatingErrorBuilder<Value> _ build: () -> V
+  ) -> Self
+  where V.Value == Value
+  {
+    .init(build())
+  }
 
   @inlinable
   public func validate(_ value: Value) throws {

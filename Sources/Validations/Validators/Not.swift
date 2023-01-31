@@ -64,6 +64,6 @@ public struct Not<Validate: Validator>: Validator {
       // happy path.
       return
     }
-    throw ValidationError(message: "Not validator did not succeed.")
+    throw ValidationError.failed(summary: "Not validator did not succeed.")
   }
 }

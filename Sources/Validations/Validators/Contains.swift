@@ -56,7 +56,7 @@ public struct Contains<Parent, Value: Collection>: Validator where Value.Element
     let element = rhs(parent)
 
     guard value.contains(where: { $0 == element }) else {
-      throw ValidationError(message: "Does not contain \(element)")
+      throw ValidationError.failed(summary: "Does not contain \(element)")
     }
   }
 }
