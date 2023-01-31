@@ -11,7 +11,7 @@ struct _Never<Value>: Validator {
 }
 
 extension Validation {
-  
+
   /// A validation that never succeeds.  This is useful for some testing purposes.
   ///
   /// **Example**
