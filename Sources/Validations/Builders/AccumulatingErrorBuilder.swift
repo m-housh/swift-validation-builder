@@ -2,7 +2,6 @@
 ///
 @resultBuilder
 public enum AccumulatingErrorBuilder<Value> {
-  // TODO: Complete for limited availablity, etc.
   // Not supplying a <Value> with validation builder causes it to have to be supplied for all the validators inside the
   // build context, which is no fun / creates a poor user experience.
 

@@ -2,17 +2,17 @@
 @resultBuilder
 public enum OneOfBuilder<Value> {
 
-  @inlinable
-  public static func buildBlock<V: Validator>(_ components: V...) -> _SequenceMany<V>
-  where V.Value == Value {
-    .oneOf(components)
-  }
-
-  @inlinable
-  public static func buildArray<V: Validator>(_ components: [V]) -> _SequenceMany<V>
-  where V.Value == Value {
-    .oneOf(components)
-  }
+//  @inlinable
+//  public static func buildBlock<V: Validator>(_ components: V...) -> _SequenceMany<V>
+//  where V.Value == Value {
+//    .oneOf(components)
+//  }
+//
+//  @inlinable
+//  public static func buildArray<V: Validator>(_ components: [V]) -> _SequenceMany<V>
+//  where V.Value == Value {
+//    .oneOf(components)
+//  }
 
   @inlinable
   public static func buildPartialBlock<V: Validator>(first: V) -> V where V.Value == Value {

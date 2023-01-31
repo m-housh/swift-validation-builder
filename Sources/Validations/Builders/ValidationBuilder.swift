@@ -5,17 +5,17 @@ public enum ValidationBuilder<Value> {
   // Not supplying a <Value> with validation builder causes it to have to be supplied for all the validators inside the
   // build context, which is no fun / creates a poor user experience.
 
-  @inlinable
-  public static func buildBlock<V: Validator>(_ components: V...) -> _SequenceMany<V>
-  where V.Value == Value {
-    .earlyOut(components)
-  }
-
-  @inlinable
-  public static func buildArray<V: Validator>(_ components: [V]) -> _SequenceMany<V>
-  where V.Value == Value {
-    .earlyOut(components)
-  }
+//  @inlinable
+//  public static func buildBlock<V: Validator>(_ components: V...) -> _SequenceMany<V>
+//  where V.Value == Value {
+//    .earlyOut(components)
+//  }
+//
+//  @inlinable
+//  public static func buildArray<V: Validator>(_ components: [V]) -> _SequenceMany<V>
+//  where V.Value == Value {
+//    .earlyOut(components)
+//  }
 
   @inlinable
   public static func buildPartialBlock<V: Validator>(first: V) -> V where V.Value == Value {

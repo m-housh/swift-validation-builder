@@ -22,11 +22,6 @@ public struct AsyncValidation<Value>: AsyncValidator {
     self.init(build())
   }
 
-  //  @inlinable
-  //  public init<V: Validator>(@ValidationBuilder<Value> _ build: () -> V) where Value == V.Value {
-  //    self.init(build().async)
-  //  }
-
   @inlinable
   public init(_ validate: @escaping (Value) async throws -> Void) {
     self.closure = validate
