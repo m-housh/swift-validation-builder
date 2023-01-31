@@ -31,7 +31,7 @@ extension Validator {
   /// Succeeds if one of the validators passes.
   ///
   /// **Example**
-  /// ```
+  /// ```swift
   /// let oneOrTwo = ValidatorOf<Int> {
   ///   Equals(1)
   ///     .or(Equals(2))
@@ -51,7 +51,7 @@ extension Validator {
   /// Succeeds if one of the validators passes.
   ///
   /// **Example**
-  /// ```
+  /// ```swift
   /// let oneOrTwo = ValidatorOf<Int> {
   ///   Equals(1)
   ///     .or {

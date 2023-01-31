@@ -1,6 +1,6 @@
 /// Validates a collection is empty.
 ///
-/// ```
+/// ```swift
 ///  let emptyValidator = ValidatorOf<String> {
 ///    Empty()
 ///  }

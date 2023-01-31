@@ -1,6 +1,10 @@
 
 test-linux:
-	@docker run --rm -v "${PWD}:${PWD}" -w "${PWD}" swift:5.7-focal swift test
+	@docker run --rm \
+		--volume "${PWD}:${PWD}" \
+		--workdir "${PWD}" \
+		swift:5.7-focal \
+		swift test
 
 test-swift:
 	@swift test

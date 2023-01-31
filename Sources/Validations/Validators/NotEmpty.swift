@@ -1,7 +1,7 @@
 /// A validator that validates a collection is not empty.
 ///
 /// **Example**
-/// ```
+/// ```swift
 /// let notEmptyString = ValidatorOf<String> {
 ///   NotEmpty()
 /// }

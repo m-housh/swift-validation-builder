@@ -2,7 +2,7 @@
 /// by using the builder syntax to create a validator.
 ///
 /// **Example**
-/// ```
+/// ```swift
 /// let nonEmptyString = Validation<String> {
 ///   NotEmtpy()
 /// }
@@ -20,7 +20,7 @@ public struct Validation<Value>: Validator {
   ///
   /// **Example**
   ///
-  /// ```
+  /// ```swift
   /// let blobValidator = Validation<String> { string in
   ///   guard string == "blob" else {
   ///     throw ValidationError(message: "\(string) is not blob!")
@@ -36,7 +36,7 @@ public struct Validation<Value>: Validator {
   ///
   /// **Example**
   ///
-  /// ```
+  /// ```swift
   /// let notEmptyString = Validation<String>(NotEmpty())
   /// ```
   @inlinable
@@ -48,7 +48,7 @@ public struct Validation<Value>: Validator {
   ///
   /// **Example**
   ///
-  /// ```
+  /// ```swift
   /// let emailValidator = Validation<String> {
   ///   NotEmpty()
   ///   Contains("@")
@@ -57,35 +57,6 @@ public struct Validation<Value>: Validator {
   @inlinable
   public init<V: Validator>(@ValidationBuilder<Value> _ build: () -> V) where Value == V.Value {
     self.init(build())
-  }
-
-  ///  Create a validation that accumulates errors for the supplied validators.
-  ///
-  ///  **Example**
-  /// ```
-  ///  struct User: Validatable {
-  ///    let name: String
-  ///    let email: String
-  ///
-  ///    var body: some Validator<Self> {
-  ///      Validation.accumulating {
-  ///        Validate(\.name, using: NotEmpty())
-  ///        Validate(\.email) {
-  ///          NotEmpty()
-  ///          Contains("@")
-  ///        }
-  ///      }
-  ///    }
-  ///  }
-  ///
-  ///   try User(name: "blob", email: "blob@example.com").validate() // success.
-  ///   try User(name: "", email: "blob.example.com").validate() // fails with 2 errors.
-  /// ```
-  public static func accumulating<V: Validator>(
-    @AccumulatingErrorBuilder<Value> _ build: () -> V
-  ) -> Self
-  where V.Value == Value {
-    .init(build())
   }
 
   @inlinable

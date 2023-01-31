@@ -1,6 +1,6 @@
 /// Represents a type that can validate itself asynchronously.
 ///
-/// ```
+/// ```swift
 /// struct User {
 ///   let name: String
 ///   let email: String

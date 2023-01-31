@@ -249,6 +249,17 @@ final class ValidationTests: XCTestCase {
     XCTAssertThrowsError(try sut.validate(-1))
     XCTAssertNoThrow(try sut.validate(-10))
     XCTAssertNoThrow(try sut.validate(1))
+    
+    let sut2 = ValidatorOf<Int> {
+      OneOf {
+        GreaterThan(0)
+        Equals(-10)
+      }
+    }
+    XCTAssertThrowsError(try sut2.validate(-1))
+    XCTAssertNoThrow(try sut2.validate(-10))
+    XCTAssertNoThrow(try sut2.validate(1))
+    
   }
   
   func test_documenation() {
@@ -259,11 +270,13 @@ final class ValidationTests: XCTestCase {
       let email: String
       
       var body: some Validator<Self> {
-        Validation {
+        Accumulating {
           Validate(\.name, using: NotEmpty())
           Validate(\.email) {
-            NotEmpty()
-            Contains("@")
+            Accumulating {
+              NotEmpty()
+              Contains("@")
+            }
           }
         }
       }
@@ -341,7 +354,7 @@ final class ValidationTests: XCTestCase {
       let email: String
       
       var body: some Validator<Self> {
-        Validation.accumulating {
+        Accumulating {
           Validate(\.name, using: NotEmpty())
           Validate(\.email) {
             NotEmpty()

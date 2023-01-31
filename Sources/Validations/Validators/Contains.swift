@@ -1,6 +1,6 @@
 /// A validator for if a collection contains a value.
 ///
-/// ```
+/// ```swift
 /// let validator = ValidatorOf<String> {
 ///   Contains("@")
 /// }

@@ -1,7 +1,7 @@
 /// Inverses a validator.
 ///
 /// **Example**
-/// ```
+/// ```swift
 /// let noOnes = ValidatorOf<Int> {
 ///   Not(Equals(1))
 /// }
@@ -18,7 +18,7 @@ public struct Not<Validate: Validator>: Validator {
   /// Create a not validator from an existing validator.
   ///
   /// **Example**
-  /// ```
+  /// ```swift
   /// let blobValidator = ValidatorOf<String> {
   ///   Equals("blob")
   /// }
@@ -37,7 +37,7 @@ public struct Not<Validate: Validator>: Validator {
   /// Create a not validator using builder syntax.
   ///
   /// **Example**
-  /// ```
+  /// ```swift
   /// let blobValidator = ValidatorOf<String> {
   ///   Equals("blob")
   /// }

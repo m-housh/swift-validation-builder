@@ -2,7 +2,7 @@
 /// by using the builder syntax to create a validator.
 ///
 /// **Example**
-/// ```
+/// ```swift
 /// let nonEmptyString = AsyncValidation<String> {
 ///   NotEmtpy()
 /// }
@@ -16,6 +16,17 @@ public struct AsyncValidation<Value>: AsyncValidator {
   @usableFromInline
   let closure: (Value) async throws -> Void
 
+  /// Create an async validation using the builder syntax.
+  ///
+  /// **Example**
+  /// ```swift
+  /// let asyncIntValidator = AsyncValidation<Int> {
+  ///   Equals(1)
+  /// }
+  ///
+  /// try await asyncIntValidator.validate(1) // succeeds.
+  /// try await asyncIntValidator.validate(2) // fails.
+  /// ```
   @inlinable
   public init<V: AsyncValidator>(@AsyncValidationBuilder<Value> _ build: () -> V)
   where Value == V.Value {

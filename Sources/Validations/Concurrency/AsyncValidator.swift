@@ -1,9 +1,9 @@
 /// A type that can asynchronously validate a value or throw an error.  You can conform to this protocol by either
-/// implementing the `validate(_: Value)` method, or by supplying a validator in the `body`
-/// property.
+/// implementing the ``AsyncValidator/validate(_:)-6qhpy`` method, or by supplying a validator in the
+/// ``AsyncValidator/body-swift.property-44764`` property.
 ///
 ///  **Example using the `validate(_: Value)` implementatin.**
-///  ```
+///  ```swift
 ///     struct AsyncAlways<Value>: AsyncValidator {
 ///        func validate(_ value: Value>) async throws {
 ///         // do nothing
@@ -12,7 +12,7 @@
 ///  ```
 ///
 ///   **Example using the `body` property.**
-///   ```
+///   ```swift
 ///   struct User {
 ///     let name: String
 ///     let email: String
@@ -51,7 +51,10 @@ public protocol AsyncValidator<Value> {
   ///   - value: The value to validate.
   func validate(_ value: Value) async throws
 
-  /// Implement the validation using / building a validator.
+  /// Implement the validation using / building a validator using builder syntax.
+  ///
+  /// - SeeAlso:
+  ///   - ``AsyncValidator``
   @AsyncValidationBuilder<Value>
   var body: Body { get }
 }

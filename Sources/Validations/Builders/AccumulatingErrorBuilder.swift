@@ -6,18 +6,6 @@ public enum AccumulatingErrorBuilder<Value> {
   // build context, which is no fun / creates a poor user experience.
 
   @inlinable
-  public static func buildBlock<V: Validator>(_ components: V...) -> _SequenceMany<V>
-  where V.Value == Value {
-    _SequenceMany.accumulating(components)
-  }
-
-  @inlinable
-  public static func buildArray<V: Validator>(_ components: [V]) -> _SequenceMany<V>
-  where V.Value == Value {
-    _SequenceMany.accumulating(components)
-  }
-
-  @inlinable
   public static func buildPartialBlock<V: Validator>(first: V) -> V where V.Value == Value {
     first
   }

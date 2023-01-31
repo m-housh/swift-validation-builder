@@ -1,7 +1,7 @@
 /// Validates values are equal.
 ///
 /// **Example**
-/// ```
+/// ```swift
 /// let equalsTen = ValidatorOf<Int> {
 ///   Equals(10)
 /// }
@@ -21,7 +21,7 @@ public struct Equals<Value, Element: Equatable>: Validator {
   /// Create an equals validator using closures.
   ///
   /// **Example**
-  /// ```
+  /// ```swift
   /// struct Deeply {
   ///   let nested = Nested()
   ///  struct Nested {
@@ -55,7 +55,7 @@ public struct Equals<Value, Element: Equatable>: Validator {
   /// Create an equals validator using key paths.
   ///
   /// **Example**
-  /// ```
+  /// ```swift
   /// struct Deeply {
   ///   let nested = Nested()
   ///  struct Nested {
@@ -88,7 +88,7 @@ public struct Equals<Value, Element: Equatable>: Validator {
   /// Create an equals validator using key path and a value.
   ///
   /// **Example**
-  /// ```
+  /// ```swift
   /// struct Parent {
   ///   let count: Int
   /// }
@@ -127,7 +127,7 @@ extension Equals where Value == Element {
   /// Create an equals validator using  a value.
   ///
   /// **Example**
-  /// ```
+  /// ```swift
   /// let countValidator = ValidatorOf<Int> {
   ///   Equals(10)
   /// }

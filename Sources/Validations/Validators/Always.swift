@@ -1,7 +1,7 @@
 /// A validator that always succeeds.
 ///
 /// Example:
-/// ```
+/// ```swift
 /// let always = Always<String>()
 ///
 /// try! always.validate("")

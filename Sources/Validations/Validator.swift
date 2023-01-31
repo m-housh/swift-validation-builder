@@ -5,7 +5,7 @@ import Foundation
 /// property.
 ///
 ///  **Example using the `validate(_: Value)` implementatin.**
-///  ```
+///  ```swift
 ///     struct Always<Value>: Validator {
 ///        func validate(_ value: Value>) throws {
 ///         // do nothing
@@ -14,7 +14,7 @@ import Foundation
 ///  ```
 ///
 ///   **Example using the `body` property.**
-///   ```
+///   ```swift
 ///   struct User {
 ///     let name: String
 ///     let email: String
@@ -56,7 +56,7 @@ public protocol Validator<Value> {
   var body: Body { get }
 }
 
-extension Validator where Body == Never {
+extension Validator where Body == Swift.Never {
 
   @_transparent
   public var body: Body {

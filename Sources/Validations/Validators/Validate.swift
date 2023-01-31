@@ -1,7 +1,7 @@
 /// Validates a child value. Generally used when creating a validation for a nested value.
 ///
 /// ** Example**
-/// ```
+/// ```swift
 /// struct User: Validatable {
 ///   let name: String
 ///   let email: String
@@ -24,7 +24,7 @@
 /// It can also be used with only a `KeyPath` when the value is `Validatable`
 ///
 ///  **Example**
-/// ```
+/// ```swift
 /// struct HoldsUser: Validatable {
 ///   let user: User
 ///
