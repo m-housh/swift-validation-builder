@@ -376,6 +376,58 @@ final class ValidationTests: XCTestCase {
     }
   }
   
+  func test_true_validator() {
+    
+    let isTrue = ValidatorOf<Bool> {
+      True()
+    }
+    
+    XCTAssertNoThrow(try isTrue.validate(true))
+    XCTAssertThrowsError(try isTrue.validate(false))
+    
+    struct User: Validatable {
+      let name: String
+      let email: String
+      let isAdmin: Bool
+      
+      var body: some Validator<Self> {
+        Accumulating {
+          Validate(\.isAdmin, using: True())
+        }
+      }
+    }
+    
+    XCTAssertNoThrow(try User(name: "Blob", email: "blob@example.com", isAdmin: true).validate())
+    XCTAssertThrowsError(try User(name: "Blob", email: "blob@example.com", isAdmin: false).validate())
+    
+  }
+  
+  func test_false_validator() {
+    
+    let isFalse = ValidatorOf<Bool> {
+      False()
+    }
+    
+    XCTAssertNoThrow(try isFalse.validate(false))
+    XCTAssertThrowsError(try isFalse.validate(true))
+    
+    struct User: Validatable {
+      let name: String
+      let email: String
+      let isAdmin: Bool
+      
+      var body: some Validator<Self> {
+        Accumulating {
+          Validate(\.isAdmin, using: False())
+        }
+      }
+    }
+    
+    XCTAssertNoThrow(try User(name: "Blob", email: "blob@example.com", isAdmin: false).validate())
+    XCTAssertThrowsError(try User(name: "Blob", email: "blob@example.com", isAdmin: true).validate())
+    
+  }
+  
 }
 
 extension Int {

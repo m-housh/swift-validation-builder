@@ -35,3 +35,12 @@ public struct Accumulating<Value>: Validator {
     try self.validator.validate(value)
   }
 }
+
+extension Validation {
+  
+  public static func accumulating(
+    @AccumulatingErrorBuilder<Value> builder: () -> any Validator<Value>
+  ) -> Self {
+    .init(builder())
+  }
+}

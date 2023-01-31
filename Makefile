@@ -28,3 +28,9 @@ build-documentation:
 		--transform-for-static-hosting \
 		--hosting-base-path swift-validation-builder \
 		--output-path ./docs
+
+preview-documentation:
+	@swift package \
+		--disable-sandbox \
+		preview-documentation \
+		--target Validations

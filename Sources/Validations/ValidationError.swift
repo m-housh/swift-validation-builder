@@ -39,12 +39,29 @@ extension ValidationError: CustomDebugStringConvertible {
     case let .failed(context):
       return context.debugDescription
     case let .manyFailed(errors, _):
-      return
-        errors
+      let beginning = "Validation Error:\n\t• "
+      let flattenedErrors = flatten(errors: errors)
+      let errorString = flattenedErrors
         .map(formatError(_:))
-        .joined(separator: "\n")
+        .joined(separator: "\n\t• ")
+      
+      return beginning + errorString
     }
   }
+}
+
+private func flatten(errors: [Error]) -> [Error] {
+  var flattened = [Error]()
+  for error in errors {
+    if let validationError = error as? ValidationError,
+       case let .manyFailed(manyErrors, _) = validationError
+    {
+      flattened += flatten(errors: manyErrors)
+    } else {
+      flattened.append(error)
+    }
+  }
+  return flattened
 }
 
 private func formatError(_ error: Error) -> String {
