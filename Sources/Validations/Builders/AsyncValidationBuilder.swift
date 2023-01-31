@@ -40,40 +40,35 @@ public enum AsyncValidationBuilder<Value> {
 
   @inlinable
   public static func buildFinalResult<V: AsyncValidator>(_ component: V) -> V
-  where V.Value == Value
-  {
+  where V.Value == Value {
     component
   }
-  
+
   @inlinable
   public static func buildLimitedAvailability<V: AsyncValidator>(_ component: V) -> V
-  where V.Value == Value
-  {
+  where V.Value == Value {
     component
   }
-  
+
   @inlinable
   public static func buildOptional<V: AsyncValidator>(_ component: V?) -> V?
-  where V.Value == Value
-  {
+  where V.Value == Value {
     component
   }
-  
+
   @inlinable
   public static func buildEither<True: AsyncValidator, False: AsyncValidator>(
     first component: True
   ) -> _Conditional<True, False>
-  where True.Value == Value, False.Value == Value
-  {
+  where True.Value == Value, False.Value == Value {
     .first(component)
   }
-  
+
   @inlinable
   public static func buildEither<True: AsyncValidator, False: AsyncValidator>(
     second component: False
   ) -> _Conditional<True, False>
-  where True.Value == Value, False.Value == Value
-  {
+  where True.Value == Value, False.Value == Value {
     .second(component)
   }
 }

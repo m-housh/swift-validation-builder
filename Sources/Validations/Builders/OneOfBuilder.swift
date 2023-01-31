@@ -4,8 +4,7 @@ public enum OneOfBuilder<Value> {
 
   @inlinable
   public static func buildBlock<V: Validator>(_ components: V...) -> _SequenceMany<V>
-  where V.Value == Value
-  {
+  where V.Value == Value {
     .oneOf(components)
   }
 
@@ -37,33 +36,32 @@ public enum OneOfBuilder<Value> {
   public static func buildFinalResult<V: Validator>(_ component: V) -> V where V.Value == Value {
     component
   }
-  
+
   @inlinable
-  public static func buildOptional<V: Validator>(_ component: V?) -> Optional<V> where V.Value == Value {
+  public static func buildOptional<V: Validator>(_ component: V?) -> V? where V.Value == Value {
     component
   }
-  
+
   @inlinable
-  public static func buildLimitedAvailability<V: Validator>(_ component: V) -> V where V.Value == Value {
+  public static func buildLimitedAvailability<V: Validator>(_ component: V) -> V
+  where V.Value == Value {
     component
   }
-  
+
   @inlinable
   public static func buildEither<True: Validator, False: Validator>(
     first component: True
   ) -> _Conditional<True, False>
-  where True.Value == Value, False.Value == Value
-  {
+  where True.Value == Value, False.Value == Value {
     .first(component)
   }
-  
+
   @inlinable
   public static func buildEither<True: Validator, False: Validator>(
     second component: False
   ) -> _Conditional<True, False>
-  where True.Value == Value, False.Value == Value
-  {
+  where True.Value == Value, False.Value == Value {
     .second(component)
   }
-  
+
 }

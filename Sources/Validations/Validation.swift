@@ -58,7 +58,7 @@ public struct Validation<Value>: Validator {
   public init<V: Validator>(@ValidationBuilder<Value> _ build: () -> V) where Value == V.Value {
     self.init(build())
   }
-  
+
   ///  Create a validation that accumulates errors for the supplied validators.
   ///
   ///  **Example**
@@ -84,8 +84,7 @@ public struct Validation<Value>: Validator {
   public static func accumulating<V: Validator>(
     @AccumulatingErrorBuilder<Value> _ build: () -> V
   ) -> Self
-  where V.Value == Value
-  {
+  where V.Value == Value {
     .init(build())
   }
 

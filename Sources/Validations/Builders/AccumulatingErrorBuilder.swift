@@ -1,4 +1,3 @@
-
 /// A  validation builder.
 ///
 @resultBuilder
@@ -9,15 +8,13 @@ public enum AccumulatingErrorBuilder<Value> {
 
   @inlinable
   public static func buildBlock<V: Validator>(_ components: V...) -> _SequenceMany<V>
-  where V.Value == Value
-  {
+  where V.Value == Value {
     _SequenceMany.accumulating(components)
   }
-  
+
   @inlinable
   public static func buildArray<V: Validator>(_ components: [V]) -> _SequenceMany<V>
-  where V.Value == Value
-  {
+  where V.Value == Value {
     _SequenceMany.accumulating(components)
   }
 
@@ -59,14 +56,15 @@ public enum AccumulatingErrorBuilder<Value> {
   public static func buildFinalResult<V: Validator>(_ component: V) -> V where V.Value == Value {
     component
   }
-  
+
   @inlinable
   public static func buildOptional<V: Validator>(_ component: V?) -> V? where V.Value == Value {
     component
   }
-  
+
   @inlinable
-  public static func buildLimitedAvailability<V: Validator>(_ component: V) -> V where V.Value == Value {
+  public static func buildLimitedAvailability<V: Validator>(_ component: V) -> V
+  where V.Value == Value {
     component
   }
 }

@@ -4,22 +4,22 @@ import Foundation
 enum ValidationError: Error {
   case failed(Context)
   case manyFailed([Error], Context)
-  
+
   @usableFromInline
   static func failed(summary: String) -> Self {
     .failed(.init(debugDescription: summary))
   }
-  
+
   @usableFromInline
   static func manyFailed(_ errors: [Error]) -> Self {
     .manyFailed(errors, .init(debugDescription: ""))
   }
- 
+
   @usableFromInline
   struct Context {
     let debugDescription: String
     let underlyingError: Error?
-    
+
     @usableFromInline
     init(
       debugDescription: String,
@@ -39,7 +39,8 @@ extension ValidationError: CustomDebugStringConvertible {
     case let .failed(context):
       return context.debugDescription
     case let .manyFailed(errors, _):
-      return errors
+      return
+        errors
         .map(formatError(_:))
         .joined(separator: "\n")
     }
