@@ -59,7 +59,7 @@ public protocol AsyncValidator<Value> {
   var body: Body { get }
 }
 
-extension AsyncValidator where Body == Never {
+extension AsyncValidator where Body == Swift.Never {
 
   @_transparent
   public var body: Body {

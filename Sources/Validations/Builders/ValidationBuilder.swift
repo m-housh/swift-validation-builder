@@ -15,7 +15,7 @@ public enum ValidationBuilder<Value> {
     accumulated: V0,
     next: V1
   ) -> _Sequence<V0, V1> {
-    .earlyOut(accumulated, next)
+    .failEarly(accumulated, next)
   }
 
   @inlinable

@@ -11,7 +11,7 @@ final class ValidationTests: XCTestCase {
   func test_or_validator() throws {
     let validators = [
       ValidatorOf<Int> {
-        Always<Int>()
+        Validators.Always<Int>()
         GreaterThan(10).or(Equals(5))
       },
       Validation {
@@ -334,7 +334,7 @@ final class ValidationTests: XCTestCase {
       
       var body: some Validator<String> {
         Validation {
-          Always()
+          Validators.Always()
           if onlyBlobs {
             Equals("Blob")
           }
@@ -426,6 +426,11 @@ final class ValidationTests: XCTestCase {
     XCTAssertNoThrow(try User(name: "Blob", email: "blob@example.com", isAdmin: false).validate())
     XCTAssertThrowsError(try User(name: "Blob", email: "blob@example.com", isAdmin: true).validate())
     
+  }
+  
+  func test_never_validator() {
+    let validator = ValidatorOf<Int>.never()
+    XCTAssertThrowsError(try validator.validate(0))
   }
   
 }

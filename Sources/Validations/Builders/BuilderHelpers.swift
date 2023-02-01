@@ -1,12 +1,15 @@
+// This file holds types that are used internally, although they are `public`, they
+// should generally not be interacted with, except when in a result builder context.
+
 public enum _Sequence<V0, V1> {
   case accumulating(V0, V1)
-  case earlyOut(V0, V1)
+  case failEarly(V0, V1)
   case oneOf(V0, V1)
 }
 
 public enum _SequenceMany<V> {
   case accumulating([V])
-  case earlyOut([V])
+  case failEarly([V])
   case oneOf([V])
 }
 
@@ -58,7 +61,7 @@ extension _SequenceMany: Validator where V: Validator {
         throw ValidationError.manyFailed(errors)
       }
 
-    case let .earlyOut(validators):
+    case let .failEarly(validators):
       for validator in validators {
         try validator.validate(value)
       }
@@ -92,7 +95,7 @@ extension _Sequence: Validator where V0: Validator, V1: Validator, V0.Value == V
         throw ValidationError.manyFailed(errors)
       }
 
-    case let .earlyOut(validator0, validator1):
+    case let .failEarly(validator0, validator1):
       try validator0.validate(value)
       try validator1.validate(value)
 
@@ -125,7 +128,7 @@ extension _SequenceMany: AsyncValidator where V: AsyncValidator {
         throw ValidationError.manyFailed(errors)
       }
 
-    case let .earlyOut(validators):
+    case let .failEarly(validators):
       for validator in validators {
         try await validator.validate(value)
       }
@@ -161,7 +164,7 @@ where V0: AsyncValidator, V1: AsyncValidator, V0.Value == V1.Value {
         throw ValidationError.manyFailed(errors)
       }
 
-    case let .earlyOut(validator0, validator1):
+    case let .failEarly(validator0, validator1):
       try await validator0.validate(value)
       try await validator1.validate(value)
 

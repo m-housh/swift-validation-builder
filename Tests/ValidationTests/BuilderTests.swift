@@ -6,9 +6,9 @@ final class BuilderTests: XCTestCase {
   func test_validationBuilder_limitedAvailabilty() {
     let validator = ValidatorOf<Int> {
       if #available(macOS 10.15, *) {
-        Always()
+        Validators.Always()
       } else {
-        Always()
+        Validators.Always()
       }
     }
     
@@ -23,7 +23,7 @@ final class BuilderTests: XCTestCase {
       var body: some Validator<Self> {
         OneOf {
           if shouldAllowOnes {
-            Always()
+            Validators.Always()
           } else {
             Validate(\.number) {
               Not(Equals(1))
@@ -41,9 +41,9 @@ final class BuilderTests: XCTestCase {
     let validator = ValidatorOf<Int> {
       OneOf {
         if #available(macOS 10.15, *) {
-          Always()
+          Validators.Always()
         } else {
-          Always()
+          Validators.Always()
         }
       }
     }
@@ -80,7 +80,7 @@ final class BuilderTests: XCTestCase {
       var body: some Validator<Self> {
         Accumulating {
           if shouldAllowOnes {
-            Always()
+            Validators.Always()
           } else {
             Validate(\.number) {
               Not(Equals(1))
@@ -98,9 +98,9 @@ final class BuilderTests: XCTestCase {
     let validator = ValidatorOf<Int> {
       Accumulating {
         if #available(macOS 10.15, *) {
-          Always()
+          Validators.Always()
         } else {
-          Always()
+          Validators.Always()
         }
       }
     }
@@ -115,7 +115,7 @@ final class BuilderTests: XCTestCase {
       
       var body: some Validator<Self> {
         Accumulating {
-          Always()
+          Validators.Always()
           if !shouldAllowOnes {
             Validate(\.number) {
               Not(Equals(1))
@@ -136,7 +136,7 @@ final class BuilderTests: XCTestCase {
       
       var body: some AsyncValidator<Self> {
         AsyncValidation {
-          Always()
+          Validators.Always()
           if !shouldAllowOnes {
             Validate(\.number) {
               Not(Equals(1))
@@ -153,9 +153,9 @@ final class BuilderTests: XCTestCase {
   func test_asyncBuilder_limitedAvailability() async {
     let validator = AsyncValidation<Int> {
       if #available(macOS 10.15, *) {
-        Always()
+        Validators.Always()
       } else {
-        Always()
+        Validators.Always()
       }
     }
     
@@ -170,7 +170,7 @@ final class BuilderTests: XCTestCase {
       var body: some AsyncValidator<Self> {
         AsyncValidation {
           if shouldAllowOnes {
-            Always()
+            Validators.Always()
           } else {
             Validate(\.number) {
               Not(Equals(1))

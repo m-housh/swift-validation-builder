@@ -35,7 +35,7 @@ public struct Equals<Value, Element: Equatable>: Validator {
   /// }
   ///
   /// let countValidator = ValidatorOf<Parent> {
-  ///   Equals({ $0.count}, { $0.deeply.nested.value })
+  ///   Equals({ $0.count }, { $0.deeply.nested.value })
   /// }
   ///
   /// try countValidator.validate(.init(count: 10)) // success.

@@ -17,4 +17,12 @@ public struct NotEmpty<Value: Collection>: Validator {
   public var body: some Validator<Value> {
     Not(Empty())
   }
+  
+  public func validate(_ value: Value) throws {
+    do {
+      try self.body.validate(value)
+    } catch {
+      throw ValidationError.failed(summary: "Expected to not be empty.")
+    }
+  }
 }

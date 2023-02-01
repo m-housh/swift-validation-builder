@@ -11,6 +11,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "0.4.0"),
+    .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "0.6.1"),
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
   ],
   targets: [
@@ -22,7 +23,10 @@ let package = Package(
     ),
     .testTarget(
       name: "ValidationTests",
-      dependencies: ["Validations"]
+      dependencies: [
+        "Validations",
+        .product(name: "CustomDump", package: "swift-custom-dump")
+      ]
     ),
   ]
 )
