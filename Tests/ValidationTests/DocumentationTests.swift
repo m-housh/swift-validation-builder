@@ -13,16 +13,16 @@ final class DocumentationTests: XCTestCase {
       
       var body: some Validator<Self> {
         Accumulating {
-          Validators.GreaterThan(\.id, 0)
+          Int.greaterThan(\.id, 0)
           Validate(\.name, using: NotEmpty())
         }
       }
     }
 
-    let adminUserValidator = Validation {
-      Accumulating<User> {
+    let adminUserValidator = ValidatorOf<User> {
+      Accumulating {
         Validate(\.self)
-        Validate(\.isAdmin, using: .true())
+        Validate(\.isAdmin, using: true)
       }
     }
     

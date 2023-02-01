@@ -76,4 +76,8 @@ extension Validator {
   {
     Validators.OrValidator(self, build())
   }
+  
+  public func or(_ validation: Validation<Value>) -> some Validator<Self.Value> {
+    Validators.OrValidator(self, validation)
+  }
 }

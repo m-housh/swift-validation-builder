@@ -35,6 +35,11 @@ extension Validators {
       self.validator = validator
     }
     
+    @inlinable
+    public init<Value>(_ validation: Validation<Value>) where Validate == Validation<Value> {
+      self.init(validation)
+    }
+    
     /// Create a not validator using builder syntax.
     ///
     /// **Example**

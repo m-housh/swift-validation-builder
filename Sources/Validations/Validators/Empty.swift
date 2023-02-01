@@ -14,7 +14,7 @@ public struct Empty<Value: Collection>: Validator {
   public init() {}
 
   public var body: some Validator<Value> {
-    Equals(\.isEmpty, true)
+    Validate(\.isEmpty, using: .true())
   }
 }
 
@@ -34,4 +34,12 @@ extension Validation where Value: Collection {
 
 extension Validators {
   public typealias Empty = Validations.Empty
+}
+
+extension Collection {
+  
+  @inlinable
+  public static func empty() -> some Validator<Self> {
+    Validators.Empty()
+  }
 }

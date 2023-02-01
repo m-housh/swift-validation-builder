@@ -11,80 +11,71 @@ extension Validators {
   ///
   /// ```
   ///
-  public struct Contains<Parent, Value: Collection>: Validator where Value.Element: Equatable {
+  public struct Contains<Value: Collection>: Validator where Value.Element: Equatable {
     
-    @usableFromInline
-    let lhs: (Parent) -> Value
-    
-    @usableFromInline
-    let rhs: (Parent) -> Value.Element
+    public let element: Value.Element
     
     @inlinable
-    public init(
-      _ lhs: @escaping (Parent) -> Value,
-      _ rhs: @escaping (Parent) -> Value.Element
-    ) {
-      self.lhs = lhs
-      self.rhs = rhs
+    public init(element: Value.Element) {
+      self.element = element
     }
     
-    @inlinable
-    public init(
-      _ lhs: KeyPath<Parent, Value>,
-      _ rhs: @escaping (Parent) -> Value.Element
-    ) {
-      self.init(lhs.value(from:), rhs)
-    }
-    
-    @inlinable
-    public init(
-      _ lhs: KeyPath<Parent, Value>,
-      _ rhs: KeyPath<Parent, Value.Element>
-    ) {
-      self.init(lhs, rhs.value(from:))
-    }
-    
-    @inlinable
-    public init(
-      _ lhs: KeyPath<Parent, Value>,
-      _ rhs: Value.Element
-    ) {
-      self.init(lhs.value(from:), { _ in rhs })
-    }
-    
-    public func validate(_ parent: Parent) throws {
-      let value = lhs(parent)
-      let element = rhs(parent)
-      
-      guard value.contains(where: { $0 == element }) else {
+    public func validate(_ value: Value) throws {
+      guard value.contains(element) else {
         throw ValidationError.failed(summary: "Does not contain \(element)")
       }
     }
   }
 }
 
-extension Validators.Contains where Parent: Collection, Value == Parent {
-
+extension Validation {
+  
   @inlinable
-  public init(_ rhs: Value.Element) {
-    self.init(\.self, rhs)
+  public static func contains<C: Collection>(
+    _ toCollection: KeyPath<Value, C>,
+    _ toElement: KeyPath<Value, C.Element>
+  ) -> Self
+  where C.Element: Equatable
+  {
+    .init(
+      Always().map { parent in
+        Validate<Value, C>(toCollection) {
+          Always().map { _ in
+            Validators.Contains<C>(element: parent[keyPath: toElement])
+          }
+        }
+      }
+      
+    )
   }
-
+  
   @inlinable
-  public init(_ rhs: KeyPath<Parent, Value.Element>) {
-    self.init(\.self, rhs)
+  public static func contains<C: Collection>(
+    _ toCollection: KeyPath<Value, C>,
+    _ element: C.Element
+  ) -> Self
+  where C.Element: Equatable
+  {
+    .init(
+      Validate<Value, C>(toCollection) {
+        Always().map { _ in Validators.Contains<C>(element: element) }
+      }
+    )
   }
-
-  @inlinable
-  public init(_ rhs: @escaping (Parent) -> Value.Element) {
-    self.init(\.self, rhs)
-  }
-
 }
 
 extension Validation where Value: Collection, Value.Element: Equatable {
   
+  @inlinable
   public static func contains(_ element: Value.Element) -> Self {
-    .init(Validators.Contains(element))
+    .init(Validators.Contains(element: element))
+  }
+}
+
+extension Collection where Element: Equatable {
+  
+  @inlinable
+  public static func contains(_ element: Element) -> some Validator<Self> {
+    Validators.Contains(element: element)
   }
 }

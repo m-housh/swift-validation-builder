@@ -26,7 +26,7 @@ final class BuilderTests: XCTestCase {
             Validators.Always()
           } else {
             Validate(\.number) {
-              Not(Equals(1))
+              Not(.equals(1))
             }
           }
         }
@@ -61,7 +61,7 @@ final class BuilderTests: XCTestCase {
           Validators.Never()
           if !shouldAllowOnes {
             Validate(\.number) {
-              Not(Equals(1))
+              Not(.equals(1))
             }
           }
         }
@@ -83,7 +83,7 @@ final class BuilderTests: XCTestCase {
             Validators.Always()
           } else {
             Validate(\.number) {
-              Not(Equals(1))
+              Not(.equals(1))
             }
           }
         }
@@ -118,7 +118,7 @@ final class BuilderTests: XCTestCase {
           Validators.Always()
           if !shouldAllowOnes {
             Validate(\.number) {
-              Not(Equals(1))
+              Not(.equals(1))
             }
           }
         }
@@ -139,7 +139,7 @@ final class BuilderTests: XCTestCase {
           Validators.Always()
           if !shouldAllowOnes {
             Validate(\.number) {
-              Not(Equals(1))
+              Not(.equals(1))
             }
           }
         }
@@ -173,7 +173,7 @@ final class BuilderTests: XCTestCase {
             Validators.Always()
           } else {
             Validate(\.number) {
-              Not(Equals(1))
+              Not(.equals(1))
             }
           }
         }

@@ -11,15 +11,15 @@ final class ValidationTests: XCTestCase {
   func test_or_validator() throws {
     let validators = [
       Validation {
-        Validators.Always<Int>()
-        GreaterThan(10).or(Equals(5))
+        Validation.always()
+        Int.greaterThan(10).or(.equals(5))
       },
       Validation {
-        Equals(5).or(GreaterThan(10))
+        Int.equals(5).or(.greaterThan(10))
       },
       Validation {
-        Equals(5).or {
-          GreaterThan(10)
+        5.equalsValidator().or {
+          10.greaterThanValidator()
         }
       }
     ]
@@ -34,28 +34,33 @@ final class ValidationTests: XCTestCase {
   }
   
   func test_empty() throws {
-    let emptyString = Validation {
-      Empty<String>()
-    }
+    let sut1 = String.empty()
+    let sut2 = ValidatorOf<String>.empty()
     
-    XCTAssertNoThrow(try emptyString.validate(""))
-    XCTAssertThrowsError(try emptyString.validate("foo"))
+    XCTAssertNoThrow(try sut1.validate(""))
+    XCTAssertNoThrow(try sut2.validate(""))
+    XCTAssertThrowsError(try sut1.validate("foo"))
+    XCTAssertThrowsError(try sut2.validate("foo"))
   }
   
   func test_notEmpty() {
-    let notEmptyString = ValidatorOf<String>.notEmpty()
+    let sut1 = String.notEmpty()
+    let sut2 = ValidatorOf<String>.notEmpty()
     
-    XCTAssertNoThrow(try notEmptyString.validate("foo"))
-    XCTAssertThrowsError(try notEmptyString.validate(""))
+    XCTAssertNoThrow(try sut1.validate("foo"))
+    XCTAssertNoThrow(try sut2.validate("foo"))
+    XCTAssertThrowsError(try sut1.validate(""))
+    XCTAssertThrowsError(try sut2.validate(""))
   }
   
   func test_contains_validator() throws {
-    let validator = Validation {
-      Validators.Contains<String, String>("@")
-    }
+    let sut1 = ValidatorOf<String>.contains("@")
+    let sut2: any Validator<String> = String.contains("@")
     
-    XCTAssertNoThrow(try validator.validate("foo@bar.com"))
-    XCTAssertThrowsError(try validator.validate("foo.bar.com"))
+    XCTAssertNoThrow(try sut1.validate("foo@bar.com"))
+    XCTAssertNoThrow(try sut2.validate("foo@bar.com"))
+    XCTAssertThrowsError(try sut1.validate("foo.bar.com"))
+    XCTAssertThrowsError(try sut2.validate("foo.bar.com"))
     
     struct Sut {
       let one: [String]
@@ -63,9 +68,9 @@ final class ValidationTests: XCTestCase {
     }
     
     let sut = Validation<Sut> {
-      Validators.Contains(\.one, \.two)
+      Validation.contains(\.one, \.two)
     }
-    
+
     XCTAssertNoThrow(
       try sut.validate(.init(one: ["foo", "bar"], two: "foo"))
     )
@@ -75,8 +80,8 @@ final class ValidationTests: XCTestCase {
   func test_greater_than_validator() throws {
 
     let validator = Validation {
-      GreaterThan(10)
-      GreaterThan(\.zero)
+      Int.greaterThan(10)
+      Int.greaterThan(\Int.zero)
     }
     
     XCTAssertNoThrow(try validator.validate(11))
@@ -88,20 +93,20 @@ final class ValidationTests: XCTestCase {
     }
   
     let sut = ValidatorOf<Sut> {
-      GreaterThan(\.one, \.two)
+      Int.greaterThan(\.one, \.two)
       Validate(\.one) {
-        GreaterThan(10)
-        GreaterThan(10)
-        GreaterThan(10)
-        GreaterThan(10)
-        GreaterThan(10)
-        GreaterThan(10)
-        GreaterThan(10)
-        GreaterThan(10)
-        GreaterThan(10)
-        Not(GreaterThan(15))
+        Int.greaterThan(10)
+        Int.greaterThan(10)
+        Int.greaterThan(10)
+        Int.greaterThan(10)
+        Int.greaterThan(10)
+        Int.greaterThan(10)
+        Int.greaterThan(10)
+        Int.greaterThan(10)
+        Int.greaterThan(10)
+        Not(.greaterThan(15))
       }
-      GreaterThan(50, \.two)
+      Int.greaterThan(50, \.two)
     }
     
     XCTAssertNoThrow(try sut.validate(.init(one: 11, two: 10)))
@@ -119,13 +124,13 @@ final class ValidationTests: XCTestCase {
       
       var body: some Validator<Self> {
         Validation {
-          LessThan(\.one, 12)
-          LessThanOrEquals(\.one, \.two)
-          LessThan(1, \.two)
-          LessThan(\.one, \.two).or {
-            Equals(\.one, \.two)
+          Validation.lessThan(\.one, 12)
+          Validation.lessThanOrEquals(\.one, \.two)
+          Int.lessThan(1, \.two)
+          Int.lessThan(\.one, \.two).or {
+            Validation.equals(\.one, \.two)
           }
-          LessThanOrEquals(\.one, 13)
+          Int.lessThanOrEquals(\.one, 13)
         }
       }
     }
@@ -134,16 +139,12 @@ final class ValidationTests: XCTestCase {
     XCTAssertThrowsError(try Sut(one: 3, two: 2).validate())
     XCTAssertNoThrow(try Sut(one: 10, two: 11).validate())
     
-    let lessThanOrEqualsOne = ValidatorOf<Int> {
-      LessThanOrEquals(1)
-    }
+    let lessThanOrEqualsOne = ValidatorOf<Int>.lessThan(1).or(.equals(1))
     
     XCTAssertThrowsError(try lessThanOrEqualsOne.validate(2))
     XCTAssertNoThrow(try lessThanOrEqualsOne.validate(1))
     
-    let lessThan12 = ValidatorOf<Int> {
-      LessThan(12)
-    }
+    let lessThan12 = ValidatorOf<Int>.lessThan(12)
     
     XCTAssertThrowsError(try lessThan12.validate(12))
     XCTAssertNoThrow(try lessThan12.validate(11))
@@ -151,9 +152,7 @@ final class ValidationTests: XCTestCase {
   }
   
   func test_greater_than_or_equals_validator() throws {
-    let validator = ValidatorOf<Int> {
-      GreaterThanOrEquals(10)
-    }
+    let validator = ValidatorOf<Int>.greaterThanOrEquals(10)
     
     XCTAssertNoThrow(try validator.validate(10))
     XCTAssertThrowsError(try validator.validate(9))
@@ -164,7 +163,7 @@ final class ValidationTests: XCTestCase {
     }
   
     let sut = ValidatorOf<Sut> {
-      GreaterThanOrEquals(\.one, \.two)
+      Int.greaterThanOrEquals(\.one, \.two)
     }
     
     XCTAssertNoThrow(try sut.validate(.init(one: 11, two: 10)))
@@ -174,7 +173,7 @@ final class ValidationTests: XCTestCase {
   
   func test_not_validator() throws {
     
-    let validator = ValidatorOf<Int>.not { GreaterThan(0) }
+    let validator = ValidatorOf<Int>.not { Validation.greaterThan(0) }
     
     XCTAssertThrowsError(try validator.validate(4))
     XCTAssertNoThrow(try validator.validate(-1))
@@ -186,7 +185,7 @@ final class ValidationTests: XCTestCase {
       let two: Int
       
       var body: some Validator<Self> {
-        Equals(\.one, \.two)
+        Validation.equals(\.one, \.two)
       }
     }
     
@@ -202,9 +201,9 @@ final class ValidationTests: XCTestCase {
       
       var body: some AsyncValidator<Self> {
         AsyncValidation {
-          LessThan(\.one, 12)
-          LessThanOrEquals(\.one, \.two)
-          LessThan(1, \.two)
+          Int.lessThan(\.one, 12)
+          Int.lessThanOrEquals(\.one, \.two)
+          Int.lessThan(1, \.two)
         }
       }
     }
@@ -221,9 +220,9 @@ final class ValidationTests: XCTestCase {
     }
     
     let sut = OneOf {
-      Validators.Case(/Sut.one, using: GreaterThan(0))
+      Validators.Case(/Sut.one, using: Validation.greaterThan(0))
       Validators.Case(/Sut.two) {
-        GreaterThan(10)
+        Int.greaterThan(10)
       }
     }
     
@@ -236,8 +235,8 @@ final class ValidationTests: XCTestCase {
   
   func test_oneOF() throws {
     let sut = OneOf {
-      GreaterThan(0)
-      Equals(-10)
+      Int.greaterThan(0)
+      Validation.equals(-10)
     }
     
     XCTAssertThrowsError(try sut.validate(-1))
@@ -246,8 +245,8 @@ final class ValidationTests: XCTestCase {
     
     let sut2 = ValidatorOf<Int> {
       OneOf {
-        GreaterThan(0)
-        Equals(-10)
+        Validation.greaterThan(0)
+        Validation.equals(-10)
       }
     }
     XCTAssertThrowsError(try sut2.validate(-1))
@@ -269,7 +268,7 @@ final class ValidationTests: XCTestCase {
           Validate(\.email) {
             Accumulating {
               NotEmpty()
-              Validators.Contains("@")
+              String.contains("@")
             }
           }
         }
@@ -302,7 +301,7 @@ final class ValidationTests: XCTestCase {
       var body: some Validator<String> {
         Validation {
           if onlyBlobs {
-            Equals("Blob")
+            Validation.equals("Blob")
           } else {
             NotEmpty()
           }
@@ -330,7 +329,7 @@ final class ValidationTests: XCTestCase {
         Validation {
           Always()
           if onlyBlobs {
-            Equals("Blob")
+            Validation.equals("Blob")
           }
         }
       }
@@ -352,7 +351,7 @@ final class ValidationTests: XCTestCase {
           Validate(\.name, using: NotEmpty())
           Validate(\.email) {
             NotEmpty<String>()
-            Validation.contains("@")
+            String.contains("@")
           }
         }
       }
@@ -366,6 +365,7 @@ final class ValidationTests: XCTestCase {
         XCTFail()
         return
       }
+      print(validationErrors)
       XCTAssertEqual(validationErrors.count, 2)
     }
   }
@@ -384,7 +384,7 @@ final class ValidationTests: XCTestCase {
       
       var body: some Validator<Self> {
         Accumulating {
-          Validate(\.isAdmin, using: .true())
+          Validate(\.isAdmin, using: true)
         }
       }
     }

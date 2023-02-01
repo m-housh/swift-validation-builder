@@ -47,3 +47,11 @@ extension Validation where Value: Collection {
 }
 
 public typealias NotEmpty = Validators.NotEmpty
+
+extension Collection {
+  
+  @inlinable
+  public static func notEmpty() -> some Validator<Self> {
+    Validators.NotEmpty()
+  }
+}

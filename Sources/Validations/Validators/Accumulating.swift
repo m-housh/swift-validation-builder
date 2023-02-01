@@ -20,29 +20,25 @@
 ///   }
 /// }
 /// ```
+// TODO: switch to being generic over the validator, so it can be an async validator too.
 public struct Accumulating<Value>: Validator {
 
-  public let validator: any Validator<Value>
+  public let validators: any Validator<Value>
+  
+  @inlinable
+  public init<V: Validator>(_ validators: V) where V.Value == Value {
+    self.validators = validators
+  }
 
   @inlinable
   public init(
-    @AccumulatingErrorBuilder<Value> builder: () -> any Validator<Value>
+    @AccumulatingErrorBuilder<Value> builder: () -> some Validator<Value>
   ) {
-    self.validator = builder()
+    self.validators = builder()
   }
 
   public func validate(_ value: Value) throws {
-    try self.validator.validate(value)
+    try self.validators.validate(value)
   }
 }
 
-//extension Validation {
-//
-//  public static func accumulating(
-//    @AccumulatingErrorBuilder<Value> builder: () -> some Validator<Value>
-//  ) -> Self
-//  where Validators.Value == Value
-//  {
-//    .init(builder())
-//  }
-//}

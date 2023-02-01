@@ -66,6 +66,14 @@ extension Validation where Value == Bool {
   }
 }
 
+extension Bool: Validator {
+  public typealias Value = Swift.Bool
+  
+  public var body: some Validator<Self> {
+    Validators.BoolValidator(expecting: self)
+  }
+}
+
 /// A validator that fails if an expression evaluates to `false`.
 ///
 /// **Example**
