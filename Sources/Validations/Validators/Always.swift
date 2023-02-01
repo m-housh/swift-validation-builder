@@ -35,3 +35,5 @@ extension Validation {
     .init(Validators.Always())
   }
 }
+
+public typealias Always = Validators.Always

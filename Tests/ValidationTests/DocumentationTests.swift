@@ -13,16 +13,16 @@ final class DocumentationTests: XCTestCase {
       
       var body: some Validator<Self> {
         Accumulating {
-          GreaterThan(\.id, 0)
+          Validators.GreaterThan(\.id, 0)
           Validate(\.name, using: NotEmpty())
         }
       }
     }
 
-    let adminUserValidator = ValidatorOf<User> {
-      Accumulating {
+    let adminUserValidator = Validation {
+      Accumulating<User> {
         Validate(\.self)
-        Validate(\.isAdmin, using: True())
+        Validate(\.isAdmin, using: .true())
       }
     }
     
@@ -34,7 +34,7 @@ final class DocumentationTests: XCTestCase {
         return
       }
       // Assert the error message is correct.
-      let expected = "Validation Error:\n\t• 0 is not greater than 0\n\t• Expected to not be empty.\n\t• Expected to evaluate to true."
+      let expected = "Validation Error:\n\t• 0 is not greater than 0\n\t• Expected to not be empty.\n\t• Failed bool evaluation, expected true"
       
       XCTAssertNoDifference(error.debugDescription, expected)
 //      print(error)

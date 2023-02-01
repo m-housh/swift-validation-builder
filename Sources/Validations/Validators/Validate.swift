@@ -53,6 +53,15 @@ public struct Validate<Parent, Child>: Validator {
     self.child = child
     self.validator = validator
   }
+  
+  @usableFromInline
+  init(
+    _ child: @escaping (Parent) -> Child,
+    using validator: Validation<Child>
+  ) {
+    self.child = child
+    self.validator = { _ in validator }
+  }
 
   @inlinable
   public init(

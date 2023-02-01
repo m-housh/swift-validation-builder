@@ -13,8 +13,9 @@
 ///
 public struct Validation<Value>: Validator {
 
-  @usableFromInline
-  let closure: (Value) throws -> Void
+  public let validators: any Validator<Value>
+//  @usableFromInline
+//  let closure: (Value) throws -> Void
 
   /// Create a validation using a closure that validates the value.
   ///
@@ -27,10 +28,10 @@ public struct Validation<Value>: Validator {
   ///   }
   /// }
   ///```
-  @inlinable
-  public init(_ validate: @escaping (Value) throws -> Void) {
-    self.closure = validate
-  }
+//  @inlinable
+//  public init(_ validate: @escaping (Value) throws -> Void) {
+//    self.closure = validate
+//  }
 
   /// Create a validation wrapping an already existing validator.
   ///
@@ -40,8 +41,8 @@ public struct Validation<Value>: Validator {
   /// let notEmptyString = Validation<String>(NotEmpty())
   /// ```
   @inlinable
-  public init<V: Validator>(_ validator: V) where V.Value == Value {
-    self.init(validator.validate(_:))
+  public init<V: Validator>(_ validators: V) where V.Value == Value {
+    self.validators = validators
   }
 
   /// Create a validation using the builder syntax.
@@ -55,13 +56,13 @@ public struct Validation<Value>: Validator {
   /// }
   /// ```
   @inlinable
-  public init<V: Validator>(@ValidationBuilder<Value> _ build: () -> V) where Value == V.Value {
+  public init<V: Validator>(@ValidationBuilder<Value> _ build: () -> V) where V.Value == Value {
     self.init(build())
   }
 
   @inlinable
   public func validate(_ value: Value) throws {
-    try closure(value)
+    try validators.validate(value)
   }
 }
 

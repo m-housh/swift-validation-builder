@@ -60,4 +60,4 @@ public struct AsyncValidation<Value>: AsyncValidator {
   }
 }
 
-public typealias AsyncValidatorOf<Value> = Validation<Value>
+//public typealias AsyncValidatorOf<Value> = Validation<Value>

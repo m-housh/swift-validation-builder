@@ -4,11 +4,11 @@ import XCTest
 final class BuilderTests: XCTestCase {
  
   func test_validationBuilder_limitedAvailabilty() {
-    let validator = ValidatorOf<Int> {
+    let validator = Validation {
       if #available(macOS 10.15, *) {
-        Validators.Always()
+        Validators.Always<Int>()
       } else {
-        Validators.Always()
+        Validators.Always<Int>()
       }
     }
     
@@ -38,12 +38,12 @@ final class BuilderTests: XCTestCase {
   }
   
   func test_oneOfBuilder_limitedAvailability() {
-    let validator = ValidatorOf<Int> {
+    let validator = Validation {
       OneOf {
         if #available(macOS 10.15, *) {
-          Validators.Always()
+          Validators.Always<Int>()
         } else {
-          Validators.Always()
+          Validators.Always<Int>()
         }
       }
     }
@@ -58,7 +58,7 @@ final class BuilderTests: XCTestCase {
       
       var body: some Validator<Self> {
         OneOf {
-          Validation.never()
+          Validators.Never()
           if !shouldAllowOnes {
             Validate(\.number) {
               Not(Equals(1))
@@ -95,12 +95,12 @@ final class BuilderTests: XCTestCase {
   }
   
   func test_accumulatingBuilder_limitedAvailability() {
-    let validator = ValidatorOf<Int> {
+    let validator = Validation {
       Accumulating {
         if #available(macOS 10.15, *) {
-          Validators.Always()
+          Validators.Always<Int>()
         } else {
-          Validators.Always()
+          Validators.Always<Int>()
         }
       }
     }

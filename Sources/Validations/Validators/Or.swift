@@ -1,24 +1,29 @@
-struct _Or<Validate: Validator>: Validator {
-
-  @usableFromInline
-  let lhs: Validate
-
-  @usableFromInline
-  let rhs: any Validator<Value>
-
-  @inlinable
-  public init(_ lhs: Validate, _ rhs: some Validator<Value>) {
-    self.lhs = lhs
-    self.rhs = rhs
-  }
-
-  @inlinable
-  public func validate(_ value: Validate.Value) throws {
-    do {
-      try lhs.validate(value)
-    } catch {
+extension Validators {
+  public struct OrValidator<Value>: Validator {
+    
+    @usableFromInline
+    let lhs: any Validator<Value>
+    
+    @usableFromInline
+    let rhs: any Validator<Value>
+    
+    @inlinable
+    public init(_ lhs: any Validator<Value>, _ rhs: any Validator<Value>) {
+      self.lhs = lhs
+      self.rhs = rhs
+    }
+    
+    public var body: some Validator<Value> {
+      OneOf {
+        lhs.eraseToAnyValidator()
+        rhs.eraseToAnyValidator()
+      }
+    }
+    
+    @inlinable
+    public func validate(_ value: Value) throws {
       do {
-        try rhs.validate(value)
+        try self.body.validate(value)
       } catch {
         throw ValidationError.failed(summary: "Did not pass any of the validations.")
       }
@@ -45,7 +50,7 @@ extension Validator {
   /// - Parameters:
   ///   - other: The other validator to use.
   public func or(_ other: some Validator<Self.Value>) -> some Validator<Value> {
-    _Or(self, other)
+    Validators.OrValidator(self, other)
   }
 
   /// Succeeds if one of the validators passes.
@@ -69,6 +74,6 @@ extension Validator {
   public func or(@ValidationBuilder<Self.Value> _ build: () -> some Validator<Self.Value>)
     -> some Validator<Value>
   {
-    _Or(self, build())
+    Validators.OrValidator(self, build())
   }
 }

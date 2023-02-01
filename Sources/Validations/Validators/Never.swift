@@ -26,6 +26,7 @@ extension Validators {
   }
 }
 
+
 extension Validation {
 
   /// A validation that never succeeds.  This is useful for some testing purposes.
@@ -46,6 +47,6 @@ extension Validation {
   ///
   @inlinable
   public static func never() -> Self {
-    .init(Validators.Never())
+    .init(Validations.Validators.Never<Value>())
   }
 }

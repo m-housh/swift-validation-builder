@@ -10,7 +10,7 @@ final class ValidationTests: XCTestCase {
   
   func test_or_validator() throws {
     let validators = [
-      ValidatorOf<Int> {
+      Validation {
         Validators.Always<Int>()
         GreaterThan(10).or(Equals(5))
       },
@@ -23,18 +23,18 @@ final class ValidationTests: XCTestCase {
         }
       }
     ]
-    
+
     for validator in validators {
       XCTAssertNoThrow(try validator.validate(11))
       XCTAssertNoThrow(try validator.validate(5))
       XCTAssertThrowsError(try validator.validate(4))
     }
-    
+
     XCTAssertNoThrow(try validators.validator().validate(11))
   }
   
   func test_empty() throws {
-    let emptyString = ValidatorOf<String> {
+    let emptyString = Validation {
       Empty<String>()
     }
     
@@ -43,17 +43,15 @@ final class ValidationTests: XCTestCase {
   }
   
   func test_notEmpty() {
-    let notEmptyString = ValidatorOf<String> {
-      NotEmpty()
-    }
+    let notEmptyString = ValidatorOf<String>.notEmpty()
     
     XCTAssertNoThrow(try notEmptyString.validate("foo"))
     XCTAssertThrowsError(try notEmptyString.validate(""))
   }
   
   func test_contains_validator() throws {
-    let validator = ValidatorOf<String> {
-      Contains("@")
+    let validator = Validation {
+      Validators.Contains<String, String>("@")
     }
     
     XCTAssertNoThrow(try validator.validate("foo@bar.com"))
@@ -64,8 +62,8 @@ final class ValidationTests: XCTestCase {
       let two: String
     }
     
-    let sut = ValidatorOf<Sut> {
-      Contains(\.one, \.two)
+    let sut = Validation<Sut> {
+      Validators.Contains(\.one, \.two)
     }
     
     XCTAssertNoThrow(
@@ -76,7 +74,7 @@ final class ValidationTests: XCTestCase {
   
   func test_greater_than_validator() throws {
 
-    let validator = ValidatorOf<Int> {
+    let validator = Validation {
       GreaterThan(10)
       GreaterThan(\.zero)
     }
@@ -176,11 +174,7 @@ final class ValidationTests: XCTestCase {
   
   func test_not_validator() throws {
     
-    let validator = ValidatorOf<Int> {
-      Not {
-        GreaterThan(0)
-      }
-    }
+    let validator = ValidatorOf<Int>.not { GreaterThan(0) }
     
     XCTAssertThrowsError(try validator.validate(4))
     XCTAssertNoThrow(try validator.validate(-1))
@@ -227,8 +221,8 @@ final class ValidationTests: XCTestCase {
     }
     
     let sut = OneOf {
-      Case(/Sut.one, using: GreaterThan(0))
-      Case(/Sut.two) {
+      Validators.Case(/Sut.one, using: GreaterThan(0))
+      Validators.Case(/Sut.two) {
         GreaterThan(10)
       }
     }
@@ -275,7 +269,7 @@ final class ValidationTests: XCTestCase {
           Validate(\.email) {
             Accumulating {
               NotEmpty()
-              Contains("@")
+              Validators.Contains("@")
             }
           }
         }
@@ -334,7 +328,7 @@ final class ValidationTests: XCTestCase {
       
       var body: some Validator<String> {
         Validation {
-          Validators.Always()
+          Always()
           if onlyBlobs {
             Equals("Blob")
           }
@@ -357,8 +351,8 @@ final class ValidationTests: XCTestCase {
         Accumulating {
           Validate(\.name, using: NotEmpty())
           Validate(\.email) {
-            NotEmpty()
-            Contains("@")
+            NotEmpty<String>()
+            Validation.contains("@")
           }
         }
       }
@@ -378,9 +372,7 @@ final class ValidationTests: XCTestCase {
   
   func test_true_validator() {
     
-    let isTrue = ValidatorOf<Bool> {
-      True()
-    }
+    let isTrue = ValidatorOf<Bool>.true()
     
     XCTAssertNoThrow(try isTrue.validate(true))
     XCTAssertThrowsError(try isTrue.validate(false))
@@ -392,7 +384,7 @@ final class ValidationTests: XCTestCase {
       
       var body: some Validator<Self> {
         Accumulating {
-          Validate(\.isAdmin, using: True())
+          Validate(\.isAdmin, using: .true())
         }
       }
     }
@@ -404,9 +396,7 @@ final class ValidationTests: XCTestCase {
   
   func test_false_validator() {
     
-    let isFalse = ValidatorOf<Bool> {
-      False()
-    }
+    let isFalse = ValidatorOf<Bool>.false()
     
     XCTAssertNoThrow(try isFalse.validate(false))
     XCTAssertThrowsError(try isFalse.validate(true))
@@ -418,7 +408,7 @@ final class ValidationTests: XCTestCase {
       
       var body: some Validator<Self> {
         Accumulating {
-          Validate(\.isAdmin, using: False())
+          Validate(\.isAdmin, using: .false())
         }
       }
     }

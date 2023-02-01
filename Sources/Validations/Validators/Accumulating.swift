@@ -36,11 +36,13 @@ public struct Accumulating<Value>: Validator {
   }
 }
 
-extension Validation {
-
-  public static func accumulating(
-    @AccumulatingErrorBuilder<Value> builder: () -> any Validator<Value>
-  ) -> Self {
-    .init(builder())
-  }
-}
+//extension Validation {
+//
+//  public static func accumulating(
+//    @AccumulatingErrorBuilder<Value> builder: () -> some Validator<Value>
+//  ) -> Self
+//  where Validators.Value == Value
+//  {
+//    .init(builder())
+//  }
+//}
