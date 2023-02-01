@@ -9,10 +9,10 @@ extension Validators {
   /// // succeeds
   /// ```
   public struct Always<Value>: Validator {
-    
+
     @inlinable
     public init() {}
-    
+
     @inlinable
     public func validate(_ value: Value) throws {
       // do nothing.
@@ -21,7 +21,7 @@ extension Validators {
 }
 
 extension Validation {
-  
+
   /// A validator that always succeeds.
   ///
   /// Example:

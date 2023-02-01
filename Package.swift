@@ -25,7 +25,7 @@ let package = Package(
       name: "ValidationTests",
       dependencies: [
         "Validations",
-        .product(name: "CustomDump", package: "swift-custom-dump")
+        .product(name: "CustomDump", package: "swift-custom-dump"),
       ]
     ),
   ]

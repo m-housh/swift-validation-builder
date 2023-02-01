@@ -15,10 +15,10 @@ extension Validators {
   ///```
   ///
   public struct Never<Value>: Validator {
-    
+
     @inlinable
     init() {}
-    
+
     @inlinable
     public func validate(_ value: Value) throws {
       throw ValidationError.failed(summary: "Never validation error.")

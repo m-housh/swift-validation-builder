@@ -1,2 +1,1 @@
-
-public enum Validators { }
+public enum Validators {}

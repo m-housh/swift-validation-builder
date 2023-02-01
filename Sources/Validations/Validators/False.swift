@@ -1,4 +1,3 @@
-
 /// A validator that fails if an expression evaluates to `false`.
 ///
 /// **Example**
@@ -34,7 +33,7 @@ public struct False<Value>: Validator {
 }
 
 extension False where Value == Bool {
-  
+
   /// Create a ``False`` validator.
   /// **Example**
   /// ```swift
