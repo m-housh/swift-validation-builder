@@ -18,8 +18,8 @@ public enum _Conditional<True, False> {
   case second(False)
 }
 
-extension _Conditional: Validator
-where True: Validator, False: Validator, True.Value == False.Value {
+extension _Conditional: Validation
+where True: Validation, False: Validation, True.Value == False.Value {
 
   public func validate(_ value: True.Value) throws {
     switch self {
@@ -43,7 +43,7 @@ where True: AsyncValidator, False: AsyncValidator, True.Value == False.Value {
     }
   }
 }
-extension _SequenceMany: Validator where V: Validator {
+extension _SequenceMany: Validation where V: Validation {
 
   @inlinable
   public func validate(_ value: V.Value) throws {
@@ -78,7 +78,7 @@ extension _SequenceMany: Validator where V: Validator {
   }
 }
 
-extension _Sequence: Validator where V0: Validator, V1: Validator, V0.Value == V1.Value {
+extension _Sequence: Validation where V0: Validation, V1: Validation, V0.Value == V1.Value {
 
   @inlinable
   public func validate(_ value: V0.Value) throws {

@@ -48,7 +48,7 @@ public struct AsyncValidation<Value>: AsyncValidator {
   /// - Parameters:
   ///   - validator: The synchronous validator to transform.
   @inlinable
-  public init<V: Validator>(_ validator: V) where V.Value == Value {
+  public init<V: Validation>(_ validator: V) where V.Value == Value {
     self.closure = { value in
       try validator.validate(value)
     }

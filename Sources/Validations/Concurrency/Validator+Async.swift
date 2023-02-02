@@ -1,4 +1,4 @@
-extension Validator {
+extension Validation {
 
   /// Wraps a synchronous validator in an asynchronous validator.
   @inlinable

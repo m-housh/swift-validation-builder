@@ -11,7 +11,7 @@ extension Validators {
   /// try noOnes.validate(1) // fails.
   ///
   /// ```
-  public struct Not<Validate: Validator>: Validator {
+  public struct Not<Validate: Validation>: Validation {
     
     @usableFromInline
     let validator: Validate
@@ -36,7 +36,7 @@ extension Validators {
     }
     
     @inlinable
-    public init<Value>(_ validation: Validation<Value>) where Validate == Validation<Value> {
+    public init<Value>(_ validation: Validator<Value>) where Validate == Validator<Value> {
       self.init(validation)
     }
     
@@ -75,10 +75,10 @@ extension Validators {
   }
 }
 
-extension Validation {
+extension Validator {
   
   public static func not(
-    @ValidationBuilder<Value> with build: () -> some Validator<Value>
+    @ValidationBuilder<Value> with build: () -> some Validation<Value>
   ) -> Self {
     .init(Validators.Not(build()))
   }

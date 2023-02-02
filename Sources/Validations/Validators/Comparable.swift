@@ -1,6 +1,18 @@
 extension Validators {
   
-  public struct ComparableValidator<Value, Element>: Validator {
+  /// A validation that compares two elements.  This is generally not interacted with, but is
+  /// made by one of the methods on the ``Validator`` type or the `Comparable`
+  /// type that is being compared.
+  ///
+  /// **Example**
+  /// ```
+  ///  let intValidator = Int.lessThanOrEquals(10)
+  ///
+  ///  try intValidator.validate(10) // succeeds.
+  ///  try intValidator.validate(11) // fails.
+  /// ```
+  ///
+  public struct ComparableValidator<Value, Element>: Validation {
     @usableFromInline
     let lhs: (Value) -> Element
     
@@ -27,11 +39,12 @@ extension Validators {
       self.operatorString = operatorString
     }
     
+    @inlinable
     public func validate(_ value: Value) throws {
       let lhs = self.lhs(value)
       let rhs = self.rhs(value)
       guard self.operator(lhs, rhs) else {
-        throw ValidationError.failed(summary: "\(lhs) is not \(operatorString) \(rhs)") // fix error.
+        throw ValidationError.failed(summary: "\(lhs) is not \(operatorString) \(rhs)")
       }
     }
     
@@ -193,7 +206,35 @@ extension Validators {
 
 // MARK: - Equatable
 
-extension Validation {
+extension Validator {
+  
+  /// Validates two elements are equal, using closures to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.equals({ $0.count }, { $0.deeply.nested.value })
+  ///
+  /// try validator.validate(.init(count: 10)) // succeeds.
+  /// try validatore.valiate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   public static func equals<Element: Equatable>(
     _ lhs: @escaping (Value) -> Element,
     _ rhs: @escaping  (Value) -> Element
@@ -209,36 +250,36 @@ extension Validation {
   }
 }
 
-extension Validation where Value: Collection, Value.Element: Equatable {
+//extension Validator where Value: Collection, Value.Element: Equatable {
   
-  @inlinable
-  public static func equals(
-    _ lhs: KeyPath<Value, Value.Element>,
-    _ rhs: KeyPath<Value, Value.Element>
-  ) -> Self {
-    .equals(lhs.value(from:), rhs.value(from:))
-  }
+//  @inlinable
+//  public static func equals(
+//    _ lhs: KeyPath<Value, Value.Element>,
+//    _ rhs: KeyPath<Value, Value.Element>
+//  ) -> Self {
+//    .equals(lhs.value(from:), rhs.value(from:))
+//  }
   
-  @inlinable
-  public static func equals(
-    _ lhs: KeyPath<Value, Value.Element>,
-    _ rhs: Value.Element
-  ) -> Self {
-    .equals(lhs.value(from:), { _ in rhs })
-  }
-}
+//  @inlinable
+//  public static func equals(
+//    _ lhs: KeyPath<Value, Value.Element>,
+//    _ rhs: Value.Element
+//  ) -> Self {
+//    .equals(lhs.value(from:), { _ in rhs })
+//  }
+//}
 
-extension Validation where Value: Collection, Value.Element: Equatable, Value == Value.Element {
+//extension Validator where Value: Collection, Value.Element: Equatable, Value == Value.Element {
+//
+//  @inlinable
+//  public static func equals(
+//    _ rhs: Value.Element
+//  ) -> Self {
+//    .equals(\.self, rhs)
+//  }
+//}
 
-  @inlinable
-  public static func equals(
-    _ rhs: Value.Element
-  ) -> Self {
-    .equals(\.self, rhs)
-  }
-}
-
-extension Validation where Value: Equatable {
+extension Validator where Value: Equatable {
   
   @inlinable
   public static func equals(
@@ -249,25 +290,18 @@ extension Validation where Value: Equatable {
 }
 
 extension Equatable {
-  
-//  static func equals(
-//    _ lhs: Self,
-//    _ rhs: Self
-//  ) -> some Validator<Self> {
-//    Validation.equals({ _ in lhs }, { _ in rhs })
-//  }
-  
-  static func equals(_ rhs: Self) -> some Validator<Self> {
-    Validation.equals(rhs)
+ 
+  static func equals(_ rhs: Self) -> some Validation<Self> {
+    Validator.equals(rhs)
   }
   
-  func equalsValidator() -> some Validator<Self> {
+  func equalsValidator() -> some Validation<Self> {
     Self.equals(self)
   }
 }
 
 // MARK: - Greater Than
-extension Validation {
+extension Validator {
   
   @inlinable
   public static func greaterThan<Element: Comparable>(
@@ -344,31 +378,31 @@ extension Validation {
   }
 }
 
-extension Validation where Value: Comparable {
+extension Validator where Value: Comparable {
   
   @inlinable
   public static func greaterThan(_ rhs: Value) -> Self {
     greaterThan(\.self, rhs)
   }
   
-  @inlinable
-  public static func greaterThan(
-    _ rhs: KeyPath<Value, Value>
-  ) -> Self {
-    greaterThan(\.self, rhs)
-  }
+//  @inlinable
+//  public static func greaterThan(
+//    _ rhs: KeyPath<Value, Value>
+//  ) -> Self {
+//    greaterThan(\.self, rhs)
+//  }
   
   @inlinable
   public static func greaterThanOrEquals(_ rhs: Value) -> Self {
     greaterThanOrEquals(\.self, rhs)
   }
   
-  @inlinable
-  public static func greaterThanOrEquals(
-    _ rhs: KeyPath<Value, Value>
-  ) -> Self {
-    greaterThanOrEquals(\.self, rhs)
-  }
+//  @inlinable
+//  public static func greaterThanOrEquals(
+//    _ rhs: KeyPath<Value, Value>
+//  ) -> Self {
+//    greaterThanOrEquals(\.self, rhs)
+//  }
   
 }
 
@@ -378,15 +412,15 @@ extension Comparable {
   public static func greaterThan<Value>(
     _ lhs: @escaping (Value) -> Self,
     _ rhs: @escaping (Value) -> Self
-  ) -> some Validator<Value> {
-    Validation<Value>.greaterThan(lhs, rhs)
+  ) -> some Validation<Value> {
+    Validator<Value>.greaterThan(lhs, rhs)
   }
   
   @inlinable
   public static func greaterThan<Value>(
     _ lhs: KeyPath<Value, Self>,
     _ rhs: KeyPath<Value, Self>
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     greaterThan(lhs.value(from:), rhs.value(from:))
   }
   
@@ -394,7 +428,7 @@ extension Comparable {
   public static func greaterThan<Value>(
     _ lhs: KeyPath<Value, Self>,
     _ rhs: Self
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     greaterThan(lhs.value(from:), { _ in rhs })
   }
   
@@ -402,22 +436,22 @@ extension Comparable {
   public static func greaterThan<Value>(
     _ lhs: Self,
     _ rhs: KeyPath<Value, Self>
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     greaterThan({ _ in lhs }, rhs.value(from:))
   }
   
   @inlinable
-  public static func greaterThan(_ other: Self) -> some Validator<Self> {
+  public static func greaterThan(_ other: Self) -> some Validation<Self> {
     greaterThan(\.self, other)
   }
   
   @inlinable
-  public static func greaterThan(_ other: KeyPath<Self, Self>) -> some Validator<Self> {
+  public static func greaterThan(_ other: KeyPath<Self, Self>) -> some Validation<Self> {
     greaterThan(\.self, other)
   }
   
   @inlinable
-  public func greaterThanValidator() -> some Validator<Self> {
+  public func greaterThanValidator() -> some Validation<Self> {
     Self.greaterThan(self)
   }
   
@@ -425,15 +459,15 @@ extension Comparable {
   public static func greaterThanOrEquals<Value>(
     _ lhs: @escaping (Value) -> Self,
     _ rhs: @escaping (Value) -> Self
-  ) -> some Validator<Value> {
-    Validation<Value>.greaterThanOrEquals(lhs, rhs)
+  ) -> some Validation<Value> {
+    Validator<Value>.greaterThanOrEquals(lhs, rhs)
   }
   
   @inlinable
   public static func greaterThanOrEquals<Value>(
     _ lhs: KeyPath<Value, Self>,
     _ rhs: KeyPath<Value, Self>
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     greaterThanOrEquals(lhs.value(from:), rhs.value(from:))
   }
   
@@ -441,7 +475,7 @@ extension Comparable {
   public static func greaterThanOrEquals<Value>(
     _ lhs: KeyPath<Value, Self>,
     _ rhs: Self
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     greaterThanOrEquals(lhs.value(from:), { _ in rhs })
   }
   
@@ -449,29 +483,29 @@ extension Comparable {
   public static func greaterThanOrEquals<Value>(
     _ lhs: Self,
     _ rhs: KeyPath<Value, Self>
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     greaterThanOrEquals({ _ in lhs }, rhs.value(from:))
   }
   
   @inlinable
-  public static func greaterThanOrEquals(_ other: Self) -> some Validator<Self> {
+  public static func greaterThanOrEquals(_ other: Self) -> some Validation<Self> {
     greaterThan(\.self, other)
   }
   
   @inlinable
-  public static func greaterThanOrEquals(_ other: KeyPath<Self, Self>) -> some Validator<Self> {
+  public static func greaterThanOrEquals(_ other: KeyPath<Self, Self>) -> some Validation<Self> {
     greaterThan(\.self, other)
   }
   
   @inlinable
-  public func greaterThanOrEqualsValidator() -> some Validator<Self> {
+  public func greaterThanOrEqualsValidator() -> some Validation<Self> {
     Self.greaterThan(self)
   }
 }
 
 // MARK: - Less Than
 
-extension Validation {
+extension Validator {
   
   @inlinable
   public static func lessThan<Element: Comparable>(
@@ -548,7 +582,7 @@ extension Validation {
   }
 }
 
-extension Validation where Value: Comparable {
+extension Validator where Value: Comparable {
   
   @inlinable
   public static func lessThan(_ rhs: Value) -> Self {
@@ -582,22 +616,22 @@ extension Comparable {
   public static func lessThan<Value>(
     _ lhs: @escaping (Value) -> Self,
     _ rhs: @escaping (Value) -> Self
-  ) -> some Validator<Value> {
-    Validation<Value>.lessThan(lhs, rhs)
+  ) -> some Validation<Value> {
+    Validator<Value>.lessThan(lhs, rhs)
   }
   
   @inlinable
   public static func lessThan<Value>(
     _ lhs: KeyPath<Value, Self>,
     _ rhs: KeyPath<Value, Self>
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     lessThan(lhs.value(from:), rhs.value(from:))
   }
   @inlinable
   public static func lessThan<Value>(
     _ lhs: KeyPath<Value, Self>,
     _ rhs: Self
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     lessThan(lhs.value(from:), { _ in rhs })
   }
   
@@ -605,22 +639,22 @@ extension Comparable {
   public static func lessThan<Value>(
     _ lhs: Self,
     _ rhs: KeyPath<Value, Self>
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     lessThan({ _ in lhs }, rhs.value(from:))
   }
   
   @inlinable
-  public static func lessThan(_ other: Self) -> some Validator<Self> {
+  public static func lessThan(_ other: Self) -> some Validation<Self> {
     lessThan(\.self, other)
   }
   
   @inlinable
-  public static func lessThan(_ other: KeyPath<Self, Self>) -> some Validator<Self> {
+  public static func lessThan(_ other: KeyPath<Self, Self>) -> some Validation<Self> {
     lessThan(\.self, other)
   }
   
   @inlinable
-  public func lessThanValidator() -> some Validator<Self> {
+  public func lessThanValidator() -> some Validation<Self> {
     Self.lessThan(self)
   }
   
@@ -628,22 +662,22 @@ extension Comparable {
   public static func lessThanOrEquals<Value>(
     _ lhs: @escaping (Value) -> Self,
     _ rhs: @escaping (Value) -> Self
-  ) -> some Validator<Value> {
-    Validation<Value>.lessThanOrEquals(lhs, rhs)
+  ) -> some Validation<Value> {
+    Validator<Value>.lessThanOrEquals(lhs, rhs)
   }
   
   @inlinable
   public static func lessThanOrEquals<Value>(
     _ lhs: KeyPath<Value, Self>,
     _ rhs: KeyPath<Value, Self>
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     lessThanOrEquals(lhs.value(from:), rhs.value(from:))
   }
   @inlinable
   public static func lessThanOrEquals<Value>(
     _ lhs: KeyPath<Value, Self>,
     _ rhs: Self
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     lessThanOrEquals(lhs.value(from:), { _ in rhs })
   }
   
@@ -651,22 +685,22 @@ extension Comparable {
   public static func lessThanOrEquals<Value>(
     _ lhs: Self,
     _ rhs: KeyPath<Value, Self>
-  ) -> some Validator<Value> {
+  ) -> some Validation<Value> {
     lessThanOrEquals({ _ in lhs }, rhs.value(from:))
   }
   
   @inlinable
-  public static func lessThanOrEquals(_ other: Self) -> some Validator<Self> {
+  public static func lessThanOrEquals(_ other: Self) -> some Validation<Self> {
     lessThanOrEquals(\.self, other)
   }
   
   @inlinable
-  public static func lessThanOrEquals(_ other: KeyPath<Self, Self>) -> some Validator<Self> {
+  public static func lessThanOrEquals(_ other: KeyPath<Self, Self>) -> some Validation<Self> {
     lessThanOrEquals(\.self, other)
   }
   
   @inlinable
-  public func lessThanOrEqualsValidator() -> some Validator<Self> {
+  public func lessThanOrEqualsValidator() -> some Validation<Self> {
     Self.lessThanOrEquals(self)
   }
 }

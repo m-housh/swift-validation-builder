@@ -5,7 +5,7 @@ extension Validators {
   /// ```swift
   /// let intValidator = ValidatorOf<Int> {
   ///   Accumulating {
-  ///     Never()
+  ///     Fail()
   ///     Equals(1)
   ///   }
   /// }
@@ -14,20 +14,20 @@ extension Validators {
   /// try intValidator.validate(1) // fails with 1 error.
   ///```
   ///
-  public struct Never<Value>: Validator {
+  public struct Fail<Value>: Validation {
 
     @inlinable
     init() {}
 
     @inlinable
     public func validate(_ value: Value) throws {
-      throw ValidationError.failed(summary: "Never validation error.")
+      throw ValidationError.failed(summary: "Fail validation error.")
     }
   }
 }
 
 
-extension Validation {
+extension Validator {
 
   /// A validation that never succeeds.  This is useful for some testing purposes.
   ///
@@ -35,7 +35,7 @@ extension Validation {
   /// ```swift
   /// let intValidator = ValidatorOf<Int> {
   ///   Accumulating {
-  ///     Validation.never()
+  ///     Validation.fail()
   ///     Equals(1)
   ///   }
   /// }
@@ -46,7 +46,7 @@ extension Validation {
   ///
   ///
   @inlinable
-  public static func never() -> Self {
-    .init(Validations.Validators.Never<Value>())
+  public static func fail() -> Self {
+    .init(Validations.Validators.Fail<Value>())
   }
 }

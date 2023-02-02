@@ -6,12 +6,12 @@ public enum ValidationBuilder<Value> {
   // build context, which is no fun / creates a poor user experience.
 
   @inlinable
-  public static func buildPartialBlock<V: Validator>(first: V) -> V where V.Value == Value {
+  public static func buildPartialBlock<V: Validation>(first: V) -> V where V.Value == Value {
     first
   }
 
   @inlinable
-  public static func buildPartialBlock<V0: Validator, V1: Validator>(
+  public static func buildPartialBlock<V0: Validation, V1: Validation>(
     accumulated: V0,
     next: V1
   ) -> _Sequence<V0, V1> {
@@ -19,7 +19,7 @@ public enum ValidationBuilder<Value> {
   }
 
   @inlinable
-  public static func buildEither<TrueValidator: Validator, FalseValidator: Validator>(
+  public static func buildEither<TrueValidator: Validation, FalseValidator: Validation>(
     first component: TrueValidator
   ) -> _Conditional<TrueValidator, FalseValidator>
   where TrueValidator.Value == Value, FalseValidator.Value == Value {
@@ -27,7 +27,7 @@ public enum ValidationBuilder<Value> {
   }
 
   @inlinable
-  public static func buildEither<TrueValidator: Validator, FalseValidator: Validator>(
+  public static func buildEither<TrueValidator: Validation, FalseValidator: Validation>(
     second component: FalseValidator
   ) -> _Conditional<TrueValidator, FalseValidator>
   where TrueValidator.Value == Value, FalseValidator.Value == Value {
@@ -35,23 +35,23 @@ public enum ValidationBuilder<Value> {
   }
 
   @inlinable
-  public static func buildExpression<V: Validator>(_ expression: V) -> V where V.Value == Value {
+  public static func buildExpression<V: Validation>(_ expression: V) -> V where V.Value == Value {
     expression
   }
 
   @inlinable
-  public static func buildFinalResult<V: Validator>(_ component: V) -> V where V.Value == Value {
+  public static func buildFinalResult<V: Validation>(_ component: V) -> V where V.Value == Value {
     component
   }
 
   @inlinable
-  public static func buildLimitedAvailability<V: Validator>(_ component: V) -> V
+  public static func buildLimitedAvailability<V: Validation>(_ component: V) -> V
   where V.Value == Value {
     component
   }
 
   @inlinable
-  public static func buildOptional<V: Validator>(_ component: V?) -> V? where V.Value == Value {
+  public static func buildOptional<V: Validation>(_ component: V?) -> V? where V.Value == Value {
     component
   }
 

@@ -1,5 +1,6 @@
 import Foundation
 
+// TODO: Support labels to errors when there are `many` errors.
 @usableFromInline
 enum ValidationError: Error {
   case failed(Context)

@@ -21,18 +21,18 @@
 /// }
 /// ```
 // TODO: switch to being generic over the validator, so it can be an async validator too.
-public struct Accumulating<Value>: Validator {
+public struct Accumulating<Value>: Validation {
 
-  public let validators: any Validator<Value>
+  public let validators: any Validation<Value>
   
   @inlinable
-  public init<V: Validator>(_ validators: V) where V.Value == Value {
+  public init<V: Validation>(_ validators: V) where V.Value == Value {
     self.validators = validators
   }
 
   @inlinable
   public init(
-    @AccumulatingErrorBuilder<Value> builder: () -> some Validator<Value>
+    @AccumulatingErrorBuilder<Value> builder: () -> some Validation<Value>
   ) {
     self.validators = builder()
   }

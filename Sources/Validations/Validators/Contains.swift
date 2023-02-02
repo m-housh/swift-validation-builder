@@ -11,7 +11,7 @@ extension Validators {
   ///
   /// ```
   ///
-  public struct Contains<Value: Collection>: Validator where Value.Element: Equatable {
+  public struct Contains<Value: Collection>: Validation where Value.Element: Equatable {
     
     public let element: Value.Element
     
@@ -28,7 +28,7 @@ extension Validators {
   }
 }
 
-extension Validation {
+extension Validator {
   
   @inlinable
   public static func contains<C: Collection>(
@@ -38,14 +38,11 @@ extension Validation {
   where C.Element: Equatable
   {
     .init(
-      Always().map { parent in
+      Validators.Lazy { parent in
         Validate<Value, C>(toCollection) {
-          Always().map { _ in
-            Validators.Contains<C>(element: parent[keyPath: toElement])
-          }
+          Validators.Contains(element: parent[keyPath: toElement])
         }
       }
-      
     )
   }
   
@@ -58,13 +55,13 @@ extension Validation {
   {
     .init(
       Validate<Value, C>(toCollection) {
-        Always().map { _ in Validators.Contains<C>(element: element) }
+        Validators.Contains(element: element)
       }
     )
   }
 }
 
-extension Validation where Value: Collection, Value.Element: Equatable {
+extension Validator where Value: Collection, Value.Element: Equatable {
   
   @inlinable
   public static func contains(_ element: Value.Element) -> Self {
@@ -75,7 +72,7 @@ extension Validation where Value: Collection, Value.Element: Equatable {
 extension Collection where Element: Equatable {
   
   @inlinable
-  public static func contains(_ element: Element) -> some Validator<Self> {
+  public static func contains(_ element: Element) -> some Validation<Self> {
     Validators.Contains(element: element)
   }
 }

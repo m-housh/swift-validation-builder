@@ -1,4 +1,4 @@
-extension Optional: Validator where Wrapped: Validator {
+extension Optional: Validation where Wrapped: Validation {
 
   public func validate(_ value: Wrapped.Value) throws {
     if let validator = self {

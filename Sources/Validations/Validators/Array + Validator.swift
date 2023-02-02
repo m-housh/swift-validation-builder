@@ -1,10 +1,10 @@
-extension Array where Element: Validator {
+extension Array where Element: Validation {
   /// Create a validator from an array of validators.
   ///
   /// - Parameters:
   ///   - type: The validation type to build.
   @inlinable
-  public func validator(type: ValidationType = .failEarly) -> some Validator<Element.Value> {
+  public func validator(type: ValidationType = .failEarly) -> some Validation<Element.Value> {
     switch type {
     case .accumulating:
       return _SequenceMany.accumulating(self)

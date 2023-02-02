@@ -16,12 +16,12 @@ extension Validators {
     let line: UInt
     
     @usableFromInline
-    let validator: any Validator<Child>
+    let validator: any Validation<Child>
     
     @inlinable
     public init(
       _ casePath: CasePath<Parent, Child>,
-      using validator: any Validator<Child>,
+      using validator: any Validation<Child>,
       file: StaticString = #file,
       fileID: StaticString = #fileID,
       line: UInt = #line
@@ -34,7 +34,7 @@ extension Validators {
     }
     
     @inlinable
-    public init<V: Validator>(
+    public init<V: Validation>(
       _ casePath: CasePath<Parent, Child>,
       file: StaticString = #file,
       fileID: StaticString = #fileID,
@@ -46,7 +46,7 @@ extension Validators {
   }
 }
 
-extension Validators.Case: Validator {
+extension Validators.Case: Validation {
   public typealias Value = Parent
   
   @inlinable

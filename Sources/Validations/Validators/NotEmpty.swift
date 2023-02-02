@@ -11,11 +11,11 @@ extension Validators {
   /// try notEmptyString.validate("") //fails.
   /// ```
   ///
-  public struct NotEmpty<Value: Collection>: Validator {
+  public struct NotEmpty<Value: Collection>: Validation {
     
     public init() {}
     
-    public var body: some Validator<Value> {
+    public var body: some Validation<Value> {
       Not(Empty())
     }
     
@@ -29,7 +29,7 @@ extension Validators {
   }
 }
 
-extension Validation where Value: Collection {
+extension Validator where Value: Collection {
  
   /// Validaties a collection is not empty.
   ///
@@ -51,7 +51,7 @@ public typealias NotEmpty = Validators.NotEmpty
 extension Collection {
   
   @inlinable
-  public static func notEmpty() -> some Validator<Self> {
+  public static func notEmpty() -> some Validation<Self> {
     Validators.NotEmpty()
   }
 }

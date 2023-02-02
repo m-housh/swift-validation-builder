@@ -8,7 +8,7 @@ extension Validators {
   /// try! always.validate("")
   /// // succeeds
   /// ```
-  public struct Always<Value>: Validator {
+  public struct Success<Value>: Validation {
 
     @inlinable
     public init() {}
@@ -20,7 +20,7 @@ extension Validators {
   }
 }
 
-extension Validation {
+extension Validator {
 
   /// A validator that always succeeds.
   ///
@@ -32,8 +32,8 @@ extension Validation {
   /// // succeeds
   /// ```
   public static func always() -> Self {
-    .init(Validators.Always())
+    .init(Validators.Success())
   }
 }
 
-public typealias Always = Validators.Always
+//public typealias Always = Validators.Success

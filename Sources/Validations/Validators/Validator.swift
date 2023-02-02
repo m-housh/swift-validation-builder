@@ -11,9 +11,9 @@
 /// try nonEmptyString.validate("") // fails.
 ///```
 ///
-public struct Validation<Value>: Validator {
+public struct Validator<Value>: Validation {
 
-  public let validators: any Validator<Value>
+  public let validators: any Validation<Value>
 //  @usableFromInline
 //  let closure: (Value) throws -> Void
 
@@ -28,10 +28,16 @@ public struct Validation<Value>: Validator {
   ///   }
   /// }
   ///```
+  @inlinable
+  public init(_ validate: @escaping (Value) throws -> Void) {
+    self.validators = AnyValidator(validate)
+  }
+  
 //  @inlinable
-//  public init(_ validate: @escaping (Value) throws -> Void) {
-//    self.closure = validate
+//  public init(_ validate: @escaping (Value) throws -> some Validation<Value>) {
+//    self.validators = valida
 //  }
+  
 
   /// Create a validation wrapping an already existing validator.
   ///
@@ -41,7 +47,7 @@ public struct Validation<Value>: Validator {
   /// let notEmptyString = Validation<String>(NotEmpty())
   /// ```
   @inlinable
-  public init<V: Validator>(_ validators: V) where V.Value == Value {
+  public init<V: Validation>(_ validators: V) where V.Value == Value {
     self.validators = validators
   }
 
@@ -56,7 +62,7 @@ public struct Validation<Value>: Validator {
   /// }
   /// ```
   @inlinable
-  public init<V: Validator>(@ValidationBuilder<Value> _ build: () -> V) where V.Value == Value {
+  public init<V: Validation>(@ValidationBuilder<Value> _ build: () -> V) where V.Value == Value {
     self.init(build())
   }
 
@@ -68,4 +74,4 @@ public struct Validation<Value>: Validator {
 
 /// Convenience naming for making concrete validations.
 ///
-public typealias ValidatorOf<Value> = Validation<Value>
+public typealias ValidatorOf<Value> = Validator<Value>

@@ -1,19 +1,19 @@
 extension Validators {
-  public struct OrValidator<Value>: Validator {
+  public struct OrValidator<Value>: Validation {
     
     @usableFromInline
-    let lhs: any Validator<Value>
+    let lhs: any Validation<Value>
     
     @usableFromInline
-    let rhs: any Validator<Value>
+    let rhs: any Validation<Value>
     
     @inlinable
-    public init(_ lhs: any Validator<Value>, _ rhs: any Validator<Value>) {
+    public init(_ lhs: any Validation<Value>, _ rhs: any Validation<Value>) {
       self.lhs = lhs
       self.rhs = rhs
     }
     
-    public var body: some Validator<Value> {
+    public var body: some Validation<Value> {
       OneOf {
         lhs.eraseToAnyValidator()
         rhs.eraseToAnyValidator()
@@ -31,7 +31,7 @@ extension Validators {
   }
 }
 
-extension Validator {
+extension Validation {
 
   /// Succeeds if one of the validators passes.
   ///
@@ -49,7 +49,7 @@ extension Validator {
   ///
   /// - Parameters:
   ///   - other: The other validator to use.
-  public func or(_ other: some Validator<Self.Value>) -> some Validator<Value> {
+  public func or(_ other: some Validation<Self.Value>) -> some Validation<Value> {
     Validators.OrValidator(self, other)
   }
 
@@ -71,13 +71,13 @@ extension Validator {
   ///
   /// - Parameters:
   ///   - build: The other validator to use.
-  public func or(@ValidationBuilder<Self.Value> _ build: () -> some Validator<Self.Value>)
-    -> some Validator<Value>
+  public func or(@ValidationBuilder<Self.Value> _ build: () -> some Validation<Self.Value>)
+    -> some Validation<Value>
   {
     Validators.OrValidator(self, build())
   }
   
-  public func or(_ validation: Validation<Value>) -> some Validator<Self.Value> {
+  public func or(_ validation: Validator<Value>) -> some Validation<Self.Value> {
     Validators.OrValidator(self, validation)
   }
 }

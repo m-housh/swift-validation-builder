@@ -39,7 +39,7 @@ import Foundation
 ///
 ///   ```
 ///
-public protocol Validator<Value> {
+public protocol Validation<Value> {
 
   associatedtype Value
   associatedtype _Body
@@ -56,7 +56,7 @@ public protocol Validator<Value> {
   var body: Body { get }
 }
 
-extension Validator where Body == Swift.Never {
+extension Validation where Body == Swift.Never {
 
   @_transparent
   public var body: Body {
@@ -64,7 +64,7 @@ extension Validator where Body == Swift.Never {
   }
 }
 
-extension Validator where Body: Validator, Body.Value == Value {
+extension Validation where Body: Validation, Body.Value == Value {
 
   @inlinable
   public func validate(_ value: Value) throws {

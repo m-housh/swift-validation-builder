@@ -22,7 +22,7 @@
 /// try invalid.validate() // error.
 /// ```
 ///
-public protocol Validatable: Validator where Value == Self {
+public protocol Validatable: Validation where Value == Self {
 
   /// Validate an instance.
   func validate() throws

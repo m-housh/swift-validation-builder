@@ -10,14 +10,14 @@ final class ValidationTests: XCTestCase {
   
   func test_or_validator() throws {
     let validators = [
-      Validation {
-        Validation.always()
+      Validator {
+        Validator.always()
         Int.greaterThan(10).or(.equals(5))
       },
-      Validation {
+      Validator {
         Int.equals(5).or(.greaterThan(10))
       },
-      Validation {
+      Validator {
         5.equalsValidator().or {
           10.greaterThanValidator()
         }
@@ -55,7 +55,7 @@ final class ValidationTests: XCTestCase {
   
   func test_contains_validator() throws {
     let sut1 = ValidatorOf<String>.contains("@")
-    let sut2: any Validator<String> = String.contains("@")
+    let sut2: any Validation<String> = String.contains("@")
     
     XCTAssertNoThrow(try sut1.validate("foo@bar.com"))
     XCTAssertNoThrow(try sut2.validate("foo@bar.com"))
@@ -67,8 +67,8 @@ final class ValidationTests: XCTestCase {
       let two: String
     }
     
-    let sut = Validation<Sut> {
-      Validation.contains(\.one, \.two)
+    let sut = Validator<Sut> {
+      Validator.contains(\.one, \.two)
     }
 
     XCTAssertNoThrow(
@@ -79,7 +79,7 @@ final class ValidationTests: XCTestCase {
   
   func test_greater_than_validator() throws {
 
-    let validator = Validation {
+    let validator = Validator {
       Int.greaterThan(10)
       Int.greaterThan(\Int.zero)
     }
@@ -122,13 +122,13 @@ final class ValidationTests: XCTestCase {
       let one: Int
       let two: Int
       
-      var body: some Validator<Self> {
-        Validation {
-          Validation.lessThan(\.one, 12)
-          Validation.lessThanOrEquals(\.one, \.two)
+      var body: some Validation<Self> {
+        Validator {
+          Validator.lessThan(\.one, 12)
+          Validator.lessThanOrEquals(\.one, \.two)
           Int.lessThan(1, \.two)
           Int.lessThan(\.one, \.two).or {
-            Validation.equals(\.one, \.two)
+            Validator.equals(\.one, \.two)
           }
           Int.lessThanOrEquals(\.one, 13)
         }
@@ -173,7 +173,7 @@ final class ValidationTests: XCTestCase {
   
   func test_not_validator() throws {
     
-    let validator = ValidatorOf<Int>.not { Validation.greaterThan(0) }
+    let validator = ValidatorOf<Int>.not { Validator.greaterThan(0) }
     
     XCTAssertThrowsError(try validator.validate(4))
     XCTAssertNoThrow(try validator.validate(-1))
@@ -184,8 +184,8 @@ final class ValidationTests: XCTestCase {
       let one: Int
       let two: Int
       
-      var body: some Validator<Self> {
-        Validation.equals(\.one, \.two)
+      var body: some Validation<Self> {
+        Validator.equals(\.one, \.two)
       }
     }
     
@@ -220,7 +220,7 @@ final class ValidationTests: XCTestCase {
     }
     
     let sut = OneOf {
-      Validators.Case(/Sut.one, using: Validation.greaterThan(0))
+      Validators.Case(/Sut.one, using: Validator.greaterThan(0))
       Validators.Case(/Sut.two) {
         Int.greaterThan(10)
       }
@@ -236,7 +236,7 @@ final class ValidationTests: XCTestCase {
   func test_oneOF() throws {
     let sut = OneOf {
       Int.greaterThan(0)
-      Validation.equals(-10)
+      Validator.equals(-10)
     }
     
     XCTAssertThrowsError(try sut.validate(-1))
@@ -245,8 +245,8 @@ final class ValidationTests: XCTestCase {
     
     let sut2 = ValidatorOf<Int> {
       OneOf {
-        Validation.greaterThan(0)
-        Validation.equals(-10)
+        Validator.greaterThan(0)
+        Validator.equals(-10)
       }
     }
     XCTAssertThrowsError(try sut2.validate(-1))
@@ -262,7 +262,7 @@ final class ValidationTests: XCTestCase {
       let name: String
       let email: String
       
-      var body: some Validator<Self> {
+      var body: some Validation<Self> {
         Accumulating {
           Validate(\.name, using: NotEmpty())
           Validate(\.email) {
@@ -281,7 +281,7 @@ final class ValidationTests: XCTestCase {
     struct HoldsUser: Validatable {
       let user: User
       
-      var body: some Validator<Self> {
+      var body: some Validation<Self> {
         Validate(\.user)
       }
     }
@@ -292,16 +292,16 @@ final class ValidationTests: XCTestCase {
   
   func test_builder_either() {
    
-    struct Sut: Validator {
+    struct Sut: Validation {
       
       typealias Value = String
       
       let onlyBlobs: Bool
       
-      var body: some Validator<String> {
-        Validation {
+      var body: some Validation<String> {
+        Validator {
           if onlyBlobs {
-            Validation.equals("Blob")
+            Validator.equals("Blob")
           } else {
             NotEmpty()
           }
@@ -319,17 +319,17 @@ final class ValidationTests: XCTestCase {
   
   func test_builder_if() {
    
-    struct Sut: Validator {
+    struct Sut: Validation {
       
       typealias Value = String
       
       let onlyBlobs: Bool
       
-      var body: some Validator<String> {
-        Validation {
-          Always()
+      var body: some Validation<String> {
+        Validator {
+          Validators.Success()
           if onlyBlobs {
-            Validation.equals("Blob")
+            Validator.equals("Blob")
           }
         }
       }
@@ -346,7 +346,7 @@ final class ValidationTests: XCTestCase {
       let name: String
       let email: String
       
-      var body: some Validator<Self> {
+      var body: some Validation<Self> {
         Accumulating {
           Validate(\.name, using: NotEmpty())
           Validate(\.email) {
@@ -382,7 +382,7 @@ final class ValidationTests: XCTestCase {
       let email: String
       let isAdmin: Bool
       
-      var body: some Validator<Self> {
+      var body: some Validation<Self> {
         Accumulating {
           Validate(\.isAdmin, using: true)
         }
@@ -406,7 +406,7 @@ final class ValidationTests: XCTestCase {
       let email: String
       let isAdmin: Bool
       
-      var body: some Validator<Self> {
+      var body: some Validation<Self> {
         Accumulating {
           Validate(\.isAdmin, using: .false())
         }
@@ -419,8 +419,35 @@ final class ValidationTests: XCTestCase {
   }
   
   func test_never_validator() {
-    let validator = ValidatorOf<Int>.never()
+    let validator = ValidatorOf<Int>.fail()
     XCTAssertThrowsError(try validator.validate(0))
+  }
+  
+  func test_email() {
+    let sut = ValidatorOf<String>.email()
+    let sut2 = ValidatorOf<String>.email(.international)
+    
+    XCTAssertNoThrow(try sut.validate("blob@example.com"))
+    XCTAssertNoThrow(try sut2.validate("blob@example.com"))
+    XCTAssertThrowsError(try sut.validate("blob@example@com"))
+    XCTAssertThrowsError(try sut2.validate("blob@example@com"))
+  }
+  
+  func test_mapError() {
+    enum TestError: Error {
+      case invalid
+    }
+    
+    let sut = ValidatorOf<Int>
+      .fail()
+      .mapError(TestError.invalid)
+    
+    do {
+      try sut.validate(1)
+    } catch {
+      let testError = error as! TestError
+      XCTAssertEqual(testError, .invalid)
+    }
   }
   
 }

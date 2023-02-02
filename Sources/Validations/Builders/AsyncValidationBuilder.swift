@@ -21,7 +21,7 @@ public enum AsyncValidationBuilder<Value> {
   }
 
   @inlinable
-  public static func buildExpression<V: Validator>(_ expression: V) -> some AsyncValidator<V.Value>
+  public static func buildExpression<V: Validation>(_ expression: V) -> some AsyncValidator<V.Value>
   where V.Value == Value {
     expression.async
   }

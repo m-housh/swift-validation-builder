@@ -14,13 +14,13 @@
 /// try oneOrTwo.validate(3) // fails.
 /// ```
 ///
-public struct OneOf<Value>: Validator {
+public struct OneOf<Value>: Validation {
 
   @usableFromInline
-  let validator: any Validator<Value>
+  let validator: any Validation<Value>
 
   @inlinable
-  public init<V: Validator>(_ validator: V) where V.Value == Value {
+  public init<V: Validation>(_ validator: V) where V.Value == Value {
     self.validator = validator
   }
 
@@ -40,7 +40,7 @@ public struct OneOf<Value>: Validator {
   /// ```
   ///
   @inlinable
-  public init<V: Validator>(@OneOfBuilder<Value> builder: @escaping () -> V)
+  public init<V: Validation>(@OneOfBuilder<Value> builder: @escaping () -> V)
   where V.Value == Value {
     self.init(builder())
   }

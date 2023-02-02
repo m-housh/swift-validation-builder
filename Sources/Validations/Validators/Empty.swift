@@ -9,16 +9,16 @@
 ///  try emptyValidator.validate("") // success.
 ///  try emptyValidator.validate("foo") // fails.
 ///  ```
-public struct Empty<Value: Collection>: Validator {
+public struct Empty<Value: Collection>: Validation {
 
   public init() {}
 
-  public var body: some Validator<Value> {
+  public var body: some Validation<Value> {
     Validate(\.isEmpty, using: .true())
   }
 }
 
-extension Validation where Value: Collection {
+extension Validator where Value: Collection {
   /// Validates a collection is empty.
   ///
   /// ```swift
@@ -39,7 +39,7 @@ extension Validators {
 extension Collection {
   
   @inlinable
-  public static func empty() -> some Validator<Self> {
+  public static func empty() -> some Validation<Self> {
     Validators.Empty()
   }
 }

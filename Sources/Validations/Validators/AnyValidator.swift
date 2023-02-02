@@ -1,17 +1,18 @@
-extension Validator {
+extension Validation {
 
   public func eraseToAnyValidator() -> AnyValidator<Value> {
     AnyValidator(self)
   }
 
 }
-public struct AnyValidator<Value>: Validator {
+
+public struct AnyValidator<Value>: Validation {
 
   @usableFromInline
   let closure: (Value) throws -> Void
 
   @inlinable
-  public init<V: Validator>(_ validator: V) where V.Value == Value {
+  public init<V: Validation>(_ validator: V) where V.Value == Value {
     self.closure = validator.validate(_:)
   }
 
@@ -20,6 +21,7 @@ public struct AnyValidator<Value>: Validator {
     self.closure = validator
   }
 
+  @inlinable
   public func validate(_ value: Value) throws {
     try closure(value)
   }

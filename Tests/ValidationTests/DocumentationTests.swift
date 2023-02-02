@@ -11,7 +11,7 @@ final class DocumentationTests: XCTestCase {
       let name: String
       let isAdmin: Bool
       
-      var body: some Validator<Self> {
+      var body: some Validation<Self> {
         Accumulating {
           Int.greaterThan(\.id, 0)
           Validate(\.name, using: NotEmpty())

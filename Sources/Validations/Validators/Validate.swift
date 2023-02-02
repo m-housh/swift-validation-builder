@@ -37,18 +37,18 @@
 /// try HoldsUser(user: .init(name: "Blob", email: "blob.example.com")).validate() // fails.
 ///
 ///```
-public struct Validate<Parent, Child>: Validator {
+public struct Validate<Parent, Child>: Validation {
 
   @usableFromInline
   let child: (Parent) -> Child
 
   @usableFromInline
-  let validator: (Parent) -> any Validator<Child>
+  let validator: (Parent) -> any Validation<Child>
 
   @usableFromInline
   init(
     _ child: @escaping (Parent) -> Child,
-    validator: @escaping (Parent) -> any Validator<Child>
+    validator: @escaping (Parent) -> any Validation<Child>
   ) {
     self.child = child
     self.validator = validator
@@ -57,7 +57,7 @@ public struct Validate<Parent, Child>: Validator {
   @usableFromInline
   init(
     _ child: @escaping (Parent) -> Child,
-    using validator: Validation<Child>
+    using validator: Validator<Child>
   ) {
     self.child = child
     self.validator = { _ in validator }
@@ -66,7 +66,7 @@ public struct Validate<Parent, Child>: Validator {
   @inlinable
   public init(
     _ toChild: KeyPath<Parent, Child>,
-    @ValidationBuilder<Child> build: () -> some Validator<Child>
+    @ValidationBuilder<Child> build: () -> some Validation<Child>
   ) {
     self.init(toChild, using: build())
   }
@@ -74,7 +74,7 @@ public struct Validate<Parent, Child>: Validator {
   @inlinable
   public init(
     _ toChild: KeyPath<Parent, Child>,
-    using validator: some Validator<Child>
+    using validator: some Validation<Child>
   ) {
     self.init(
       toChild.value(from:),
