@@ -4,7 +4,7 @@ import XCTestDynamicOverlay
 extension Validators {
   /// A ``Validation`` used for validating values that are embedded inside of an enum case.
   ///
-  /// We can not ensure that all cases get handled when validating enum values, but if the ``Validators/Case/validate(_:)``
+  /// We can not ensure that all cases get handled when build validations for enum values, but if the ``Validators/Case/validate(_:)``
   /// method is called with an un-handled case an `XCTFail` and runtime warning will be thrown, when not inside a testing context.
   ///
   /// **Example**
@@ -27,8 +27,12 @@ extension Validators {
   /// ```
   ///
   public struct Case<Parent, Child> {
-    @usableFromInline
-    let casePath: CasePath<Parent, Child>
+    
+    /// The case path to use to access the child value.
+    public let casePath: CasePath<Parent, Child>
+    
+    /// The validator to use when we found a child value in the case path.
+    public let validator: any Validation<Child>
     
     @usableFromInline
     let file: StaticString
@@ -39,8 +43,6 @@ extension Validators {
     @usableFromInline
     let line: UInt
     
-    @usableFromInline
-    let validator: any Validation<Child>
     
     /// Create an enum case validation, using the given ``Validation`` for the value embedded in the case.
     ///
@@ -127,8 +129,7 @@ extension Validators.Case: Validation {
         Current case is: \(value)
         """
       if !_XCTIsTesting {
-        // fail tests and throw a runtime warning, if a case was not
-        // handled.
+        // Throw a runtime warning, if a case was not handled.
         XCTFail(message, file: file, line: line)
       }
       throw ValidationError.failed(summary: message)

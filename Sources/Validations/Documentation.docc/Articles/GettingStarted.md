@@ -158,7 +158,7 @@ try adminUserValidator.validate(User(id: 0, name: "", isAdmin: false)) // fails 
 You can also conform your types to the ``Validatable`` protocol.  A `Validatable` type is able
 to validate an instance of itself.
 
-This has the advantage of using the ``Validator/body-swift.property-47mhe`` property for a clean
+This has the advantage of using the ``Validation/body-swift.property-2e4vc`` property for a clean
 interface, using result builder syntax as shown above.
 
 ```swift

@@ -19,6 +19,7 @@ extension Array where Element: Validation {
 extension Array where Element: AsyncValidator {
 
   /// Create a validator from an array of validators.
+  /// 
   /// - Parameters:
   ///   - type: The validation type to build.
   ///
@@ -35,7 +36,7 @@ extension Array where Element: AsyncValidator {
   }
 }
 
-/// Represents the different types of validators that can be created from an `Array` of ``Validator``'s or ``AsyncValidator``'s
+/// Represents the different types of validators that can be created from an `Array` of ``Validation``'s or ``AsyncValidator``'s
 ///
 public enum ValidationType {
 

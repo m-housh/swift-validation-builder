@@ -13,7 +13,8 @@ final class DocumentationTests: XCTestCase {
       
       var body: some Validation<Self> {
         Accumulating {
-          Int.greaterThan(\.id, 0)
+          Validate(\.id, using: .greaterThan(0))
+//          Int.greaterThan(\.id, 0)
           Validate(\.name, using: NotEmpty())
         }
       }
@@ -62,6 +63,61 @@ final class DocumentationTests: XCTestCase {
     let hasOneValidator = ValidatorOf<[Int]>.contains(1)
     XCTAssertNoThrow(try hasOneValidator.validate([2, 3, 6, 4, 1])) // success.
     XCTAssertThrowsError(try hasOneValidator.validate([4, 9, 7, 3])) // fails
+    
+    let sut = ValidatorOf<MatchCharacter>.contains(\.input, "z")
+    XCTAssertNoThrow(try sut.validate(.init(input: "baz", character: "f")))
+    XCTAssertThrowsError(try sut.validate(.init(input: "foo", character: "f")))
   
+  }
+  
+  func test_comparable() {
+    struct Deeply {
+      let nested = Nested()
+      
+      struct Nested {
+        let value = 10
+      }
+    }
+    
+    struct Example {
+      let count: Int
+      let deeply = Deeply()
+    }
+    
+    let intValidator = Int.greaterThan(10)
+    XCTAssertNoThrow(try intValidator.validate(11))
+    XCTAssertThrowsError(try intValidator.validate(9))
+    
+    let sut2 = Int.greaterThanOrEquals(10)
+    XCTAssertNoThrow(try sut2.validate(10))
+    XCTAssertThrowsError(try sut2.validate(9))
+    
+    let sut3 = ValidatorOf<Example>.lessThan(\.count, \.deeply.nested.value)
+    XCTAssertNoThrow(try sut3.validate(.init(count: 9)))
+    XCTAssertThrowsError(try sut3.validate(.init(count: 11)))
+    
+    let sut4 = ValidatorOf<Example>.lessThan(10, \.count)
+    XCTAssertNoThrow(try sut4.validate(.init(count: 11)))
+    XCTAssertThrowsError(try sut4.validate(.init(count: 9)))
+    
+    let sut5 = ValidatorOf<Example>
+      .lessThanOrEquals({ $0.count }, { $0.deeply.nested.value })
+    XCTAssertNoThrow(try sut5.validate(.init(count: 10)))
+    XCTAssertThrowsError(try sut5.validate(.init(count: 11)))
+    
+    let sut6 = ValidatorOf<Example>
+      .lessThanOrEquals(\.count, 10)
+    XCTAssertNoThrow(try sut6.validate(.init(count: 10)))
+    XCTAssertThrowsError(try sut6.validate(.init(count: 11)))
+
+    
+    let sut7 = ValidatorOf<Example>
+      .lessThanOrEquals(10, \.count)
+    XCTAssertNoThrow(try sut7.validate(.init(count: 10)))
+    XCTAssertThrowsError(try sut7.validate(.init(count: 9)))
+    
+    let sut8 = ValidatorOf<Example>.greaterThan(\.count, \.deeply.nested.value)
+    XCTAssertNoThrow(try sut8.validate(.init(count: 11)))
+    XCTAssertThrowsError(try sut8.validate(.init(count: 9)))
   }
 }

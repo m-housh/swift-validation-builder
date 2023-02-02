@@ -41,6 +41,12 @@ extension Validators {
     @usableFromInline
     let bool: Swift.Bool
     
+    /// Create a bool validation using a custom evaluation to pass or fail validations.
+    ///
+    /// - Parameters:
+    ///   - bool: What we are expecting when evaluating the expression.
+    ///   - evaluate: The custom expression to use.
+    ///
     @inlinable
     public init(
       expecting bool: Bool,
@@ -64,20 +70,14 @@ extension Validators {
 
 extension Validators.BoolValidator where Value == Bool {
   
+  /// Create a ``Validators/BoolValidator`` expecting the given bool.
+  ///
+  /// - Parameters:
+  ///   - expecting: The bool that we are expecting in order to pass validations.
+  ///
   @inlinable
   public init(expecting bool: Bool) {
     self.init(expecting: bool, evaluate: { $0 })
-  }
-}
-
-extension Validator where Value == Bool {
-  
-  public static func `true`() -> Self {
-    .init(Validators.BoolValidator(expecting: true))
-  }
-  
-  public static func `false`() -> Self {
-    .init(Validators.BoolValidator(expecting: false))
   }
 }
 
@@ -88,6 +88,11 @@ extension Bool: Validation {
     self.validator()
   }
   
+  /// Access a validator for a given `Swift.Bool`.
+  ///
+  /// ```swift
+  /// let isTrueValidator = true.validator()
+  /// ```
   @inlinable
   public func validator() -> Validators.BoolValidator<Self> {
     .init(expecting: self)

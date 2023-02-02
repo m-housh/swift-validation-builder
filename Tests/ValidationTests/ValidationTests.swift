@@ -18,8 +18,8 @@ final class ValidationTests: XCTestCase {
         Int.equals(5).or(.greaterThan(10))
       },
       Validator {
-        5.equalsValidator().or {
-          10.greaterThanValidator()
+        Int.equals(5).or {
+          Int.greaterThan(10)
         }
       }
     ]
@@ -81,7 +81,7 @@ final class ValidationTests: XCTestCase {
 
     let validator = Validator {
       Int.greaterThan(10)
-      Int.greaterThan(\Int.zero)
+      Int.greaterThan(Int.zero)
     }
     
     XCTAssertNoThrow(try validator.validate(11))
@@ -93,7 +93,6 @@ final class ValidationTests: XCTestCase {
     }
   
     let sut = ValidatorOf<Sut> {
-      Int.greaterThan(\.one, \.two)
       Validate(\.one) {
         Int.greaterThan(10)
         Int.greaterThan(10)
@@ -106,11 +105,11 @@ final class ValidationTests: XCTestCase {
         Int.greaterThan(10)
         Not(.greaterThan(15))
       }
-      Int.greaterThan(50, \.two)
+      Validate(\.two, using: Int.lessThan(50))
     }
     
     XCTAssertNoThrow(try sut.validate(.init(one: 11, two: 10)))
-    XCTAssertThrowsError(try sut.validate(.init(one: 11, two: 12)))
+    XCTAssertThrowsError(try sut.validate(.init(one: 16, two: 12)))
     XCTAssertThrowsError(try sut.validate(.init(one: 10, two: 9)))
     XCTAssertThrowsError(try sut.validate(.init(one: 11, two: 51)))
     
@@ -126,11 +125,8 @@ final class ValidationTests: XCTestCase {
         Validator {
           Validator.lessThan(\.one, 12)
           Validator.lessThanOrEquals(\.one, \.two)
-          Int.lessThan(1, \.two)
-          Int.lessThan(\.one, \.two).or {
-            Validator.equals(\.one, \.two)
-          }
-          Int.lessThanOrEquals(\.one, 13)
+          Validator.lessThan(1, \.two)
+          Validate(\.one, using: Int.lessThanOrEquals(13))
         }
       }
     }
@@ -162,9 +158,11 @@ final class ValidationTests: XCTestCase {
       let two: Int
     }
   
-    let sut = ValidatorOf<Sut> {
-      Int.greaterThanOrEquals(\.one, \.two)
-    }
+    let sut = ValidatorOf<Sut>.greaterThanOrEquals(\.one, \.two)
+//    {
+//
+//      Int.greaterThanOrEquals(\.one, \.two)
+//    }
     
     XCTAssertNoThrow(try sut.validate(.init(one: 11, two: 10)))
     XCTAssertNoThrow(try sut.validate(.init(one: 11, two: 11)))
@@ -201,9 +199,11 @@ final class ValidationTests: XCTestCase {
       
       var body: some AsyncValidator<Self> {
         AsyncValidation {
-          Int.lessThan(\.one, 12)
-          Int.lessThanOrEquals(\.one, \.two)
-          Int.lessThan(1, \.two)
+          Validate(\.one, using: Int.lessThan(12))
+//          Int.lessThan(\.one, 12)
+          Validator.lessThanOrEquals(\.one, \.two)
+          Validate(\.two, using: Int.lessThan(1))
+//          Int.lessThan(1, \.two)
         }
       }
     }
@@ -264,12 +264,10 @@ final class ValidationTests: XCTestCase {
       var body: some Validation<Self> {
         Accumulating {
           Validate(\.name, using: NotEmpty())
-          Validate(\.email) {
-            Accumulating {
-              NotEmpty()
+          Validate(\.email, using: .accumulating {
+               NotEmpty()
               String.contains("@")
-            }
-          }
+          })
         }
       }
     }
@@ -371,7 +369,7 @@ final class ValidationTests: XCTestCase {
   
   func test_true_validator() {
     
-    let isTrue = ValidatorOf<Bool>.true()
+    let isTrue = ValidatorOf<Bool> { true }
     
     XCTAssertNoThrow(try isTrue.validate(true))
     XCTAssertThrowsError(try isTrue.validate(false))
@@ -395,7 +393,7 @@ final class ValidationTests: XCTestCase {
   
   func test_false_validator() {
     
-    let isFalse = ValidatorOf<Bool>.false()
+    let isFalse = ValidatorOf<Bool> { false }
     
     XCTAssertNoThrow(try isFalse.validate(false))
     XCTAssertThrowsError(try isFalse.validate(true))
@@ -407,7 +405,7 @@ final class ValidationTests: XCTestCase {
       
       var body: some Validation<Self> {
         Accumulating {
-          Validate(\.isAdmin, using: .false())
+          Validate(\.isAdmin, using: false)
         }
       }
     }

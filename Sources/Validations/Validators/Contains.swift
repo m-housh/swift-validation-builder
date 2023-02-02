@@ -70,15 +70,24 @@ extension Validator {
   /// A ``Validation`` for if a `Collection` contains a value.
   ///
   /// Use this validator, when you need to validate a collection that is accessed by a `KeyPath` from
-  /// the parent context.
+  /// the parent context, using the given element for the value to look for.
   ///
   /// ```swift
-  /// let containsZ = ValidatorOf<String>.contains("z")
+  /// struct MatchCharacter: Validatable {
+  ///   let input: String
+  ///   let character: Character
   ///
-  /// try containsZ.validate("baz") // success.
-  /// try containsZ.validate("foo") // fails.
+  ///   var body: some Validation<Self> {
+  ///     Validator.contains(\.input, \.character)
+  ///   }
+  /// }
+  ///
+  /// let containsZ = ValidatorOf<MatchCharacter>.contains(\.input, "z")
+  ///
+  /// try containsZ.validate(.init(input: "baz", character: "f")) // success.
+  /// try containsZ.validate(.init(input: "foo", character: "f")) // fails.
+  ///
   /// ```
-  ///
   @inlinable
   public static func contains<C: Collection>(
     _ toCollection: KeyPath<Value, C>,

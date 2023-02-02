@@ -6,9 +6,23 @@ extension Validation {
 //    Validators.Map(upstream: self, downstream: AnyValidator(transform))
 //  }
   
-  public func map<C: Validation>(
-    _ conversion: @escaping (Value) -> C
-  ) -> Validators.Map<Self, C> {
+  public func map<Conversion>(
+    _ transform: @escaping (Value) -> Conversion,
+    using downstream: any Validation<Conversion>
+  ) -> Validators.MapValue<Self.Value, Conversion> {
+    .init(transform, using: downstream)
+  }
+  
+  public func map<Conversion>(
+    _ transform: @escaping (Value) -> Conversion,
+    @ValidationBuilder<Conversion> validation: @escaping () -> some Validation<Conversion>
+  ) -> Validators.MapValue<Self.Value, Conversion> {
+    map(transform, using: validation())
+  }
+  
+  public func map<Conversion: Validation>(
+    _ conversion: @escaping (Value) -> Conversion
+  ) -> Validators.Map<Self, Conversion> {
     .init(upstream: self, downstream: conversion)
   }
 }

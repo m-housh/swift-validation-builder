@@ -14,7 +14,7 @@ public struct Empty<Value: Collection>: Validation {
   public init() {}
 
   public var body: some Validation<Value> {
-    Validate(\.isEmpty, using: .true())
+    Validate(\.isEmpty, using: true)
   }
 }
 

@@ -29,7 +29,7 @@ extension Validators {
     }
     
     public var body: some Validation<String> {
-      Accumulating<String> {
+      Accumulating {
         Validator.pattern(matching: style.regex)
         // total length
         Validator.lessThanOrEquals(\.count, 320)

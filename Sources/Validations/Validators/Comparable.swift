@@ -25,6 +25,13 @@ extension Validators {
     @usableFromInline
     let operatorString: String
     
+    /// Create a comparison validation with custom access to the elements and custom logic to evaluate the comparison.
+    ///
+    /// - Parameters:
+    ///   - lhs: Return the left hand side of the comparison from the parent context.
+    ///   - rhs: Return the right hand side of the comparison from the parent context.
+    ///   - operator: The expression used to evaluate the elements.
+    ///   - operatorString: Used in error messages generated when validation fails.
     @inlinable
     public init(
       _ lhs: @escaping (Value) -> Element,
@@ -51,160 +58,7 @@ extension Validators {
   }
 }
   
-  /// Validates values are equal.
-  ///
-  ///
-  /// **Example**
-  /// ```swift
-  /// let equalsTen = ValidatorOf<Int> {
-  ///   Equals(10)
-  /// }
-  ///
-  /// try equalsTen.validate(10) // success.
-  /// try equalsTen.validate(11) // fails.
-  ///```
-  ///
-//  public struct Equals<Value, Element: Equatable>: Validator {
-//
-//    @usableFromInline
-//    let lhs: (Value) -> Element
-//
-//    @usableFromInline
-//    let rhs: (Value) -> Element
-//
-//    /// Create an equals validator using closures.
-//    ///
-//    /// **Example**
-//    /// ```swift
-//    /// struct Deeply {
-//    ///   let nested = Nested()
-//    ///  struct Nested {
-//    ///    let value = 10
-//    ///  }
-//    /// }
-//    ///
-//    /// struct Parent {
-//    ///   let count: Int
-//    ///   let deeply = Deeply()
-//    /// }
-//    ///
-//    /// let countValidator = ValidatorOf<Parent> {
-//    ///   Equals({ $0.count }, { $0.deeply.nested.value })
-//    /// }
-//    ///
-//    /// try countValidator.validate(.init(count: 10)) // success.
-//    /// try countValidator.validate(.init(count: 11)) // fails.
-//    ///
-//    /// ```
-//    ///
-//    @inlinable
-//    public init(
-//      _ lhs: @escaping (Value) -> Element,
-//      _ rhs: @escaping (Value) -> Element
-//    ) {
-//      self.lhs = lhs
-//      self.rhs = rhs
-//    }
-//
-//    /// Create an equals validator using key paths.
-//    ///
-//    /// **Example**
-//    /// ```swift
-//    /// struct Deeply {
-//    ///   let nested = Nested()
-//    ///  struct Nested {
-//    ///    let value = 10
-//    ///  }
-//    /// }
-//    ///
-//    /// struct Parent {
-//    ///   let count: Int
-//    ///   let deeply = Deeply()
-//    /// }
-//    ///
-//    /// let countValidator = ValidatorOf<Parent> {
-//    ///   Equals(\.count, \.deeply.nested.value)
-//    /// }
-//    ///
-//    /// try countValidator.validate(.init(count: 10)) // success.
-//    /// try countValidator.validate(.init(count: 11)) // fails.
-//    ///
-//    /// ```
-//    ///
-//    @inlinable
-//    public init(
-//      _ lhs: KeyPath<Value, Element>,
-//      _ rhs: KeyPath<Value, Element>
-//    ) {
-//      self.init(lhs.value(from:), rhs.value(from:))
-//    }
-//
-//    /// Create an equals validator using key path and a value.
-//    ///
-//    /// **Example**
-//    /// ```swift
-//    /// struct Parent {
-//    ///   let count: Int
-//    /// }
-//    ///
-//    /// let countValidator = ValidatorOf<Parent> {
-//    ///   Equals(\.count, 10)
-//    /// }
-//    ///
-//    /// try countValidator.validate(.init(count: 10)) // success.
-//    /// try countValidator.validate(.init(count: 11)) // fails.
-//    ///
-//    /// ```
-//    ///
-//    @inlinable
-//    public init(
-//      _ lhs: KeyPath<Value, Element>,
-//      _ rhs: Element
-//    ) {
-//      self.init(lhs.value(from:), { _ in rhs })
-//    }
-//
-//    public var body: some Validator<Value> {
-//      ComparableValidator(lhs, rhs, operator: { $0 == $1 }, operatorString: "equal")
-//    }
-//
-////    @inlinable
-////    public func validate(_ value: Value) throws {
-////      let lhs = self.lhs(value)
-////      let rhs = self.rhs(value)
-////
-////      guard lhs == rhs else {
-////        throw ValidationError.failed(summary: "\(lhs) is not equal to \(rhs)")
-////      }
-////    }
-//
-//  }
-//}
-
-//extension Validators.Equals where Value == Element {
-//
-//  /// Create an equals validator using  a value.
-//  ///
-//  /// **Example**
-//  /// ```swift
-//  /// let countValidator = ValidatorOf<Int> {
-//  ///   Equals(10)
-//  /// }
-//  ///
-//  /// try countValidator.validate(10) // success.
-//  /// try countValidator.validate(11) // fails.
-//  ///
-//  /// ```
-//  ///
-//  @inlinable
-//  public init(_ rhs: Element) {
-//    self.init(\.self, rhs)
-//  }
-//}
-//
-//public typealias Equals = Validators.Equals
-
-// MARK: - Equatable
+ // MARK: - Equatable
 
 extension Validator {
   
@@ -250,59 +104,75 @@ extension Validator {
   }
 }
 
-//extension Validator where Value: Collection, Value.Element: Equatable {
-  
-//  @inlinable
-//  public static func equals(
-//    _ lhs: KeyPath<Value, Value.Element>,
-//    _ rhs: KeyPath<Value, Value.Element>
-//  ) -> Self {
-//    .equals(lhs.value(from:), rhs.value(from:))
-//  }
-  
-//  @inlinable
-//  public static func equals(
-//    _ lhs: KeyPath<Value, Value.Element>,
-//    _ rhs: Value.Element
-//  ) -> Self {
-//    .equals(lhs.value(from:), { _ in rhs })
-//  }
-//}
-
-//extension Validator where Value: Collection, Value.Element: Equatable, Value == Value.Element {
-//
-//  @inlinable
-//  public static func equals(
-//    _ rhs: Value.Element
-//  ) -> Self {
-//    .equals(\.self, rhs)
-//  }
-//}
-
 extension Validator where Value: Equatable {
   
+  /// Create a ``Validator`` that fails if the value does not equal the given value.
+  ///
+  /// **Example**
+  ///
+  /// ```swift
+  /// let intValidator = ValidatorOf<Int>.equals(10)
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - value: The value that we should equal  when validating values.
   @inlinable
   public static func equals(
-    _ rhs: Value
+    _ value: Value
   ) -> Self {
-    .equals({ $0 }, { _ in rhs })
+    .equals({ $0 }, { _ in value })
   }
 }
 
 extension Equatable {
  
-  static func equals(_ rhs: Self) -> some Validation<Self> {
-    Validator.equals(rhs)
-  }
-  
-  func equalsValidator() -> some Validation<Self> {
-    Self.equals(self)
+  /// Create a ``Validator`` from an `Equatable` conforming type.
+  ///
+  /// **Example**
+  ///
+  /// ```swift
+  /// let blobValidator = String.equals("blob")
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - value: The value that we should equal when validating other values.
+  ///
+  static func equals(_ value: Self) -> Validator<Self> {
+    .equals(value)
   }
 }
 
 // MARK: - Greater Than
 extension Validator {
   
+  /// Create a ``Validator`` that validates the left hand side is greater than the right hand side,
+  /// using closures to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.greaterThan({ $0.count }, { $0.deeply.nested.value })
+  ///
+  /// try validator.validate(.init(count: 11)) // succeeds.
+  /// try validatore.valiate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func greaterThan<Element: Comparable>(
     _ lhs: @escaping (Value) -> Element,
@@ -316,6 +186,34 @@ extension Validator {
     )
   }
   
+  /// Create a ``Validator`` that validates the left hand side is greater than the right hand side,
+  /// using `KeyPath`'s to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.greaterThan(\.count, \.deeply.nested.value)
+  ///
+  /// try validator.validate(.init(count: 11)) // succeeds.
+  /// try validatore.valiate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func greaterThan<Element: Comparable>(
     _ lhs: KeyPath<Value, Element>,
@@ -324,6 +222,34 @@ extension Validator {
     greaterThan(lhs.value(from:), rhs.value(from:))
   }
   
+  /// Create a ``Validator`` that validates the left hand side is greater than the right hand side,
+  /// using `KeyPath` to access the left hand side element, and a concrete instance for the right hand side.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.greaterThan(\.count, 10)
+  ///
+  /// try validator.validate(.init(count: 11)) // succeeds.
+  /// try validatore.valiate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: The right hand side element.
+  ///
   @inlinable
   public static func greaterThan<Element: Comparable>(
     _ lhs: KeyPath<Value, Element>,
@@ -332,6 +258,34 @@ extension Validator {
     greaterThan(lhs.value(from:), { _ in rhs })
   }
   
+  /// Create a ``Validator`` that validates the left hand side is greater than the right hand side,
+  /// using `KeyPath` to access the right hand side element, and a concrete instance for the left hand side.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.greaterThan(10, \.count)
+  ///
+  /// try validatore.valiate(.init(count: 9)) // succeeds.
+  /// try validator.validate(.init(count: 11)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: The left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func greaterThan<Element: Comparable>(
     _ lhs: Element,
@@ -340,6 +294,34 @@ extension Validator {
     greaterThan({ _ in lhs }, rhs.value(from:))
   }
   
+  /// Create a ``Validator`` that validates the left hand side is greater than or equal to the right hand side,
+  /// using closures to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.greaterThanOrEquals({ $0.count }, { $0.deeply.nested.value })
+  ///
+  /// try validator.validate(.init(count: 11)) // succeeds.
+  /// try validatore.valiate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func greaterThanOrEquals<Element: Comparable>(
     _ lhs: @escaping (Value) -> Element,
@@ -353,6 +335,34 @@ extension Validator {
     )
   }
   
+  /// Create a ``Validator`` that validates the left hand side is greater than or equal to the right hand side,
+  /// using `KeyPath`'s to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.greaterThanOrEquals(\.count, \.deeply.nested.value)
+  ///
+  /// try validator.validate(.init(count: 11)) // succeeds.
+  /// try validatore.valiate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func greaterThanOrEquals<Element: Comparable>(
     _ lhs: KeyPath<Value, Element>,
@@ -361,6 +371,34 @@ extension Validator {
     greaterThanOrEquals(lhs.value(from:), rhs.value(from:))
   }
   
+  /// Create a ``Validator`` that validates the left hand side is greater than or equal to the right hand side,
+  /// using `KeyPath` to access the left hand side element and a concrete value for the right side.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.greaterThanOrEquals(\.count, 10)
+  ///
+  /// try validator.validate(.init(count: 11)) // succeeds.
+  /// try validatore.valiate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: The right hand side element.
+  ///
   @inlinable
   public static func greaterThanOrEquals<Element: Comparable>(
     _ lhs: KeyPath<Value, Element>,
@@ -369,6 +407,34 @@ extension Validator {
     greaterThanOrEquals(lhs.value(from:), { _ in rhs })
   }
   
+  /// Create a ``Validator`` that validates the left hand side is greater than or equal to the right hand side,
+  /// using `KeyPath` to access the right hand side element and a concrete value for the left hand side.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.greaterThanOrEquals(10, \.count)
+  ///
+  /// try validatore.valiate(.init(count: 9)) // succeeds.
+  /// try validator.validate(.init(count: 11)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: The left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func greaterThanOrEquals<Element: Comparable>(
     _ lhs: Element,
@@ -380,133 +446,114 @@ extension Validator {
 
 extension Validator where Value: Comparable {
   
+  /// Create a ``Validator`` that validates the value is greater than the given value
+  ///
+  /// **Example**
+  /// ```swift
+  /// let intValidator = ValidatorOf<Int>.greaterThan(10)
+  ///
+  /// try intValidator.validate(11) // succeeds.
+  /// try intValidator.validate(9) // fails.
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - value: The value we should use to compare values are greater than.
+  ///
   @inlinable
-  public static func greaterThan(_ rhs: Value) -> Self {
-    greaterThan(\.self, rhs)
+  public static func greaterThan(_ value: Value) -> Self {
+    greaterThan(\.self, value)
   }
   
-//  @inlinable
-//  public static func greaterThan(
-//    _ rhs: KeyPath<Value, Value>
-//  ) -> Self {
-//    greaterThan(\.self, rhs)
-//  }
-  
+  /// Create a ``Validator`` that validates the value is greater than or equal to the given value
+  ///
+  /// **Example**
+  /// ```swift
+  /// let intValidator = ValidatorOf<Int>.greaterThanOrEquals(10)
+  ///
+  /// try intValidator.validate(10) // succeeds.
+  /// try intValidator.validate(9) // fails.
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - value: The value we should use to compare values are greater than or equal to.
+  ///
   @inlinable
   public static func greaterThanOrEquals(_ rhs: Value) -> Self {
     greaterThanOrEquals(\.self, rhs)
   }
-  
-//  @inlinable
-//  public static func greaterThanOrEquals(
-//    _ rhs: KeyPath<Value, Value>
-//  ) -> Self {
-//    greaterThanOrEquals(\.self, rhs)
-//  }
-  
+ 
 }
 
 extension Comparable {
   
+  /// Create a ``Validator`` that validates the value is greater than the given value
+  ///
+  /// **Example**
+  /// ```swift
+  /// let intValidator = Int.greaterThan(10)
+  ///
+  /// try intValidator.validate(11) // succeeds.
+  /// try intValidator.validate(9) // fails.
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - value: The value we should use to compare values are greater than.
+  ///
   @inlinable
-  public static func greaterThan<Value>(
-    _ lhs: @escaping (Value) -> Self,
-    _ rhs: @escaping (Value) -> Self
-  ) -> some Validation<Value> {
-    Validator<Value>.greaterThan(lhs, rhs)
+  public static func greaterThan(_ value: Self) -> Validator<Self> {
+    .greaterThan(\.self, value)
   }
   
+  /// Create a ``Validator`` that validates the value is greater than or equal to the given value
+  ///
+  /// **Example**
+  /// ```swift
+  /// let intValidator = Int.greaterThanOrEquals(10)
+  ///
+  /// try intValidator.validate(10) // succeeds.
+  /// try intValidator.validate(9) // fails.
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - value: The value we should use to compare values are greater than or equal to.
+  ///
   @inlinable
-  public static func greaterThan<Value>(
-    _ lhs: KeyPath<Value, Self>,
-    _ rhs: KeyPath<Value, Self>
-  ) -> some Validation<Value> {
-    greaterThan(lhs.value(from:), rhs.value(from:))
-  }
-  
-  @inlinable
-  public static func greaterThan<Value>(
-    _ lhs: KeyPath<Value, Self>,
-    _ rhs: Self
-  ) -> some Validation<Value> {
-    greaterThan(lhs.value(from:), { _ in rhs })
-  }
-  
-  @inlinable
-  public static func greaterThan<Value>(
-    _ lhs: Self,
-    _ rhs: KeyPath<Value, Self>
-  ) -> some Validation<Value> {
-    greaterThan({ _ in lhs }, rhs.value(from:))
-  }
-  
-  @inlinable
-  public static func greaterThan(_ other: Self) -> some Validation<Self> {
-    greaterThan(\.self, other)
-  }
-  
-  @inlinable
-  public static func greaterThan(_ other: KeyPath<Self, Self>) -> some Validation<Self> {
-    greaterThan(\.self, other)
-  }
-  
-  @inlinable
-  public func greaterThanValidator() -> some Validation<Self> {
-    Self.greaterThan(self)
-  }
-  
-  @inlinable
-  public static func greaterThanOrEquals<Value>(
-    _ lhs: @escaping (Value) -> Self,
-    _ rhs: @escaping (Value) -> Self
-  ) -> some Validation<Value> {
-    Validator<Value>.greaterThanOrEquals(lhs, rhs)
-  }
-  
-  @inlinable
-  public static func greaterThanOrEquals<Value>(
-    _ lhs: KeyPath<Value, Self>,
-    _ rhs: KeyPath<Value, Self>
-  ) -> some Validation<Value> {
-    greaterThanOrEquals(lhs.value(from:), rhs.value(from:))
-  }
-  
-  @inlinable
-  public static func greaterThanOrEquals<Value>(
-    _ lhs: KeyPath<Value, Self>,
-    _ rhs: Self
-  ) -> some Validation<Value> {
-    greaterThanOrEquals(lhs.value(from:), { _ in rhs })
-  }
-  
-  @inlinable
-  public static func greaterThanOrEquals<Value>(
-    _ lhs: Self,
-    _ rhs: KeyPath<Value, Self>
-  ) -> some Validation<Value> {
-    greaterThanOrEquals({ _ in lhs }, rhs.value(from:))
-  }
-  
-  @inlinable
-  public static func greaterThanOrEquals(_ other: Self) -> some Validation<Self> {
-    greaterThan(\.self, other)
-  }
-  
-  @inlinable
-  public static func greaterThanOrEquals(_ other: KeyPath<Self, Self>) -> some Validation<Self> {
-    greaterThan(\.self, other)
-  }
-  
-  @inlinable
-  public func greaterThanOrEqualsValidator() -> some Validation<Self> {
-    Self.greaterThan(self)
+  public static func greaterThanOrEquals(_ value: Self) -> Validator<Self> {
+    .greaterThanOrEquals(\.self, value)
   }
 }
 
 // MARK: - Less Than
 
 extension Validator {
-  
+  /// Create a ``Validator`` that validates the left hand side is less than the right hand side,
+  /// using closures to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.lessThan({ $0.count }, { $0.deeply.nested.value })
+  ///
+  /// try validator.validate(.init(count: 9)) // succeeds.
+  /// try validatore.valiate(.init(count: 11)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func lessThan<Element: Comparable>(
     _ lhs: @escaping (Value) -> Element,
@@ -520,6 +567,34 @@ extension Validator {
     )
   }
   
+  /// Create a ``Validator`` that validates the left hand side is less than the right hand side,
+  /// using `KeyPath`'s to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.lessThan(\.count, \.deeply.nested.value)
+  ///
+  /// try validator.validate(.init(count: 9)) // succeeds.
+  /// try validatore.valiate(.init(count: 11)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func lessThan<Element: Comparable>(
     _ lhs: KeyPath<Value, Element>,
@@ -528,6 +603,34 @@ extension Validator {
     lessThan(lhs.value(from:), rhs.value(from:))
   }
   
+  /// Create a ``Validator`` that validates the left hand side is less than the right hand side,
+  /// using `KeyPath` to access the left hand side element and a concrete value as the right hand side.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.lessThan(\.count, 10)
+  ///
+  /// try validator.validate(.init(count: 9)) // succeeds.
+  /// try validatore.valiate(.init(count: 11)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func lessThan<Element: Comparable>(
     _ lhs: KeyPath<Value, Element>,
@@ -536,6 +639,34 @@ extension Validator {
     lessThan(lhs.value(from:), { _ in rhs })
   }
   
+  /// Create a ``Validator`` that validates the left hand side is less than the right hand side,
+  /// using `KeyPath` to access the right hand side element and a concrete value as the left hand side.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.lessThan(10, \.count)
+  ///
+  /// try validator.validate(.init(count: 11)) // succeeds.
+  /// try validatore.valiate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func lessThan<Element: Comparable>(
     _ lhs: Element,
@@ -544,6 +675,35 @@ extension Validator {
     lessThan({ _ in lhs }, rhs.value(from:))
   }
   
+  /// Create a ``Validator`` that validates the left hand side is less than or equal to the right hand side,
+  /// using closures to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>
+  ///   .lessThanOrEquals({ $0.count }, { $0.deeply.nested.value })
+  ///
+  /// try validator.validate(.init(count: 10)) // succeeds.
+  /// try validatore.valiate(.init(count: 11)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func lessThanOrEquals<Element: Comparable>(
     _ lhs: @escaping (Value) -> Element,
@@ -557,6 +717,35 @@ extension Validator {
     )
   }
   
+  /// Create a ``Validator`` that validates the left hand side is less than or equal to the right hand side,
+  /// using `KeyPath`'s to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>
+  ///   .lessThanOrEquals(\.count, \.deeply.nested.value)
+  ///
+  /// try validator.validate(.init(count: 10)) // succeeds.
+  /// try validatore.valiate(.init(count: 11)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
   @inlinable
   public static func lessThanOrEquals<Element: Comparable>(
     _ lhs: KeyPath<Value, Element>,
@@ -565,6 +754,35 @@ extension Validator {
     lessThanOrEquals(lhs.value(from:), rhs.value(from:))
   }
   
+  /// Create a ``Validator`` that validates the left hand side is less than or equal to the right hand side,
+  /// using `KeyPath` to access the left hand side element and a concrete value for the right hand side.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>
+  ///   .lessThanOrEquals(\.count, 10)
+  ///
+  /// try validator.validate(.init(count: 10)) // succeeds.
+  /// try validatore.valiate(.init(count: 11)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: The right hand side element.
+  ///
   @inlinable
   public static func lessThanOrEquals<Element: Comparable>(
     _ lhs: KeyPath<Value, Element>,
@@ -573,6 +791,35 @@ extension Validator {
     lessThanOrEquals(lhs.value(from:), { _ in rhs })
   }
   
+  /// Create a ``Validator`` that validates the left hand side is less than or equal to the right hand side,
+  /// using `KeyPath` to access the right hand side element and a concrete value for the left hand side.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>
+  ///   .lessThanOrEquals(10, \.count)
+  ///
+  /// try validator.validate(.init(count: 10)) // succeeds.
+  /// try validatore.valiate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: The right hand side element.
+  ///
   @inlinable
   public static func lessThanOrEquals<Element: Comparable>(
     _ lhs: Element,
@@ -584,124 +831,85 @@ extension Validator {
 
 extension Validator where Value: Comparable {
   
+  /// Create a ``Validator`` that validates the value is less than the given value,
+  ///
+  /// **Example**
+  ///```swift
+  /// let validator = ValidatorOf<Int>.lessThan(11)
+  ///
+  /// try validator.validate(10) // succeeds.
+  /// try validatore.valiate(12) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - value: The value that values should be less than during validaiton.
+  ///
   @inlinable
-  public static func lessThan(_ rhs: Value) -> Self {
-    lessThan(\.self, rhs)
+  public static func lessThan(_ value: Value) -> Self {
+    lessThan(\.self, value)
   }
   
+  /// Create a ``Validator`` that validates the value is less than or equal to the given value,
+  ///
+  /// **Example**
+  ///```swift
+  /// let validator = ValidatorOf<Int>.lessThanOrEquals(11)
+  ///
+  /// try validator.validate(11) // succeeds.
+  /// try validatore.valiate(12) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - value: The value that values should be less than or equal to during validaiton.
+  ///
   @inlinable
-  public static func lessThan(
-    _ rhs: KeyPath<Value, Value>
-  ) -> Self {
-    lessThan(\.self, rhs)
+  public static func lessThanOrEquals(_ value: Value) -> Self {
+    lessThanOrEquals(\.self, value)
   }
-  
-  @inlinable
-  public static func lessThanOrEquals(_ rhs: Value) -> Self {
-    lessThanOrEquals(\.self, rhs)
-  }
-  
-  @inlinable
-  public static func lessThanOrEquals(
-    _ rhs: KeyPath<Value, Value>
-  ) -> Self {
-    lessThanOrEquals(\.self, rhs)
-  }
-  
+ 
 }
 
 extension Comparable {
   
+  /// Create a ``Validator`` that validates the value is less than the given value,
+  ///
+  /// **Example**
+  ///```swift
+  /// let validator = Int.lessThan(11)
+  ///
+  /// try validator.validate(10) // succeeds.
+  /// try validatore.valiate(12) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - value: The value that values should be less than during validaiton.
+  ///
   @inlinable
-  public static func lessThan<Value>(
-    _ lhs: @escaping (Value) -> Self,
-    _ rhs: @escaping (Value) -> Self
-  ) -> some Validation<Value> {
-    Validator<Value>.lessThan(lhs, rhs)
+  public static func lessThan(_ value: Self) -> Validator<Self> {
+    .lessThan(\.self, value)
   }
   
+  /// Create a ``Validator`` that validates the value is less than or equal to the given value,
+  ///
+  /// **Example**
+  ///```swift
+  /// let validator = Int.lessThanOrEquals(11)
+  ///
+  /// try validator.validate(.init(count: 11)) // succeeds.
+  /// try validatore.valiate(.init(count: 12)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - value: The value that values should be less than or equal to during validaiton.
+  ///
   @inlinable
-  public static func lessThan<Value>(
-    _ lhs: KeyPath<Value, Self>,
-    _ rhs: KeyPath<Value, Self>
-  ) -> some Validation<Value> {
-    lessThan(lhs.value(from:), rhs.value(from:))
-  }
-  @inlinable
-  public static func lessThan<Value>(
-    _ lhs: KeyPath<Value, Self>,
-    _ rhs: Self
-  ) -> some Validation<Value> {
-    lessThan(lhs.value(from:), { _ in rhs })
-  }
-  
-  @inlinable
-  public static func lessThan<Value>(
-    _ lhs: Self,
-    _ rhs: KeyPath<Value, Self>
-  ) -> some Validation<Value> {
-    lessThan({ _ in lhs }, rhs.value(from:))
+  public static func lessThanOrEquals(_ value: Self) -> Validator<Self> {
+    .lessThanOrEquals(\.self, value)
   }
   
-  @inlinable
-  public static func lessThan(_ other: Self) -> some Validation<Self> {
-    lessThan(\.self, other)
-  }
-  
-  @inlinable
-  public static func lessThan(_ other: KeyPath<Self, Self>) -> some Validation<Self> {
-    lessThan(\.self, other)
-  }
-  
-  @inlinable
-  public func lessThanValidator() -> some Validation<Self> {
-    Self.lessThan(self)
-  }
-  
-  @inlinable
-  public static func lessThanOrEquals<Value>(
-    _ lhs: @escaping (Value) -> Self,
-    _ rhs: @escaping (Value) -> Self
-  ) -> some Validation<Value> {
-    Validator<Value>.lessThanOrEquals(lhs, rhs)
-  }
-  
-  @inlinable
-  public static func lessThanOrEquals<Value>(
-    _ lhs: KeyPath<Value, Self>,
-    _ rhs: KeyPath<Value, Self>
-  ) -> some Validation<Value> {
-    lessThanOrEquals(lhs.value(from:), rhs.value(from:))
-  }
-  @inlinable
-  public static func lessThanOrEquals<Value>(
-    _ lhs: KeyPath<Value, Self>,
-    _ rhs: Self
-  ) -> some Validation<Value> {
-    lessThanOrEquals(lhs.value(from:), { _ in rhs })
-  }
-  
-  @inlinable
-  public static func lessThanOrEquals<Value>(
-    _ lhs: Self,
-    _ rhs: KeyPath<Value, Self>
-  ) -> some Validation<Value> {
-    lessThanOrEquals({ _ in lhs }, rhs.value(from:))
-  }
-  
-  @inlinable
-  public static func lessThanOrEquals(_ other: Self) -> some Validation<Self> {
-    lessThanOrEquals(\.self, other)
-  }
-  
-  @inlinable
-  public static func lessThanOrEquals(_ other: KeyPath<Self, Self>) -> some Validation<Self> {
-    lessThanOrEquals(\.self, other)
-  }
-  
-  @inlinable
-  public func lessThanOrEqualsValidator() -> some Validation<Self> {
-    Self.lessThanOrEquals(self)
-  }
 }
 

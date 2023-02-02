@@ -44,7 +44,7 @@ try userValidator.validate(User(name: "Blob", email: "blob.example.com")) // thr
 You can conform types to the ``Validatable`` protocol, which is a type that can
 validate an instance of itself.
 
-Generally you will supply the ``Validator/body-swift.property-1hjr4`` property.  Which uses
+Generally you will supply the ``Validation/body-swift.property-2e4vc`` property.  Which uses
 result builder syntax.
 
 ```swift
@@ -67,7 +67,7 @@ try User(name: "", email: "blob@example.com").validate() // throws error.
 try User(name: "Blob", email: "blob.example.com").validate() // throws error.
 ```
 
-However you can also implement the ``Validator/validate(_:)-327kx``.
+However you can also implement the ``Validation/body-swift.property-7hgef``.
 
 ```swift
 enum UserError: Error { 
