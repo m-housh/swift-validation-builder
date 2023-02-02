@@ -41,4 +41,27 @@ final class DocumentationTests: XCTestCase {
     }
     
   }
+  
+  func test_contains_init() {
+    struct MatchCharacter: Validatable {
+      let input: String
+      let character: Character
+      
+      var body: some Validation<Self> {
+        Validator.contains(\.input, \.character)
+      }
+    }
+
+    XCTAssertNoThrow(try MatchCharacter(input: "blob around the world", character: "a").validate())
+    XCTAssertThrowsError(try MatchCharacter(input: "blob jr.", character: "z").validate())
+    
+    let containsZ = ValidatorOf<String>.contains("z")
+    XCTAssertNoThrow(try containsZ.validate("baz"))
+    XCTAssertThrowsError(try containsZ.validate("foo"))
+    
+    let hasOneValidator = ValidatorOf<[Int]>.contains(1)
+    XCTAssertNoThrow(try hasOneValidator.validate([2, 3, 6, 4, 1])) // success.
+    XCTAssertThrowsError(try hasOneValidator.validate([4, 9, 7, 3])) // fails
+  
+  }
 }

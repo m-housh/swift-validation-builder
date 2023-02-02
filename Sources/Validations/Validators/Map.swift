@@ -49,4 +49,34 @@ extension Validators {
       try downstream(value).validate(value)
     }
   }
+  
+  public struct MapValue<Input, Output>: Validation {
+    
+    public let transform: (Input) -> Output
+    public let downstream: any Validation<Output>
+    
+    @inlinable
+    public init(
+      _ transform: @escaping (Input) -> Output,
+      using validator: any Validation<Output>
+    ) {
+      self.transform = transform
+      self.downstream = validator
+    }
+    
+    @inlinable
+    public init(
+      _ transform: @escaping (Input) -> Output,
+      using validator: Validator<Output>
+    ) {
+      self.transform = transform
+      self.downstream = validator
+    }
+    
+    public func validate(_ value: Input) throws {
+      let transformed = transform(value)
+      try downstream.validate(transformed)
+    }
+    
+  }
 }

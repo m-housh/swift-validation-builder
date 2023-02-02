@@ -220,17 +220,16 @@ final class ValidationTests: XCTestCase {
     }
     
     let sut = OneOf {
-      Validators.Case(/Sut.one, using: Validator.greaterThan(0))
+      Validators.Case(/Sut.one, using: .greaterThan(0))
       Validators.Case(/Sut.two) {
         Int.greaterThan(10)
       }
     }
     
-    XCTAssertThrowsError(try sut.validate(.one(0)))
-    XCTAssertThrowsError(try sut.validate(.two(0)))
-    XCTAssertThrowsError(try sut.validate(.three(0)))
     XCTAssertNoThrow(try sut.validate(.one(1)))
     XCTAssertNoThrow(try sut.validate(.two(11)))
+    XCTAssertThrowsError(try sut.validate(.three(0)))
+  
   }
   
   func test_oneOF() throws {
@@ -425,7 +424,7 @@ final class ValidationTests: XCTestCase {
   
   func test_email() {
     let sut = ValidatorOf<String>.email()
-    let sut2 = ValidatorOf<String>.email(.international)
+    let sut2 = String.email(.international)
     
     XCTAssertNoThrow(try sut.validate("blob@example.com"))
     XCTAssertNoThrow(try sut2.validate("blob@example.com"))

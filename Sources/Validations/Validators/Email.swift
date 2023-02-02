@@ -7,6 +7,14 @@ extension Validator where Value == String {
   }
 }
 
+extension String {
+  
+  @inlinable
+  public static func email(_ style: Validators.Email.Style = .default) -> Validators.Email {
+    .init(style: style)
+  }
+}
+
 extension Validators {
   
   public struct Email: Validation {
@@ -23,7 +31,10 @@ extension Validators {
     public var body: some Validation<String> {
       Accumulating<String> {
         Validator.pattern(matching: style.regex)
+        // total length
         Validator.lessThanOrEquals(\.count, 320)
+        // length before the @
+        Validators.MapValue({ $0.split(separator: "@")[0].count }, using: .lessThanOrEquals(64))
       }
     }
     

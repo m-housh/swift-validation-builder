@@ -2,7 +2,7 @@ extension Validator where Value == String {
   
   @inlinable
   public static func pattern(matching pattern: String) -> Self {
-    .init(Validators.Pattern(pattern: pattern))
+    .init(Validators.Regex(pattern: pattern))
   }
 }
 
@@ -10,7 +10,7 @@ extension Validator where Value == String {
 extension Validators {
   
   
-  public struct Pattern: Validation {
+  public struct Regex: Validation {
     
     public let pattern: String
     
