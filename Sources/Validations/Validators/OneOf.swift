@@ -70,6 +70,26 @@ where Validators: AsyncValidation, Validators.Value == Value {
   }
 }
 
+extension Validator {
+
+  public static func oneOf<V: Validation>(
+    @OneOfBuilder<Value> builder: () -> V
+  ) -> Self
+  where V.Value == Value {
+    .init(builder())
+  }
+}
+
+extension AsyncValidator {
+
+  public static func oneOf<V: AsyncValidation>(
+    @OneOfBuilder<Value> builder: () -> V
+  ) -> Self
+  where V.Value == Value {
+    .init(builder())
+  }
+}
+
 public func OneOf<Value, Validators: Validation>(
   @OneOfBuilder<Value> builder: () -> Validators
 ) -> Validations.Validators.OneOf<Value, Validators> {

@@ -3,7 +3,7 @@ extension Validators {
   /// A ``Validation`` that replaces the error with the given error if validation fails.
   ///
   /// This is generally not interacted with directly, instead you call the ``Validation/mapError(_:)``
-  /// method on an existing validator.
+  /// method on an existing validator or the equivalent on an async validation``AsyncValidation/mapError(_:)``.
   ///
   public struct MapError<Upstream> {
 

@@ -129,8 +129,8 @@ try adminUserValidator.validate(User(id: 2, name: "Blob Jr.", isAdmin: false)) /
 
 There is not a ton of difference, however let's imagine that we discovered that we
 need to do all the validations and accumulate the errors.  I will not re-create the functions,
-however I will show how easy this can be implemented by using the ``Accumulating`` validator that
-is supplied with the library.
+however I will show how easy this can be implemented by using the ``Validator/accumulating(accumulating:)`` 
+validator that is supplied with the library.
 
 ```swift
 

@@ -40,17 +40,59 @@ public enum AccumulatingErrorBuilder<Value> {
   }
 
   @inlinable
-  public static func buildFinalResult<V: Validation>(_ component: V) -> V where V.Value == Value {
-    component
-  }
-
-  @inlinable
   public static func buildOptional<V: Validation>(_ component: V?) -> V? where V.Value == Value {
     component
   }
 
   @inlinable
   public static func buildLimitedAvailability<V: Validation>(_ component: V) -> V
+  where V.Value == Value {
+    component
+  }
+
+  @inlinable
+  public static func buildPartialBlock<V: AsyncValidation>(first: V) -> V where V.Value == Value {
+    first
+  }
+
+  @inlinable
+  public static func buildPartialBlock<V0: AsyncValidation, V1: AsyncValidation>(
+    accumulated: V0,
+    next: V1
+  ) -> _Sequence<V0, V1> {
+    _Sequence.accumulating(accumulated, next)
+  }
+
+  @inlinable
+  public static func buildEither<TrueValidator: AsyncValidation, FalseValidator: AsyncValidation>(
+    first component: TrueValidator
+  ) -> _Conditional<TrueValidator, FalseValidator>
+  where TrueValidator.Value == Value, FalseValidator.Value == Value {
+    .first(component)
+  }
+
+  @inlinable
+  public static func buildEither<TrueValidator: AsyncValidation, FalseValidator: AsyncValidation>(
+    second component: FalseValidator
+  ) -> _Conditional<TrueValidator, FalseValidator>
+  where TrueValidator.Value == Value, FalseValidator.Value == Value {
+    .second(component)
+  }
+
+  @inlinable
+  public static func buildExpression<V: AsyncValidation>(_ expression: V) -> V
+  where V.Value == Value {
+    expression
+  }
+
+  @inlinable
+  public static func buildOptional<V: AsyncValidation>(_ component: V?) -> V?
+  where V.Value == Value {
+    component
+  }
+
+  @inlinable
+  public static func buildLimitedAvailability<V: AsyncValidation>(_ component: V) -> V
   where V.Value == Value {
     component
   }

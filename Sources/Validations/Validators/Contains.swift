@@ -94,7 +94,7 @@ extension Validator {
   ) -> Self
   where C.Element: Equatable {
     .init(
-      Validate<Value, C>(toCollection) {
+      Validate(toCollection) {
         Validators.Contains(element: element)
       }
     )

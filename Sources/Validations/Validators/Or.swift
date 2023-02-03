@@ -1,7 +1,7 @@
 extension Validators {
   /// A ``Validation`` that succeeds if either of the underlying validators succeed.
   ///
-  /// This type is generally not interacted with directly, instead use one of the ``Validation/or(_:)-97ygx``
+  /// This type is generally not interacted with directly, instead use one of the ``Validation/or(_:)-7e8zk``
   /// or ``AsyncValidation/or(_:)-7jj5l``methods on an existing validation.
   ///
   ///

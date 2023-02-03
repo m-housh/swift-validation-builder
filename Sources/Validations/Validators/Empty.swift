@@ -14,7 +14,7 @@ extension Validators {
     public init() {}
 
     public var body: some Validation<Value> {
-      Validate(\.isEmpty, using: true)
+      Validations.Validate(\.isEmpty, using: true)
         .mapError(ValidationError.failed(summary: "Expected empty."))
     }
   }

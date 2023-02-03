@@ -242,9 +242,9 @@ final class ValidationTests: XCTestCase {
       
       var body: some AsyncValidation<Self> {
         AsyncValidator {
-          Validate(\.one, using: Int.lessThan(12))
-          Validator.lessThanOrEquals(\.one, \.two)
-          Validate(\.two, using: Int.lessThan(1))
+          Validate(\.one, using: Int.lessThan(12).async)
+          Validator.lessThanOrEquals(\.one, \.two).async
+          Validate(\.two, using: Int.lessThan(1).async)
         }
       }
     }
@@ -292,6 +292,15 @@ final class ValidationTests: XCTestCase {
     XCTAssertThrowsError(try sut2.validate(-1))
     XCTAssertNoThrow(try sut2.validate(-10))
     XCTAssertNoThrow(try sut2.validate(1))
+    
+    let sut3 = ValidatorOf<Int>.oneOf {
+      Int.greaterThan(0)
+      Int.equals(-10)
+    }
+    
+    XCTAssertThrowsError(try sut3.validate(-1))
+    XCTAssertNoThrow(try sut3.validate(-10))
+    XCTAssertNoThrow(try sut3.validate(1))
 
   }
   
@@ -314,6 +323,15 @@ final class ValidationTests: XCTestCase {
     await XCTAssertThrowsAsyncError(try await sut2.validate(-1))
     await XCTAssertNoThrowAsync(try await sut2.validate(-10))
     await XCTAssertNoThrowAsync(try await sut2.validate(1))
+    
+    let sut3 = AsyncValidatorOf<Int>.oneOf {
+      Int.greaterThan(0).async
+      Int.equals(-10).async
+    }
+    await XCTAssertThrowsAsyncError(try await sut3.validate(-1))
+    await XCTAssertNoThrowAsync(try await sut3.validate(-10))
+    await XCTAssertNoThrowAsync(try await sut3.validate(1))
+    
 
   }
   
@@ -430,6 +448,34 @@ final class ValidationTests: XCTestCase {
     }
   }
   
+  func test_accumulating_errors_async() async {
+    struct User: AsyncValidatable {
+      let name: String
+      let email: String
+      
+      var body: some AsyncValidation<Self> {
+        Accumulating {
+          Validate(\.name, using: Validators.NotEmpty()).async
+          Validate(\.email) {
+            String.notEmpty()
+            String.contains("@")
+          }.async
+        }
+      }
+    }
+
+    await XCTAssertNoThrowAsync(try await User(name: "blob", email: "blob@example.com").validate())
+    do {
+      try await User(name: "", email: "blob.example.com").validate()
+    } catch {
+      guard case let .manyFailed(validationErrors, _) = error as! ValidationError else {
+        XCTFail()
+        return
+      }
+      print(validationErrors)
+      XCTAssertEqual(validationErrors.count, 2)
+    }
+  }
   func test_true_validator() {
     
     let isTrue = ValidatorOf<Bool> { true }
@@ -542,13 +588,54 @@ final class ValidationTests: XCTestCase {
     
     let sut4 = ValidatorOf<HoldsOptional> {
       Validate(\.count) {
-        Validators.NotNil()
+        Validator.notNil()
         Int.greaterThan(10).optional()
       }
     }
     XCTAssertNoThrow(try sut4.validate(.init(count: 11)))
     XCTAssertThrowsError(try sut4.validate(.init(count: 9)))
     XCTAssertThrowsError(try sut4.validate(.init(count: .none)))
+  }
+  
+  func test_optional_async() async {
+    let nilValidator = AsyncValidatorOf<Int?>.nil()
+    
+    await XCTAssertNoThrowAsync(try await nilValidator.validate(.none))
+    await XCTAssertThrowsAsyncError(try await nilValidator.validate(.some(1)))
+    
+    let sut = Int.greaterThan(10).async.optional()
+    await XCTAssertNoThrowAsync(try await sut.validate(.none))
+    await XCTAssertNoThrowAsync(try await sut.validate(11))
+    await XCTAssertThrowsAsyncError(try await sut.validate(1))
+    
+    let sut2 = AsyncValidatorOf<Int?>.nil().or {
+      Int.greaterThan(10).async.optional()
+    }
+    
+    await XCTAssertNoThrowAsync(try await sut2.validate(.none))
+    await XCTAssertNoThrowAsync(try await sut2.validate(11))
+    await XCTAssertThrowsAsyncError(try await sut2.validate(1))
+    
+    let sut3 = AsyncValidatorOf<Int?>.notNil().map {
+      Int.greaterThan(10).async
+    }
+    await XCTAssertNoThrowAsync(try await sut3.validate(.some(11)))
+    await XCTAssertThrowsAsyncError(try await sut3.validate(.some(9)))
+    await XCTAssertThrowsAsyncError(try await sut3.validate(.none))
+    
+    struct HoldsOptional {
+      let count: Int?
+    }
+    
+    let sut4 = AsyncValidatorOf<HoldsOptional> {
+      Validate(\.count) { // fix validate to be async
+        Validator.notNil()
+        Int.greaterThan(10).optional()
+      }.async
+    }
+    await XCTAssertNoThrowAsync(try await sut4.validate(.init(count: 11)))
+    await XCTAssertThrowsAsyncError(try await sut4.validate(.init(count: 9)))
+    await XCTAssertThrowsAsyncError(try await sut4.validate(.init(count: .none)))
   }
   
   func test_async_array() async {

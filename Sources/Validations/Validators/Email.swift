@@ -79,7 +79,7 @@ extension Validators {
     public var body: some Validation<String> {
       Validator<Value> {
         String.notEmpty()  // fail early if the string is empty
-        Accumulating {  // accumulate errors if not.
+        Validator.accumulating {  // accumulate errors if not.
           Validator.pattern(matching: style.regex)
           // total length
           Validator.lessThanOrEquals(\.count, 320)
