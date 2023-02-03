@@ -16,7 +16,7 @@ extension Array where Element: Validation {
   }
 }
 
-extension Array where Element: AsyncValidator {
+extension Array where Element: AsyncValidation {
 
   /// Create a validator from an array of validators.
   /// 
@@ -24,7 +24,7 @@ extension Array where Element: AsyncValidator {
   ///   - type: The validation type to build.
   ///
   @inlinable
-  public func validator(type: ValidationType = .failEarly) -> some AsyncValidator<Element.Value> {
+  public func validator(type: ValidationType = .failEarly) -> some AsyncValidation<Element.Value> {
     switch type {
     case .accumulating:
       return _SequenceMany.accumulating(self)

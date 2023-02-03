@@ -51,6 +51,17 @@ final class ValidationTests: XCTestCase {
     XCTAssertNoThrow(try sut2.validate("foo"))
     XCTAssertThrowsError(try sut1.validate(""))
     XCTAssertThrowsError(try sut2.validate(""))
+    
+    struct Sut {
+      let values: [Int]
+    }
+    
+    let sutValidator = ValidatorOf<Sut> {
+      Validate(\.values, using: .notEmpty())
+    }
+    
+    XCTAssertNoThrow(try sutValidator.validate(.init(values: [1, 2])))
+    XCTAssertThrowsError(try sutValidator.validate(.init(values: [])))
   }
   
   func test_contains_validator() throws {
@@ -197,8 +208,8 @@ final class ValidationTests: XCTestCase {
       let one: Int
       let two: Int
       
-      var body: some AsyncValidator<Self> {
-        AsyncValidation {
+      var body: some AsyncValidation<Self> {
+        AsyncValidator {
           Validate(\.one, using: Int.lessThan(12))
 //          Int.lessThan(\.one, 12)
           Validator.lessThanOrEquals(\.one, \.two)
@@ -263,10 +274,10 @@ final class ValidationTests: XCTestCase {
       
       var body: some Validation<Self> {
         Accumulating {
-          Validate(\.name, using: NotEmpty())
+          Validate(\.name, using: Validators.NotEmpty())
           Validate(\.email, using: .accumulating {
-               NotEmpty()
-              String.contains("@")
+            String.notEmpty()
+            String.contains("@")
           })
         }
       }
@@ -300,7 +311,7 @@ final class ValidationTests: XCTestCase {
           if onlyBlobs {
             Validator.equals("Blob")
           } else {
-            NotEmpty()
+            Validators.NotEmpty()
           }
         }
       }
@@ -345,9 +356,9 @@ final class ValidationTests: XCTestCase {
       
       var body: some Validation<Self> {
         Accumulating {
-          Validate(\.name, using: NotEmpty())
+          Validate(\.name, using: Validators.NotEmpty())
           Validate(\.email) {
-            NotEmpty<String>()
+            String.notEmpty()
             String.contains("@")
           }
         }
@@ -445,6 +456,53 @@ final class ValidationTests: XCTestCase {
       let testError = error as! TestError
       XCTAssertEqual(testError, .invalid)
     }
+  }
+  
+  func test_optional() throws {
+    let nilValidator = ValidatorOf<Int?>.nil()
+    
+    XCTAssertNoThrow(try nilValidator.validate(.none))
+    XCTAssertThrowsError(try nilValidator.validate(.some(1)))
+    
+    let sut = Int.greaterThan(10).optional()
+    XCTAssertNoThrow(try sut.validate(.none))
+    XCTAssertNoThrow(try sut.validate(11))
+    XCTAssertThrowsError(try sut.validate(1))
+    
+    let sut2 = ValidatorOf<Int?>.nil().or {
+      Int.greaterThan(10).optional()
+    }
+    
+    XCTAssertNoThrow(try sut2.validate(.none))
+    XCTAssertNoThrow(try sut2.validate(11))
+    XCTAssertThrowsError(try sut2.validate(1))
+    
+    let sut3 = ValidatorOf<Int?>.notNil().map {
+      Int.greaterThan(10)
+    }
+    XCTAssertNoThrow(try sut3.validate(.some(11)))
+    XCTAssertThrowsError(try sut3.validate(.some(9)))
+    XCTAssertThrowsError(try sut3.validate(.none))
+    
+    struct HoldsOptional {
+      let count: Int?
+    }
+    
+    let sut4 = ValidatorOf<HoldsOptional> {
+      Validate(\.count) {
+        Validators.NotNil()
+        Int.greaterThan(10).optional()
+      }
+    }
+    XCTAssertNoThrow(try sut4.validate(.init(count: 11)))
+    XCTAssertThrowsError(try sut4.validate(.init(count: 9)))
+    XCTAssertThrowsError(try sut4.validate(.init(count: .none)))
+    
+//    let sut5 = Int?.greaterThan(10)
+//    XCTAssertNoThrow(try sut.validate(.none))
+//    XCTAssertNoThrow(try sut.validate(11))
+//    XCTAssertThrowsError(try sut.validate(1))
+    
   }
   
 }

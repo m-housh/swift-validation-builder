@@ -1,76 +1,63 @@
-/// A type that can asynchronously validate a value or throw an error.  You can conform to this protocol by either
-/// implementing the ``AsyncValidator/validate(_:)-6qhpy`` method, or by supplying a validator in the
-/// ``AsyncValidator/body-swift.property-44764`` property.
+/// A concrete asynchronous validator that can be used to build a validator with a closure, by wrapping another validator, or
+/// by using the builder syntax to create a validator.
 ///
-///  **Example using the `validate(_: Value)` implementatin.**
-///  ```swift
-///     struct AsyncAlways<Value>: AsyncValidator {
-///        func validate(_ value: Value>) async throws {
-///         // do nothing
-///        }
-///     }
-///  ```
+/// **Example**
+/// ```swift
+/// let nonEmptyString = AsyncValidator<String> {
+///   NotEmtpy()
+/// }
 ///
-///   **Example using the `body` property.**
-///   ```swift
-///   struct User {
-///     let name: String
-///     let email: String
-///   }
+/// try await nonEmptyString.validate("foo") // success.
+/// try await nonEmptyString.validate("") // fails.
+///```
 ///
-///   struct BlobValidator: AsyncValidator {
-///     var body: some AsyncValidator<User> {
-///       AsyncValidation {
-///         Equals(\.name, "Blob")
-///         Equals(\.email, "blob@example.com")
-///       }
-///     }
-///   }
-///
-///   let blob = User(name: "Blob", email: "blob@example.com")
-///   let notBlob = User(name: "Blob Jr.", email: "blob.jr@example.com")
-///
-///   let validator = BlobValidator()
-///
-///   try await validator.validate(blob) // success.
-///   try await validator.validate(notBlob) // throws.
-///
-///   ```
-///
-public protocol AsyncValidator<Value> {
+public struct AsyncValidator<Value>: AsyncValidation {
 
-  associatedtype Value
+  @usableFromInline
+  let closure: (Value) async throws -> Void
 
-  associatedtype _Body
+  /// Create an async validation using the builder syntax.
+  ///
+  /// **Example**
+  /// ```swift
+  /// let asyncIntValidator = AsyncValidator<Int> {
+  ///   Equals(1)
+  /// }
+  ///
+  /// try await asyncIntValidator.validate(1) // succeeds.
+  /// try await asyncIntValidator.validate(2) // fails.
+  /// ```
+  @inlinable
+  public init<V: AsyncValidation>(@AsyncValidationBuilder<Value> _ build: () -> V)
+  where Value == V.Value {
+    self.init(build())
+  }
 
-  typealias Body = _Body
+  @inlinable
+  public init(_ validate: @escaping (Value) async throws -> Void) {
+    self.closure = validate
+  }
 
-  /// Validate the value or throw an error.
+  @inlinable
+  public init<V: AsyncValidation>(_ validator: V) where V.Value == Value {
+    self.closure = validator.validate(_:)
+  }
+
+  /// Transofrms a synchronous validator into an asynchronous one.
   ///
   /// - Parameters:
-  ///   - value: The value to validate.
-  func validate(_ value: Value) async throws
-
-  /// Implement the validation using / building a validator using builder syntax.
-  ///
-  /// - SeeAlso:
-  ///   - ``AsyncValidator``
-  @AsyncValidationBuilder<Value>
-  var body: Body { get }
-}
-
-extension AsyncValidator where Body == Swift.Never {
-
-  @_transparent
-  public var body: Body {
-    fatalError("\(Self.self) has no body.")
+  ///   - validator: The synchronous validator to transform.
+  @inlinable
+  public init<V: Validation>(_ validator: V) where V.Value == Value {
+    self.closure = { value in
+      try validator.validate(value)
+    }
   }
-}
-
-extension AsyncValidator where Body: AsyncValidator, Body.Value == Value {
 
   @inlinable
   public func validate(_ value: Value) async throws {
-    try await self.body.validate(value)
+    try await closure(value)
   }
 }
+
+//public typealias AsyncValidatorOf<Value> = Validation<Value>

@@ -2,13 +2,47 @@
 
 extension Validator where Value == String {
   
+  /// A ``Validator`` that validates a string is a valid email.
+  ///
+  /// **Example**
+  /// ```swift
+  ///
+  /// let emailValidator = ValidatorOf<String>.email()
+  ///
+  /// try emailValidator.validate("blob@example.com") // succeeds.
+  /// try emailValidator.validate("blob.example.com") // fails.
+  ///
+  /// ```
+  ///
+  /// > Note: The above validator is also be available from the `String` type as well `String.email()`
+  ///
+  /// - Parameters:
+  ///   - style: The email style to validate.
+  ///
+  @inlinable
   public static func email(_ style: Validators.Email.Style = .default) -> Self {
     .init(Validators.Email(style: style))
   }
 }
 
 extension String {
-  
+  /// A ``Validator`` that validates a string is a valid email.
+  ///
+  /// **Example**
+  /// ```swift
+  ///
+  /// let emailValidator = ValidatorOf<String>.email()
+  ///
+  /// try emailValidator.validate("blob@example.com") // succeeds.
+  /// try emailValidator.validate("blob.example.com") // fails.
+  ///
+  /// ```
+  ///
+  /// > Note: The above validator is also be available from the `String` type as well `String.email()`
+  ///
+  /// - Parameters:
+  ///   - style: The email style to validate.
+  ///
   @inlinable
   public static func email(_ style: Validators.Email.Style = .default) -> Validators.Email {
     .init(style: style)
@@ -16,13 +50,29 @@ extension String {
 }
 
 extension Validators {
-  
+  /// A ``Validation`` that validates a string is a valid email.
+  ///
+  /// **Example**
+  /// ```swift
+  ///
+  /// let emailValidator = Validators.Email(.international)
+  ///
+  /// try emailValidator.validate("blob@example.com") // succeeds.
+  /// try emailValidator.validate("blob.example.com") // fails.
+  ///
+  /// ```
+  ///
   public struct Email: Validation {
     
     public typealias Value = String
     
     public let style: Style
     
+    /// Create an ``Validators/Email`` validationl.
+    ///
+    /// - Parameters:
+    ///   - style: The email style to validate.
+    ///
     @inlinable
     public init(style: Style = .default) {
       self.style = style
@@ -38,6 +88,7 @@ extension Validators {
       }
     }
     
+    /// Represents the different styles of email to validate.
     public enum Style: Hashable {
       case `default`
       case international

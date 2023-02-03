@@ -45,4 +45,10 @@ public struct AnyValidator<Value>: Validation {
   public func validate(_ value: Value) throws {
     try closure(value)
   }
+  
+  @inlinable
+  public func eraseToAnyValidator() -> Self {
+    // don't wrap ourself again, just return this instance.
+    self
+  }
 }

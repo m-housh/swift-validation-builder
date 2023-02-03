@@ -14,8 +14,7 @@ final class DocumentationTests: XCTestCase {
       var body: some Validation<Self> {
         Accumulating {
           Validate(\.id, using: .greaterThan(0))
-//          Int.greaterThan(\.id, 0)
-          Validate(\.name, using: NotEmpty())
+          Validate(\.name, using: String.notEmpty())
         }
       }
     }

@@ -66,7 +66,7 @@ public struct Validate<Parent, Child>: Validation {
   @inlinable
   public init(
     _ toChild: KeyPath<Parent, Child>,
-    @ValidationBuilder<Child> build: () -> some Validation<Child>
+    @ValidationBuilder<Child> build: () -> any Validation<Child>
   ) {
     self.init(toChild, using: build())
   }
@@ -94,4 +94,9 @@ public struct Validate<Parent, Child>: Validation {
     let value = child(parent)
     try validator(parent).validate(value)
   }
+}
+
+extension Validators {
+  // for discovery.
+  public typealias Validate = Validations.Validate
 }

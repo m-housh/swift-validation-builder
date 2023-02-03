@@ -16,6 +16,9 @@ extension Validators {
   ///
   public struct Fail<Value>: Validation {
 
+    /// Create a  validation that always fails.
+    ///
+    ///
     @inlinable
     init() {}
 

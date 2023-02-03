@@ -31,8 +31,8 @@ where True: Validation, False: Validation, True.Value == False.Value {
   }
 }
 
-extension _Conditional: AsyncValidator
-where True: AsyncValidator, False: AsyncValidator, True.Value == False.Value {
+extension _Conditional: AsyncValidation
+where True: AsyncValidation, False: AsyncValidation, True.Value == False.Value {
 
   public func validate(_ value: True.Value) async throws {
     switch self {
@@ -110,7 +110,7 @@ extension _Sequence: Validation where V0: Validation, V1: Validation, V0.Value =
   }
 }
 
-extension _SequenceMany: AsyncValidator where V: AsyncValidator {
+extension _SequenceMany: AsyncValidation where V: AsyncValidation {
 
   @inlinable
   public func validate(_ value: V.Value) async throws {
@@ -146,8 +146,8 @@ extension _SequenceMany: AsyncValidator where V: AsyncValidator {
   }
 }
 
-extension _Sequence: AsyncValidator
-where V0: AsyncValidator, V1: AsyncValidator, V0.Value == V1.Value {
+extension _Sequence: AsyncValidation
+where V0: AsyncValidation, V1: AsyncValidation, V0.Value == V1.Value {
 
   @inlinable
   public func validate(_ value: V0.Value) async throws {

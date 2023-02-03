@@ -7,8 +7,8 @@
 /// }
 ///
 /// extension User: AsyncValidatable {
-///   var body: some AsyncValidator<Self> {
-///     AsyncValidation {
+///   var body: some AsyncValidation<Self> {
+///     AsyncValidator {
 ///       Not(Equals(\.name, ""))
 ///       Not(Equals(\.email, ""))
 ///     }
@@ -22,13 +22,13 @@
 /// try await invalid.validate() // error.
 /// ```
 ///
-public protocol AsyncValidatable: AsyncValidator where Value == Self {
+public protocol AsyncValidatable: AsyncValidation where Value == Self {
 
   /// Validate an instance.
   func validate() async throws
 }
 
-extension AsyncValidatable where Self: AsyncValidator, Value == Self {
+extension AsyncValidatable where Self: AsyncValidation, Value == Self {
 
   @inlinable
   public func validate() async throws {

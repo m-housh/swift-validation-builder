@@ -1,47 +1,32 @@
 
 extension Validation {
-//  public func map(
-//    _ transform: @escaping (Value) throws -> ()
-//  ) -> Validators.Map<Self, AnyValidator<Value>> {
-//    Validators.Map(upstream: self, downstream: AnyValidator(transform))
-//  }
   
+  @inlinable
   public func map<Conversion>(
     _ transform: @escaping (Value) -> Conversion,
-    using downstream: any Validation<Conversion>
+    validation: @escaping () -> some Validation<Conversion>
   ) -> Validators.MapValue<Self.Value, Conversion> {
-    .init(transform, using: downstream)
+    .init(transform, using: validation())
   }
   
-  public func map<Conversion>(
-    _ transform: @escaping (Value) -> Conversion,
-    @ValidationBuilder<Conversion> validation: @escaping () -> some Validation<Conversion>
-  ) -> Validators.MapValue<Self.Value, Conversion> {
-    map(transform, using: validation())
-  }
-  
+  @inlinable
   public func map<Conversion: Validation>(
     _ conversion: @escaping (Value) -> Conversion
   ) -> Validators.Map<Self, Conversion> {
     .init(upstream: self, downstream: conversion)
   }
+  
+  @inlinable
+  public func map<Conversion: Validation>(
+    _ conversion: @escaping () -> Conversion
+  ) -> Validators.Map<Self, Conversion> {
+    .init(upstream: self, downstream: { _ in conversion() })
+  }
+  
 }
 
 extension Validators {
 
-//  public struct Map<Upstream: Validation>: Validation {
-//
-//    public let upstream: Upstream
-//
-//    public let transform: (Upstream.Value) throws -> ()
-//
-//    @inlinable
-//    public func validate(_ value: Upstream.Value) throws {
-//      try upstream.validate(value)
-//      try transform(value)
-//    }
-//  }
-  
   public struct Map<Upstream: Validation, Downstream: Validation>: Validation
   where Upstream.Value == Downstream.Value
   {

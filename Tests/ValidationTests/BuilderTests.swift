@@ -134,8 +134,8 @@ final class BuilderTests: XCTestCase {
       let shouldAllowOnes: Bool
       let number: Int
       
-      var body: some AsyncValidator<Self> {
-        AsyncValidation {
+      var body: some AsyncValidation<Self> {
+        AsyncValidator {
           Validators.Success()
           if !shouldAllowOnes {
             Validate(\.number) {
@@ -151,7 +151,7 @@ final class BuilderTests: XCTestCase {
   }
   
   func test_asyncBuilder_limitedAvailability() async {
-    let validator = AsyncValidation<Int> {
+    let validator = AsyncValidator<Int> {
       if #available(macOS 10.15, *) {
         Validators.Success()
       } else {
@@ -167,8 +167,8 @@ final class BuilderTests: XCTestCase {
       let shouldAllowOnes: Bool
       let number: Int
       
-      var body: some AsyncValidator<Self> {
-        AsyncValidation {
+      var body: some AsyncValidation<Self> {
+        AsyncValidator {
           if shouldAllowOnes {
             Validators.Success()
           } else {

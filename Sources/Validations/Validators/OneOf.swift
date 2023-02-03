@@ -16,15 +16,18 @@
 ///
 public struct OneOf<Value>: Validation {
 
-  @usableFromInline
-  let validator: any Validation<Value>
+  public let validators: any Validation<Value>
 
+  /// Create a ``OneOf`` validator.
+  ///
+  /// This method is internal, because it does not make sense to call outside of the builder context.
+  ///
   @inlinable
-  public init<V: Validation>(_ validator: V) where V.Value == Value {
-    self.validator = validator
+  init<V: Validation>(_ validator: V) where V.Value == Value {
+    self.validators = validator
   }
 
-  /// Create a one of validator using builder syntax.
+  /// Create a ``OneOf`` validator using builder syntax.
   /// **Example**
   /// ```swift
   /// let oneOrTwo = ValidatorOf<Int> {
@@ -47,6 +50,6 @@ public struct OneOf<Value>: Validation {
 
   @inlinable
   public func validate(_ value: Value) throws {
-    try validator.validate(value)
+    try validators.validate(value)
   }
 }

@@ -60,8 +60,8 @@ extension Validator {
   {
     .init(
       Validators.Lazy { parent in
-        Validate<Value, C>(toCollection) {
-          Validators.Contains(element: parent[keyPath: toElement])
+        Validate(toCollection) {
+          C.contains(parent[keyPath: toElement])
         }
       }
     )

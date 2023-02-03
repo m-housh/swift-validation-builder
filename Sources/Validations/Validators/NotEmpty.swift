@@ -4,7 +4,7 @@ extension Validators {
   /// **Example**
   /// ```swift
   /// let notEmptyString = ValidatorOf<String> {
-  ///   NotEmpty()
+  ///   Validators.NotEmpty()
   /// }
   ///
   /// try notEmptyString.validate("foo") // success.
@@ -17,20 +17,13 @@ extension Validators {
     
     public var body: some Validation<Value> {
       Not(Empty())
-    }
-    
-    public func validate(_ value: Value) throws {
-      do {
-        try self.body.validate(value)
-      } catch {
-        throw ValidationError.failed(summary: "Expected to not be empty.")
-      }
+        .mapError(ValidationError.failed(summary: "Expected to not be empty."))
     }
   }
 }
 
 extension Validator where Value: Collection {
- 
+
   /// Validaties a collection is not empty.
   ///
   /// **Example**
@@ -40,16 +33,28 @@ extension Validator where Value: Collection {
   /// try notEmptyString.validate("blob") // succeeds.
   /// try notEmptyString.validate("") // fails.
   /// ```
+  ///
+  /// > Note: The `notEmpty()` method is also available from the `Collection` type, so
+  /// > the above could be written as `let notEmptyString = String.notEmpty()`
+  ///
   @inlinable
   public static func notEmpty() -> Self {
     .init(Validators.NotEmpty())
   }
 }
 
-public typealias NotEmpty = Validators.NotEmpty
-
 extension Collection {
   
+  /// Validaties a collection is not empty.
+  ///
+  /// **Example**
+  /// ```swift
+  /// let notEmptyString = String.notEmpty()
+  ///
+  /// try notEmptyString.validate("blob") // succeeds.
+  /// try notEmptyString.validate("") // fails.
+  /// ```
+  ///
   @inlinable
   public static func notEmpty() -> some Validation<Self> {
     Validators.NotEmpty()
