@@ -33,6 +33,38 @@ final class ValidationTests: XCTestCase {
     XCTAssertNoThrow(try validators.validator().validate(11))
   }
   
+  func test_or_validator_async() async {
+    
+    let mySynchronousValidator: any Validation<Int> = Int.greaterThan(10)
+    
+    let validators = [
+      AsyncValidator {
+        Validator.always().async
+        Int.greaterThan(10).async.or(Int.equals(5).async)
+      },
+      AsyncValidator {
+        Int.equals(5).async.or(.greaterThan(10)) // convert synchronous `Validator` instances to async.
+      },
+      AsyncValidator {
+        Int.equals(5).async.or(mySynchronousValidator)
+      },
+      
+      AsyncValidator {
+        Int.equals(5).async.or {
+          Int.greaterThan(10).async
+        }
+      }
+    ]
+
+    for validator in validators {
+      await XCTAssertNoThrowAsync(try await validator.validate(11))
+      await XCTAssertNoThrowAsync(try await validator.validate(5))
+      await XCTAssertThrowsAsyncError(try await validator.validate(4))
+    }
+
+    await XCTAssertNoThrowAsync(try await validators.validator().validate(11))
+  }
+  
   func test_empty() throws {
     let sut1 = String.empty()
     let sut2 = ValidatorOf<String>.empty()
@@ -211,10 +243,8 @@ final class ValidationTests: XCTestCase {
       var body: some AsyncValidation<Self> {
         AsyncValidator {
           Validate(\.one, using: Int.lessThan(12))
-//          Int.lessThan(\.one, 12)
           Validator.lessThanOrEquals(\.one, \.two)
           Validate(\.two, using: Int.lessThan(1))
-//          Int.lessThan(1, \.two)
         }
       }
     }
@@ -519,12 +549,6 @@ final class ValidationTests: XCTestCase {
     XCTAssertNoThrow(try sut4.validate(.init(count: 11)))
     XCTAssertThrowsError(try sut4.validate(.init(count: 9)))
     XCTAssertThrowsError(try sut4.validate(.init(count: .none)))
-    
-//    let sut5 = Int?.greaterThan(10)
-//    XCTAssertNoThrow(try sut.validate(.none))
-//    XCTAssertNoThrow(try sut.validate(11))
-//    XCTAssertThrowsError(try sut.validate(1))
-    
   }
   
   func test_async_array() async {
@@ -579,6 +603,61 @@ final class ValidationTests: XCTestCase {
     await XCTAssertThrowsAsyncError(try await sut.eraseToAnyAsyncValidator().validate(""))
   }
   
+  func test_map() {
+    
+    let sut = Int.greaterThan(1)
+      .map {
+        "\($0)" // convert the int to a string.
+      } validation: {
+        String.equals("2") // validate the string.
+      }
+    
+    XCTAssertNoThrow(try sut.validate(2))
+    XCTAssertThrowsError(try sut.validate(3))
+    
+    let sut2 = Int.greaterThan(1)
+      .map { _ in
+        AnyValidator<Int> { int in
+          guard int == 2 else {
+            throw ValidationError.failed(summary: "Expected 2.")
+          }
+        }
+      }
+    
+    XCTAssertNoThrow(try sut2.validate(2))
+    XCTAssertThrowsError(try sut2.validate(3))
+    
+  }
+  
+  func test_map_async() async {
+    
+    let sut = Int.greaterThan(1).async
+      .map {
+        "\($0)" // convert the int to a string.
+      } validation: {
+        String.equals("2").async // validate the string.
+      }
+    
+    await XCTAssertNoThrowAsync(try await sut.validate(2))
+    await XCTAssertThrowsAsyncError(try await sut.validate(3))
+    
+    let sut2 = Int.greaterThan(1).async
+      .map { _ in
+        AnyAsyncValidator<Int> { int in
+          guard int == 2 else {
+            throw ValidationError.failed(summary: "Expected 2.")
+          }
+        }
+      }
+    
+    await XCTAssertNoThrowAsync(try await sut2.validate(2))
+    await XCTAssertThrowsAsyncError(try await sut2.validate(3))
+    
+    let sut3 = Int.greaterThan(1).async.map { Int.equals(2).async }
+    await XCTAssertNoThrowAsync(try await sut3.validate(2))
+    await XCTAssertThrowsAsyncError(try await sut3.validate(3))
+    
+  }
   
 }
 

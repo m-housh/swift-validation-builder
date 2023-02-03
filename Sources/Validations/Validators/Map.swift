@@ -35,14 +35,14 @@ extension AsyncValidation {
   }
 
   @inlinable
-  public func map<Conversion: Validation>(
+  public func map<Conversion: AsyncValidation>(
     _ conversion: @escaping (Value) -> Conversion
   ) -> Validators.Map<Self, Conversion, Self.Value> {
     .init(upstream: self, downstream: conversion)
   }
 
   @inlinable
-  public func map<Conversion: Validation>(
+  public func map<Conversion: AsyncValidation>(
     _ conversion: @escaping () -> Conversion
   ) -> Validators.Map<Self, Conversion, Self.Value> {
     .init(upstream: self, downstream: { _ in conversion() })

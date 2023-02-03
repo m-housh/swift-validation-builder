@@ -71,8 +71,7 @@ extension Validation {
   /// **Example**
   /// ```swift
   /// let oneOrTwo = ValidatorOf<Int> {
-  ///   Equals(1)
-  ///     .or(Equals(2))
+  ///   Int.equals(1).or(myIntValidation)
   /// }
   ///
   /// try oneOrTwo.validate(1) // success.
@@ -94,10 +93,9 @@ extension Validation {
   /// **Example**
   /// ```swift
   /// let oneOrTwo = ValidatorOf<Int> {
-  ///   Equals(1)
-  ///     .or {
-  ///       Equals(2)
-  ///      }
+  ///   Int.equals(1).or {
+  ///     Int.equals(2)
+  ///   }
   /// }
   ///
   /// try oneOrTwo.validate(1) // success.
@@ -111,18 +109,18 @@ extension Validation {
     @ValidationBuilder<Self.Value> _ build: () -> Downstream
   ) -> Validators.OrValidator<Self, Downstream>
   where Downstream.Value == Self.Value {
-    Validators.OrValidator(self, build())
+    self.or(build())
   }
 
   /// Create a ``Validation`` that succeeds if one of the validators passes.
   ///
+  /// This convenience overload allows using static methods on ``Validator``  in order to create the
+  /// downstream validation, so that it can look a little cleaner at the call site.
+  ///
   /// **Example**
   /// ```swift
   /// let oneOrTwo = ValidatorOf<Int> {
-  ///   Equals(1)
-  ///     .or {
-  ///       Equals(2)
-  ///      }
+  ///   Int.equals(1).or(.equals(2))
   /// }
   ///
   /// try oneOrTwo.validate(1) // success.
@@ -143,14 +141,14 @@ extension AsyncValidation {
   ///
   /// **Example**
   /// ```swift
-  /// let oneOrTwo = ValidatorOf<Int> {
-  ///   Equals(1)
-  ///     .or(Equals(2))
+  /// let oneOrTwo = AsyncValidatorOf<Int> {
+  ///   Int.equals(1).async
+  ///     .or(Int.equals(2).async)
   /// }
   ///
-  /// try oneOrTwo.validate(1) // success.
-  /// try oneOrTwo.validate(2) // success.
-  /// try oneOrTwo.validate(3) // fails.
+  /// try await oneOrTwo.validate(1) // success.
+  /// try await oneOrTwo.validate(2) // success.
+  /// try await oneOrTwo.validate(3) // fails.
   /// ```
   ///
   /// - Parameters:
@@ -166,22 +164,22 @@ extension AsyncValidation {
   ///
   /// **Example**
   /// ```swift
-  /// let oneOrTwo = ValidatorOf<Int> {
-  ///   Equals(1)
-  ///     .or {
-  ///       Equals(2)
-  ///      }
+  /// let oneOrTwo = AsyncValidatorOf<Int> {
+  ///   Int.equals(1).async.or {
+  ///     Int.equals(2).async
+  ///   }
   /// }
   ///
-  /// try oneOrTwo.validate(1) // success.
-  /// try oneOrTwo.validate(2) // success.
-  /// try oneOrTwo.validate(3) // fails.
+  ///
+  /// try await oneOrTwo.validate(1) // success.
+  /// try await oneOrTwo.validate(2) // success.
+  /// try await oneOrTwo.validate(3) // fails.
   /// ```
   ///
   /// - Parameters:
   ///   - build: The other validator to use.
   public func or<Downstream: AsyncValidation>(
-    @ValidationBuilder<Self.Value> _ build: () -> Downstream
+    @AsyncValidationBuilder<Self.Value> _ build: () -> Downstream
   ) -> Validators.OrValidator<Self, Downstream>
   where Downstream.Value == Self.Value {
     Validators.OrValidator(self, build())
@@ -189,14 +187,17 @@ extension AsyncValidation {
 
   /// Create an ``AsyncValidation`` that succeeds if one of the validators passes.
   ///
+  /// This convenience overload allows using static methods on ``Validator``  in order to create the
+  /// downstream validation, so that it can look a little cleaner at the call site.  The synchronous ``Validator`` will
+  /// be transformed to an asynchronous one under the hood.
+  ///
   /// **Example**
   /// ```swift
-  /// let oneOrTwo = ValidatorOf<Int> {
-  ///   Equals(1)
-  ///     .or {
-  ///       Equals(2)
-  ///      }
+  /// let oneOrTwo = AsyncValidatorOf<Int> {
+  ///   Int.equals(1).async
+  ///     .or(.equals(2)) // internally converts to an async validation.
   /// }
+  ///
   ///
   /// try oneOrTwo.validate(1) // success.
   /// try oneOrTwo.validate(2) // success.
@@ -205,8 +206,32 @@ extension AsyncValidation {
   ///
   /// - Parameters:
   ///   - validation: The other ``Validator`` to use.
-  public func or(_ validation: AsyncValidator<Value>) -> Validators.OrValidator<Self, AsyncValidator<Value>> {
-    Validators.OrValidator(self, validation)
+  public func or(_ validation: Validator<Value>)
+    -> Validators.OrValidator<Self, AsyncValidator<Value>>
+  {
+    self.or(validation.async)
+  }
+
+  /// Create an ``AsyncValidation`` that succeeds if one of the validators passes.
+  ///
+  /// **Example**
+  /// ```swift
+  /// let oneOrTwo = AsyncValidatorOf<Int> {
+  ///   Int.equals(1).async
+  ///     .or(mySynchronousIntValidation) // internally converts to an async validation.
+  /// }
+  ///
+  ///
+  /// try oneOrTwo.validate(1) // success.
+  /// try oneOrTwo.validate(2) // success.
+  /// try oneOrTwo.validate(3) // fails.
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - validation: The other ``Validator`` to use.
+  public func or(_ validation: any Validation<Value>)
+    -> Validators.OrValidator<Self, AsyncValidator<Value>>
+  {
+    self.or(validation.async)
   }
 }
-

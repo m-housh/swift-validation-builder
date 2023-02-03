@@ -90,3 +90,10 @@ extension User: Validatable {
 ### Articles
 
 * <doc:GettingStarted>
+
+### Validation Types
+
+* ``Validation``
+* ``Validatable``
+* ``AsyncValidation``
+* ``AsyncValidatable``
