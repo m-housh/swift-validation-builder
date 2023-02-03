@@ -1,6 +1,5 @@
-
 extension Validators {
-  
+
   /// A ``Validation`` that is created lazily.
   ///
   /// This generally used when you need access to the value in order to create the
@@ -24,10 +23,10 @@ extension Validators {
   ///  }
   /// ```
   public struct Lazy<Value>: Validation {
-    
+
     @usableFromInline
     let validator: (Value) -> any Validation<Value>
-    
+
     /// Create a ``Validators/Lazy`` validation.
     ///
     /// - Parameters:
@@ -39,7 +38,7 @@ extension Validators {
     ) {
       self.validator = validator
     }
-    
+
     @inlinable
     public func validate(_ value: Value) throws {
       try validator(value).validate(value)
@@ -48,7 +47,7 @@ extension Validators {
 }
 
 extension Validator {
-  
+
   /// Create a ``Validators/Lazy`` validation.
   ///
   /// - Parameters:
@@ -61,4 +60,3 @@ extension Validator {
     .init(Validators.Lazy(validator))
   }
 }
-

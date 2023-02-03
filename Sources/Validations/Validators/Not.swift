@@ -12,10 +12,10 @@ extension Validators {
   ///
   /// ```
   public struct Not<Validate: Validation>: Validation {
-    
+
     @usableFromInline
     let validator: Validate
-    
+
     /// Create a not validator from an existing validator.
     ///
     /// **Example**
@@ -34,12 +34,12 @@ extension Validators {
     public init(_ validator: Validate) {
       self.validator = validator
     }
-    
+
     @inlinable
     public init<Value>(_ validation: Validator<Value>) where Validate == Validator<Value> {
       self.init(validation)
     }
-    
+
     /// Create a not validator using builder syntax.
     ///
     /// **Example**
@@ -60,7 +60,7 @@ extension Validators {
     public init(@ValidationBuilder<Validate.Value> _ build: () -> Validate) {
       self.init(build())
     }
-    
+
     @inlinable
     public func validate(_ value: Validate.Value) throws {
       do {
@@ -76,7 +76,7 @@ extension Validators {
 }
 
 extension Validator {
-  
+
   public static func not(
     @ValidationBuilder<Value> with build: () -> some Validation<Value>
   ) -> Self {

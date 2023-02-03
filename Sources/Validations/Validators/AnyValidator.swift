@@ -3,6 +3,7 @@ extension Validation {
   /// Wraps this validation with a type erasure.
   ///
   /// - Returns: An ``AnyValidator`` wrapping this validation.
+  @inlinable
   public func eraseToAnyValidator() -> AnyValidator<Value> {
     AnyValidator(self)
   }
@@ -45,7 +46,7 @@ public struct AnyValidator<Value>: Validation {
   public func validate(_ value: Value) throws {
     try closure(value)
   }
-  
+
   @inlinable
   public func eraseToAnyValidator() -> Self {
     // don't wrap ourself again, just return this instance.

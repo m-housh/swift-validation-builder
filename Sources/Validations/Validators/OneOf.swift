@@ -1,31 +1,36 @@
-/// Ensures one of the validators succeds to validate a value.
-///
-/// **Example**
-/// ```swift
-/// let oneOrTwo = ValidatorOf<Int> {
-///   OneOf {
-///     Equals(1)
-///     Equals(2)
-///   }
-/// }
-///
-/// try oneOrTwo.validate(1) // success.
-/// try oneOrTwo.validate(2) // success.
-/// try oneOrTwo.validate(3) // fails.
-/// ```
-///
-public struct OneOf<Value>: Validation {
-
-  public let validators: any Validation<Value>
-
-  /// Create a ``OneOf`` validator.
+extension Validators {
+  /// Ensures one of the validators succeds to validate a value.
   ///
-  /// This method is internal, because it does not make sense to call outside of the builder context.
+  /// **Example**
+  /// ```swift
+  /// let oneOrTwo = ValidatorOf<Int> {
+  ///   OneOf {
+  ///     Equals(1)
+  ///     Equals(2)
+  ///   }
+  /// }
   ///
-  @inlinable
-  init<V: Validation>(_ validator: V) where V.Value == Value {
-    self.validators = validator
+  /// try oneOrTwo.validate(1) // success.
+  /// try oneOrTwo.validate(2) // success.
+  /// try oneOrTwo.validate(3) // fails.
+  /// ```
+  ///
+  public struct OneOf<Value, Validators> {
+
+    public let validators: Validators
+
+    /// Create a ``OneOf`` validator.
+    ///
+    /// This method is internal, because it does not make sense to call outside of the builder context.
+    ///
+    @inlinable
+    init(_ validator: Validators) {
+      self.validators = validator
+    }
   }
+}
+
+extension Validators.OneOf: Validation where Validators: Validation, Validators.Value == Value {
 
   /// Create a ``OneOf`` validator using builder syntax.
   /// **Example**
@@ -42,14 +47,37 @@ public struct OneOf<Value>: Validation {
   /// try oneOrTwo.validate(3) // fails
   /// ```
   ///
-  @inlinable
-  public init<V: Validation>(@OneOfBuilder<Value> builder: @escaping () -> V)
-  where V.Value == Value {
-    self.init(builder())
-  }
+  //  @inlinable
+  //  public init(
+  //    @OneOfBuilder<Value> builder: @escaping () -> Validators
+  //  ) {
+  //    self.validators = builder()
+  //    self.init(builder())
+  //  }
 
   @inlinable
-  public func validate(_ value: Value) throws {
+  public func validate(_ value: Validators.Value) throws {
     try validators.validate(value)
   }
+}
+
+extension Validators.OneOf: AsyncValidation
+where Validators: AsyncValidation, Validators.Value == Value {
+
+  @inlinable
+  public func validate(_ value: Value) async throws {
+    try await validators.validate(value)
+  }
+}
+
+public func OneOf<Value, Validators: Validation>(
+  @OneOfBuilder<Value> builder: () -> Validators
+) -> Validations.Validators.OneOf<Value, Validators> {
+  .init(builder())
+}
+
+public func OneOf<Value, Validators: AsyncValidation>(
+  @OneOfBuilder<Value> builder: () -> Validators
+) -> Validations.Validators.OneOf<Value, Validators> {
+  .init(builder())
 }

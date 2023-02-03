@@ -1,5 +1,5 @@
 extension Validators {
-  
+
   /// A validation that compares two elements.  This is generally not interacted with, but is
   /// made by one of the methods on the ``Validator`` type or the `Comparable`
   /// type that is being compared.
@@ -15,16 +15,16 @@ extension Validators {
   public struct ComparableValidator<Value, Element>: Validation {
     @usableFromInline
     let lhs: (Value) -> Element
-    
+
     @usableFromInline
     let rhs: (Value) -> Element
-    
+
     @usableFromInline
     let `operator`: (Element, Element) -> Bool
-    
+
     @usableFromInline
     let operatorString: String
-    
+
     /// Create a comparison validation with custom access to the elements and custom logic to evaluate the comparison.
     ///
     /// - Parameters:
@@ -38,14 +38,14 @@ extension Validators {
       _ rhs: @escaping (Value) -> Element,
       operator: @escaping (Element, Element) -> Bool,
       operatorString: String
-      
+
     ) {
       self.lhs = lhs
       self.rhs = rhs
       self.operator = `operator`
       self.operatorString = operatorString
     }
-    
+
     @inlinable
     public func validate(_ value: Value) throws {
       let lhs = self.lhs(value)
@@ -54,14 +54,14 @@ extension Validators {
         throw ValidationError.failed(summary: "\(lhs) is not \(operatorString) \(rhs)")
       }
     }
-    
+
   }
 }
-  
- // MARK: - Equatable
+
+// MARK: - Equatable
 
 extension Validator {
-  
+
   /// Validates two elements are equal, using closures to access the elements.
   ///
   /// **Example**
@@ -91,7 +91,7 @@ extension Validator {
   ///
   public static func equals<Element: Equatable>(
     _ lhs: @escaping (Value) -> Element,
-    _ rhs: @escaping  (Value) -> Element
+    _ rhs: @escaping (Value) -> Element
   ) -> Self {
     self.init(
       Validators.ComparableValidator(
@@ -105,7 +105,7 @@ extension Validator {
 }
 
 extension Validator where Value: Equatable {
-  
+
   /// Create a ``Validator`` that fails if the value does not equal the given value.
   ///
   /// **Example**
@@ -125,7 +125,7 @@ extension Validator where Value: Equatable {
 }
 
 extension Equatable {
- 
+
   /// Create a ``Validator`` from an `Equatable` conforming type.
   ///
   /// **Example**
@@ -144,7 +144,7 @@ extension Equatable {
 
 // MARK: - Greater Than
 extension Validator {
-  
+
   /// Create a ``Validator`` that validates the left hand side is greater than the right hand side,
   /// using closures to access the elements.
   ///
@@ -178,14 +178,15 @@ extension Validator {
     _ lhs: @escaping (Value) -> Element,
     _ rhs: @escaping (Value) -> Element
   ) -> Self {
-    .init(Validators.ComparableValidator(
-      lhs,
-      rhs,
-      operator: { $0 > $1 },
-      operatorString: "greater than")
+    .init(
+      Validators.ComparableValidator(
+        lhs,
+        rhs,
+        operator: { $0 > $1 },
+        operatorString: "greater than")
     )
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is greater than the right hand side,
   /// using `KeyPath`'s to access the elements.
   ///
@@ -221,7 +222,7 @@ extension Validator {
   ) -> Self {
     greaterThan(lhs.value(from:), rhs.value(from:))
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is greater than the right hand side,
   /// using `KeyPath` to access the left hand side element, and a concrete instance for the right hand side.
   ///
@@ -257,7 +258,7 @@ extension Validator {
   ) -> Self {
     greaterThan(lhs.value(from:), { _ in rhs })
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is greater than the right hand side,
   /// using `KeyPath` to access the right hand side element, and a concrete instance for the left hand side.
   ///
@@ -293,7 +294,7 @@ extension Validator {
   ) -> Self {
     greaterThan({ _ in lhs }, rhs.value(from:))
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is greater than or equal to the right hand side,
   /// using closures to access the elements.
   ///
@@ -327,14 +328,15 @@ extension Validator {
     _ lhs: @escaping (Value) -> Element,
     _ rhs: @escaping (Value) -> Element
   ) -> Self {
-    .init(Validators.ComparableValidator(
-      lhs,
-      rhs,
-      operator: { $0 >= $1 },
-      operatorString: "greater than or equal to")
+    .init(
+      Validators.ComparableValidator(
+        lhs,
+        rhs,
+        operator: { $0 >= $1 },
+        operatorString: "greater than or equal to")
     )
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is greater than or equal to the right hand side,
   /// using `KeyPath`'s to access the elements.
   ///
@@ -370,7 +372,7 @@ extension Validator {
   ) -> Self {
     greaterThanOrEquals(lhs.value(from:), rhs.value(from:))
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is greater than or equal to the right hand side,
   /// using `KeyPath` to access the left hand side element and a concrete value for the right side.
   ///
@@ -406,7 +408,7 @@ extension Validator {
   ) -> Self {
     greaterThanOrEquals(lhs.value(from:), { _ in rhs })
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is greater than or equal to the right hand side,
   /// using `KeyPath` to access the right hand side element and a concrete value for the left hand side.
   ///
@@ -445,7 +447,7 @@ extension Validator {
 }
 
 extension Validator where Value: Comparable {
-  
+
   /// Create a ``Validator`` that validates the value is greater than the given value
   ///
   /// **Example**
@@ -463,7 +465,7 @@ extension Validator where Value: Comparable {
   public static func greaterThan(_ value: Value) -> Self {
     greaterThan(\.self, value)
   }
-  
+
   /// Create a ``Validator`` that validates the value is greater than or equal to the given value
   ///
   /// **Example**
@@ -481,11 +483,11 @@ extension Validator where Value: Comparable {
   public static func greaterThanOrEquals(_ rhs: Value) -> Self {
     greaterThanOrEquals(\.self, rhs)
   }
- 
+
 }
 
 extension Comparable {
-  
+
   /// Create a ``Validator`` that validates the value is greater than the given value
   ///
   /// **Example**
@@ -503,7 +505,7 @@ extension Comparable {
   public static func greaterThan(_ value: Self) -> Validator<Self> {
     .greaterThan(\.self, value)
   }
-  
+
   /// Create a ``Validator`` that validates the value is greater than or equal to the given value
   ///
   /// **Example**
@@ -559,14 +561,15 @@ extension Validator {
     _ lhs: @escaping (Value) -> Element,
     _ rhs: @escaping (Value) -> Element
   ) -> Self {
-    .init(Validators.ComparableValidator(
-      lhs,
-      rhs,
-      operator: { $0 < $1 },
-      operatorString: "less than")
+    .init(
+      Validators.ComparableValidator(
+        lhs,
+        rhs,
+        operator: { $0 < $1 },
+        operatorString: "less than")
     )
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is less than the right hand side,
   /// using `KeyPath`'s to access the elements.
   ///
@@ -602,7 +605,7 @@ extension Validator {
   ) -> Self {
     lessThan(lhs.value(from:), rhs.value(from:))
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is less than the right hand side,
   /// using `KeyPath` to access the left hand side element and a concrete value as the right hand side.
   ///
@@ -638,7 +641,7 @@ extension Validator {
   ) -> Self {
     lessThan(lhs.value(from:), { _ in rhs })
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is less than the right hand side,
   /// using `KeyPath` to access the right hand side element and a concrete value as the left hand side.
   ///
@@ -674,7 +677,7 @@ extension Validator {
   ) -> Self {
     lessThan({ _ in lhs }, rhs.value(from:))
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is less than or equal to the right hand side,
   /// using closures to access the elements.
   ///
@@ -709,14 +712,15 @@ extension Validator {
     _ lhs: @escaping (Value) -> Element,
     _ rhs: @escaping (Value) -> Element
   ) -> Self {
-    .init(Validators.ComparableValidator(
-      lhs,
-      rhs,
-      operator: { $0 <= $1 },
-      operatorString: "less than or equal to")
+    .init(
+      Validators.ComparableValidator(
+        lhs,
+        rhs,
+        operator: { $0 <= $1 },
+        operatorString: "less than or equal to")
     )
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is less than or equal to the right hand side,
   /// using `KeyPath`'s to access the elements.
   ///
@@ -753,7 +757,7 @@ extension Validator {
   ) -> Self {
     lessThanOrEquals(lhs.value(from:), rhs.value(from:))
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is less than or equal to the right hand side,
   /// using `KeyPath` to access the left hand side element and a concrete value for the right hand side.
   ///
@@ -790,7 +794,7 @@ extension Validator {
   ) -> Self {
     lessThanOrEquals(lhs.value(from:), { _ in rhs })
   }
-  
+
   /// Create a ``Validator`` that validates the left hand side is less than or equal to the right hand side,
   /// using `KeyPath` to access the right hand side element and a concrete value for the left hand side.
   ///
@@ -830,7 +834,7 @@ extension Validator {
 }
 
 extension Validator where Value: Comparable {
-  
+
   /// Create a ``Validator`` that validates the value is less than the given value,
   ///
   /// **Example**
@@ -849,7 +853,7 @@ extension Validator where Value: Comparable {
   public static func lessThan(_ value: Value) -> Self {
     lessThan(\.self, value)
   }
-  
+
   /// Create a ``Validator`` that validates the value is less than or equal to the given value,
   ///
   /// **Example**
@@ -868,11 +872,11 @@ extension Validator where Value: Comparable {
   public static func lessThanOrEquals(_ value: Value) -> Self {
     lessThanOrEquals(\.self, value)
   }
- 
+
 }
 
 extension Comparable {
-  
+
   /// Create a ``Validator`` that validates the value is less than the given value,
   ///
   /// **Example**
@@ -891,7 +895,7 @@ extension Comparable {
   public static func lessThan(_ value: Self) -> Validator<Self> {
     .lessThan(\.self, value)
   }
-  
+
   /// Create a ``Validator`` that validates the value is less than or equal to the given value,
   ///
   /// **Example**
@@ -910,6 +914,5 @@ extension Comparable {
   public static func lessThanOrEquals(_ value: Self) -> Validator<Self> {
     .lessThanOrEquals(\.self, value)
   }
-  
-}
 
+}

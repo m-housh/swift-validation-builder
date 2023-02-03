@@ -1,4 +1,3 @@
-
 extension Validators {
   /// Validates a collection is empty.
   ///
@@ -11,9 +10,9 @@ extension Validators {
   ///  try emptyValidator.validate("foo") // fails.
   ///  ```
   public struct Empty<Value: Collection>: Validation {
-    
+
     public init() {}
-    
+
     public var body: some Validation<Value> {
       Validate(\.isEmpty, using: true)
         .mapError(ValidationError.failed(summary: "Expected empty."))

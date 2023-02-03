@@ -27,23 +27,22 @@ extension Validators {
   /// ```
   ///
   public struct Case<Parent, Child> {
-    
+
     /// The case path to use to access the child value.
     public let casePath: CasePath<Parent, Child>
-    
+
     /// The validator to use when we found a child value in the case path.
     public let validator: any Validation<Child>
-    
+
     @usableFromInline
     let file: StaticString
-    
+
     @usableFromInline
     let fileID: StaticString
-    
+
     @usableFromInline
     let line: UInt
-    
-    
+
     /// Create an enum case validation, using the given ``Validation`` for the value embedded in the case.
     ///
     /// - Parameters:
@@ -67,7 +66,7 @@ extension Validators {
       self.fileID = fileID
       self.line = line
     }
-    
+
     /// Create an enum case validation, using the given ``Validator`` for the value embedded in the case.
     ///
     /// This is convenience for using static methods, such as ``Validator/greaterThan(_:)``.
@@ -93,8 +92,7 @@ extension Validators {
       self.fileID = fileID
       self.line = line
     }
-    
-    
+
     /// Create an enum case validation, using  the result builder syntax for the value embedded in the case.
     ///
     ///
@@ -119,13 +117,13 @@ extension Validators {
 
 extension Validators.Case: Validation {
   public typealias Value = Parent
-  
+
   @inlinable
   public func validate(_ value: Parent) throws {
     guard let child = casePath.extract(from: value) else {
       let message = """
         A "Case" validation at "\(self.fileID):\(self.line)" does not handle the current case.
-        
+
         Current case is: \(value)
         """
       if !_XCTIsTesting {

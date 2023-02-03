@@ -1,5 +1,5 @@
 extension Validator where Value == String {
-  
+
   /// A ``Validator`` that matches a regular expression pattern for validation.
   ///
   ///
@@ -14,15 +14,15 @@ extension Validator where Value == String {
 
 // TODO: Use Regex
 extension Validators {
-  
+
   /// A ``Validation`` that matches a regular expression pattern for validation.
   ///
   ///
   public struct Regex: Validation {
-    
+
     /// The regex pattern string.
     public let pattern: String
-    
+
     /// Create a new regix validator.
     ///
     /// - Parameters:
@@ -32,11 +32,11 @@ extension Validators {
     public init(pattern: String) {
       self.pattern = pattern
     }
-    
+
     @inlinable
     public func validate(_ value: String) throws {
       guard let range = value.range(of: pattern, options: [.regularExpression]),
-            range.lowerBound == value.startIndex && range.upperBound == value.endIndex
+        range.lowerBound == value.startIndex && range.upperBound == value.endIndex
       else {
         throw ValidationError.failed(summary: "Did not match expected pattern.")
       }

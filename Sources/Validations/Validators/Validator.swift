@@ -3,8 +3,8 @@
 ///
 /// **Example**
 /// ```swift
-/// let nonEmptyString = Validation<String> {
-///   NotEmtpy()
+/// let nonEmptyString = Validator<String> {
+///   Validators.NotEmtpy()
 /// }
 ///
 /// try nonEmptyString.validate("foo") // success.
@@ -14,37 +14,13 @@
 public struct Validator<Value>: Validation {
 
   public let validators: any Validation<Value>
-//  @usableFromInline
-//  let closure: (Value) throws -> Void
-
-  /// Create a validation using a closure that validates the value.
-  ///
-  /// **Example**
-  ///
-  /// ```swift
-  /// let blobValidator = Validation<String> { string in
-  ///   guard string == "blob" else {
-  ///     throw ValidationError(message: "\(string) is not blob!")
-  ///   }
-  /// }
-  ///```
-  @inlinable
-  public init(_ validate: @escaping (Value) throws -> Void) {
-    self.validators = AnyValidator(validate)
-  }
-  
-//  @inlinable
-//  public init(_ validate: @escaping (Value) throws -> some Validation<Value>) {
-//    self.validators = valida
-//  }
-  
 
   /// Create a validation wrapping an already existing validator.
   ///
   /// **Example**
   ///
   /// ```swift
-  /// let notEmptyString = Validation<String>(NotEmpty())
+  /// let notEmptyString = Validator<String>(Validators.NotEmpty())
   /// ```
   @inlinable
   public init<V: Validation>(_ validators: V) where V.Value == Value {
@@ -56,13 +32,16 @@ public struct Validator<Value>: Validation {
   /// **Example**
   ///
   /// ```swift
-  /// let emailValidator = Validation<String> {
-  ///   NotEmpty()
-  ///   Contains("@")
+  /// let validator = Validator<String> {
+  ///   String.notEmpty()
+  ///   String.contains("@")
   /// }
   /// ```
   @inlinable
-  public init<V: Validation>(@ValidationBuilder<Value> _ build: () -> V) where V.Value == Value {
+  public init<V: Validation>(
+    @ValidationBuilder<Value> _ build: () -> V
+  )
+  where V.Value == Value {
     self.init(build())
   }
 

@@ -1,5 +1,5 @@
 extension Validation {
-  
+
   /// Transforms a ``Validation`` to one that works on an optional.
   ///
   /// The validator only gets called when the value is not nil.
@@ -16,7 +16,7 @@ extension Validation {
   public func `optional`() -> Validators.Optional<Self> {
     Validators.Optional(self)
   }
-  
+
   /// Transform a ``Validation`` to one that works on an optional.
   ///
   /// ```swift
@@ -33,25 +33,24 @@ extension Validation {
   public func map<V>(
     _ downstream: @escaping () -> some Validation<V>
   ) -> some Validation<V?>
-  where Self.Value == Optional<V>
-  {
+  where Self.Value == V? {
     self.map { downstream().optional() }
   }
 }
 
 extension Validators {
-  
+
   /// A ``Validation`` that runs a validator if the value is not nil.
   ///
   /// This type is generally not interacted with directly, instead you call the``Validation/optional()`` method
   /// on an existing validator.
   ///
   public struct Optional<Downstream: Validation>: Validation {
-    
+
     public typealias Value = Downstream.Value?
-  
+
     public let downstream: Downstream
-    
+
     /// Create a new ``Validators/Optional`` with the given downstream validator to be called when
     /// values are not nil.
     ///
@@ -62,7 +61,7 @@ extension Validators {
     public init(_ validator: Downstream) {
       self.downstream = validator
     }
-    
+
     @inlinable
     public func validate(_ value: Downstream.Value?) throws {
       guard let unwrapped = value.wrappedValue else {
@@ -71,7 +70,7 @@ extension Validators {
       try downstream.validate(unwrapped)
     }
   }
-  
+
   /// A ``Validation`` that validates optional values are not nil
   ///
   /// **Example**
@@ -84,10 +83,10 @@ extension Validators {
   /// ```
   ///
   public struct NotNil<Value: _AnyOptional>: Validation {
-    
+
     @inlinable
-    public init() { }
-    
+    public init() {}
+
     @inlinable
     public func validate(_ value: Value) throws {
       guard let _ = value.wrappedValue else {
@@ -95,7 +94,7 @@ extension Validators {
       }
     }
   }
-  
+
   /// A ``Validation`` that validates optional values are nil
   ///
   /// **Example**
@@ -108,10 +107,10 @@ extension Validators {
   /// ```
   ///
   public struct Nil<Value: _AnyOptional>: Validation {
-    
+
     @inlinable
-    public init() { }
-    
+    public init() {}
+
     public var body: some Validation<Value> {
       Not(NotNil())
         .mapError(ValidationError.failed(summary: "Expected nil"))
@@ -120,7 +119,7 @@ extension Validators {
 }
 
 extension Validator where Value: _AnyOptional {
-  
+
   /// A ``Validator`` that validates optional values are nil
   ///
   /// **Example**
@@ -136,7 +135,7 @@ extension Validator where Value: _AnyOptional {
   public static func `nil`() -> Self {
     .init(Validators.Nil<Value>())
   }
-  
+
   /// A ``Validation`` that validates optional values are not nil
   ///
   /// **Example**
@@ -194,4 +193,3 @@ extension Optional: _AnyOptional {
     }
   }
 }
-

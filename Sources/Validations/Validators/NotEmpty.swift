@@ -12,9 +12,9 @@ extension Validators {
   /// ```
   ///
   public struct NotEmpty<Value: Collection>: Validation {
-    
+
     public init() {}
-    
+
     public var body: some Validation<Value> {
       Not(Empty())
         .mapError(ValidationError.failed(summary: "Expected to not be empty."))
@@ -44,7 +44,7 @@ extension Validator where Value: Collection {
 }
 
 extension Collection {
-  
+
   /// Validaties a collection is not empty.
   ///
   /// **Example**

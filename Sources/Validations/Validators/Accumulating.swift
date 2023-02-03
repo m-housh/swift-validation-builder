@@ -50,7 +50,7 @@ public struct Accumulating<Value>: Validation {
 }
 
 extension Validator {
-  
+
   /// Create a ``Validator`` instance accumulating errors of the child validations.
   ///
   /// This is a convenience when building nested validations with types that can also

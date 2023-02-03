@@ -229,18 +229,18 @@ final class ValidationTests: XCTestCase {
       case two(Int)
       case three(Int)
     }
-    
+
     let sut = OneOf {
       Validators.Case(/Sut.one, using: .greaterThan(0))
       Validators.Case(/Sut.two) {
         Int.greaterThan(10)
       }
     }
-    
+
     XCTAssertNoThrow(try sut.validate(.one(1)))
     XCTAssertNoThrow(try sut.validate(.two(11)))
     XCTAssertThrowsError(try sut.validate(.three(0)))
-  
+
   }
   
   func test_oneOF() throws {
@@ -248,11 +248,11 @@ final class ValidationTests: XCTestCase {
       Int.greaterThan(0)
       Validator.equals(-10)
     }
-    
+
     XCTAssertThrowsError(try sut.validate(-1))
     XCTAssertNoThrow(try sut.validate(-10))
     XCTAssertNoThrow(try sut.validate(1))
-    
+
     let sut2 = ValidatorOf<Int> {
       OneOf {
         Validator.greaterThan(0)
@@ -262,7 +262,29 @@ final class ValidationTests: XCTestCase {
     XCTAssertThrowsError(try sut2.validate(-1))
     XCTAssertNoThrow(try sut2.validate(-10))
     XCTAssertNoThrow(try sut2.validate(1))
-    
+
+  }
+  
+  func test_oneOF_async() async {
+    let sut = OneOf {
+      Int.greaterThan(0).async
+      Validator.equals(-10).async
+    }
+
+    await XCTAssertThrowsAsyncError(try await sut.validate(-1))
+    await XCTAssertNoThrowAsync(try await sut.validate(-10))
+    await XCTAssertNoThrowAsync(try await sut.validate(1))
+
+    let sut2 = AsyncValidatorOf<Int> {
+      OneOf {
+        Validator.greaterThan(0).async
+        Validator.equals(-10).async
+      }
+    }
+    await XCTAssertThrowsAsyncError(try await sut2.validate(-1))
+    await XCTAssertNoThrowAsync(try await sut2.validate(-10))
+    await XCTAssertNoThrowAsync(try await sut2.validate(1))
+
   }
   
   func test_documenation() {
@@ -504,6 +526,59 @@ final class ValidationTests: XCTestCase {
 //    XCTAssertThrowsError(try sut.validate(1))
     
   }
+  
+  func test_async_array() async {
+    let validators = [
+      Int.greaterThan(0).async,
+      Int.lessThan(20).async
+    ]
+    
+    let sut1 = validators.validator()
+    await XCTAssertNoThrowAsync(try await sut1.validate(1))
+    await XCTAssertThrowsAsyncError(try await sut1.validate(21))
+    
+    let sut2 = validators.validator(type: .oneOf)
+    await XCTAssertNoThrowAsync(try await sut2.validate(1))
+    await XCTAssertNoThrowAsync(try await sut2.validate(21))
+    await XCTAssertThrowsAsyncError(try await sut2.validate(-2))
+    
+    let sut3 = [
+      String.notEmpty().async.eraseToAnyAsyncValidator(),
+      String.email().async.eraseToAnyAsyncValidator()
+    ].validator(type: .accumulating)
+    
+    await XCTAssertNoThrowAsync(try await sut3.validate("blob@example.com"))
+    do {
+      try await sut3.validate("")
+    } catch {
+      let error = error as! ValidationError
+      print(error)
+      guard case let .manyFailed(errors, _) = error else {
+        XCTFail()
+        return
+      }
+      XCTAssertEqual(errors.count, 2)
+      
+    }
+    
+  }
+  
+  func test_any_validator() {
+    let sut = AnyValidator<String> { _ in
+      throw ValidationError.failed(summary: "Always fails")
+    }
+    
+    XCTAssertThrowsError(try sut.eraseToAnyValidator().validate(""))
+  }
+  
+  func test_any_async_validator() async {
+    let sut = AnyAsyncValidator<String> { _ in
+      throw ValidationError.failed(summary: "Always fails")
+    }
+    
+    await XCTAssertThrowsAsyncError(try await sut.eraseToAnyAsyncValidator().validate(""))
+  }
+  
   
 }
 

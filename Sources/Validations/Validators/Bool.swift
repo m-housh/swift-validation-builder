@@ -1,5 +1,5 @@
 extension Validators {
- 
+
   /// A ``Validation`` type that validates expressions that can be evaluated to `true` or `false`.
   ///
   /// This type does not need to be created directly, unless you need to customize the behavor based on
@@ -34,13 +34,13 @@ extension Validators {
   /// ```
   ///
   public struct BoolValidator<Value>: Validation {
-  
+
     @usableFromInline
     let evaluate: (Value) -> Bool
-    
+
     @usableFromInline
     let bool: Swift.Bool
-    
+
     /// Create a bool validation using a custom evaluation to pass or fail validations.
     ///
     /// - Parameters:
@@ -55,21 +55,21 @@ extension Validators {
       self.evaluate = evaluate
       self.bool = bool
     }
-    
+
     @inlinable
     public func validate(_ value: Value) throws {
       let evaluated = evaluate(value)
-      
+
       guard evaluated == bool else {
         throw ValidationError.failed(summary: "Failed bool evaluation, expected \(bool)")
       }
     }
-    
+
   }
 }
 
 extension Validators.BoolValidator where Value == Bool {
-  
+
   /// Create a ``Validators/BoolValidator`` expecting the given bool.
   ///
   /// - Parameters:
@@ -83,11 +83,11 @@ extension Validators.BoolValidator where Value == Bool {
 
 extension Bool: Validation {
   public typealias Value = Swift.Bool
-  
+
   public var body: some Validation<Self> {
     self.validator()
   }
-  
+
   /// Access a validator for a given `Swift.Bool`.
   ///
   /// ```swift

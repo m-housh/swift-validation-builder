@@ -19,7 +19,7 @@ extension Array where Element: Validation {
 extension Array where Element: AsyncValidation {
 
   /// Create a validator from an array of validators.
-  /// 
+  ///
   /// - Parameters:
   ///   - type: The validation type to build.
   ///

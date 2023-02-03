@@ -4,7 +4,7 @@
 /// **Example**
 /// ```swift
 /// let nonEmptyString = AsyncValidator<String> {
-///   NotEmtpy()
+///   Validators.NotEmtpy()
 /// }
 ///
 /// try await nonEmptyString.validate("foo") // success.
@@ -13,34 +13,30 @@
 ///
 public struct AsyncValidator<Value>: AsyncValidation {
 
-  @usableFromInline
-  let closure: (Value) async throws -> Void
+  public let validators: any AsyncValidation<Value>
+
+  @inlinable
+  public init<V: AsyncValidation>(_ validator: V) where V.Value == Value {
+    self.validators = validator
+  }
 
   /// Create an async validation using the builder syntax.
   ///
   /// **Example**
   /// ```swift
   /// let asyncIntValidator = AsyncValidator<Int> {
-  ///   Equals(1)
+  ///   Int.equals(1)
   /// }
   ///
   /// try await asyncIntValidator.validate(1) // succeeds.
   /// try await asyncIntValidator.validate(2) // fails.
   /// ```
   @inlinable
-  public init<V: AsyncValidation>(@AsyncValidationBuilder<Value> _ build: () -> V)
+  public init<V: AsyncValidation>(
+    @AsyncValidationBuilder<Value> _ build: () -> V
+  )
   where Value == V.Value {
     self.init(build())
-  }
-
-  @inlinable
-  public init(_ validate: @escaping (Value) async throws -> Void) {
-    self.closure = validate
-  }
-
-  @inlinable
-  public init<V: AsyncValidation>(_ validator: V) where V.Value == Value {
-    self.closure = validator.validate(_:)
   }
 
   /// Transofrms a synchronous validator into an asynchronous one.
@@ -49,15 +45,13 @@ public struct AsyncValidator<Value>: AsyncValidation {
   ///   - validator: The synchronous validator to transform.
   @inlinable
   public init<V: Validation>(_ validator: V) where V.Value == Value {
-    self.closure = { value in
-      try validator.validate(value)
-    }
+    self.init(AnyAsyncValidator({ try validator.validate($0) }))
   }
 
   @inlinable
   public func validate(_ value: Value) async throws {
-    try await closure(value)
+    try await validators.validate(value)
   }
 }
 
-//public typealias AsyncValidatorOf<Value> = Validation<Value>
+public typealias AsyncValidatorOf<Value> = AsyncValidator<Value>

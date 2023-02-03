@@ -29,7 +29,6 @@ extension Validators {
   }
 }
 
-
 extension Validator {
 
   /// A validation that never succeeds.  This is useful for some testing purposes.
