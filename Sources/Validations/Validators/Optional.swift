@@ -13,8 +13,8 @@ extension Validation {
   /// ```
   ///
   @inlinable
-  public func `optional`() -> Validators.Optional<Self, Value?> {
-    Validators.Optional(self)
+  public func `optional`() -> Validators.OptionalValidator<Self, Value?> {
+    Validators.OptionalValidator(self)
   }
 
   /// Transform a ``Validation`` to one that works on an optional and fails if
@@ -54,21 +54,21 @@ extension AsyncValidation {
   /// ```
   ///
   @inlinable
-  public func `optional`() -> Validators.Optional<Self, Value?> {
-    Validators.Optional(self)
+  public func `optional`() -> Validators.OptionalValidator<Self, Value?> {
+    Validators.OptionalValidator(self)
   }
 
   /// Transform an``AsyncValidation`` to one that works on an optional and fails
   /// validation if the optional value is `nil`.
   ///
   /// ```swift
-  /// let validator = ValidatorOf<Int?>.notNil().map {
-  ///   Int.greaterThan(10)
+  /// let validator = AsyncValidatorOf<Int?>.notNil().map {
+  ///   Int.greaterThan(10).async
   /// }
   ///
-  /// try validator.validate(.some(11)) // success.
-  /// try validator.validate(.some(9)) // fails.
-  /// try validator.validate(.none) // fails.
+  /// try await validator.validate(.some(11)) // success.
+  /// try await validator.validate(.some(9)) // fails.
+  /// try await validator.validate(.none) // fails.
   ///
   /// ```
   @inlinable
@@ -82,6 +82,22 @@ extension AsyncValidation {
 
 extension Validators {
 
+  /// A type that maps on an optional value, throwing errors if the value is `nil`.
+  ///
+  /// This type is generally not interacted with directly, instead you cal ``Validation/map(_:)-56k9d`` on
+  /// an existing ``Validation`` or ``AsyncValidation``
+  ///
+  /// ```swift
+  /// let validator = ValidatorOf<Int?>.notNil().map {
+  ///   Int.greaterThan(10)
+  /// }
+  ///
+  /// try validator.validate(.some(11)) // success.
+  /// try validator.validate(.some(9)) // fails.
+  /// try validator.validate(.none) // fails.
+  ///
+  /// ```
+  ///
   public struct MapOptional<Downstream, Value> {
 
     public let downstream: Downstream
@@ -94,7 +110,7 @@ extension Validators {
 
   /// A validation that runs a validator if the value is not nil.
   ///
-  /// This type is generally not interacted with directly, instead you call the``Validation/optional()`` method
+  /// This type is generally not interacted with directly, instead you call the ``Validation/optional()`` method
   /// on an existing validator.
   ///
   /// ```swift
@@ -105,11 +121,11 @@ extension Validators {
   /// try validator.validate(.some(9)) // fails.
   /// ```
   ///
-  public struct Optional<Upstream, Value> {
+  public struct OptionalValidator<Upstream, Value> {
 
     public let upstream: Upstream
 
-    /// Create a new ``Validators/Optional`` with the given downstream validator to be called when
+    /// Create a new ``Validators/OptionalValidator`` with the given downstream validator to be called when
     /// values are not nil.
     ///
     /// - Parameters:
@@ -274,7 +290,7 @@ extension Optional: _AnyOptional {
   }
 }
 
-extension Validators.Optional: Validation
+extension Validators.OptionalValidator: Validation
 where
   Upstream: Validation,
   Value: _AnyOptional,
@@ -308,7 +324,7 @@ where
 
 }
 
-extension Validators.Optional: AsyncValidation
+extension Validators.OptionalValidator: AsyncValidation
 where
   Upstream: AsyncValidation,
   Value: _AnyOptional,

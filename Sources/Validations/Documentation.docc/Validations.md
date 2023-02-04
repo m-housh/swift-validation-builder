@@ -7,7 +7,7 @@ A library for creating validations with a focus on performance and ergonomics.
 
 ## Overview
 
-Validations with this library can be built by declaring ``Validator`` types, using the built-in
+Validations with this library can be built by declaring ``Validation`` types, using the built-in
 types supplied with the library, or conforming your types to the ``Validatable`` protocol.
 
 ### Using Validator's
@@ -22,10 +22,10 @@ struct User {
 
 let userValidator = ValidatorOf<User> {  
 
-  Validate(\.name, using: NotEmpty())
-  Validate(\.email) { 
-    NotEmpty()
-    Contains("@")
+  Validators.Validate(\.name, using: String.notEmpty())
+  Validators.Validate(\.email) { 
+    String.notEmpty()
+    String.contains("@")
   }
 }
 
@@ -35,14 +35,14 @@ try userValidator.validate(User(name: "Blob", email: "blob.example.com")) // thr
 
 ```
 
->  ``ValidatorOf`` is typealias of ``Validation`` for better ergonomics,
->  however the above could also be written as `Validation<User>` if
+>  ``ValidatorOf`` is typealias of ``Validator`` for better ergonomics,
+>  however the above could also be written as `Validator<User>` if
 >  you'd prefer.
 
 ### Conforming to `Validatable`
 
-You can conform types to the ``Validatable`` protocol, which is a type that can
-validate an instance of itself.
+You can conform types to the ``Validatable`` protocol or ``AsyncValidatable``, 
+which are types that can validate an instance of itself.
 
 Generally you will supply the ``Validation/body-swift.property-2e4vc`` property.  Which uses
 result builder syntax.
@@ -51,11 +51,11 @@ result builder syntax.
 extension User: Validatable { 
 
   var body: some Validator<Self> { 
-    Validation { 
-      Validate(\.name, using: NotEmpty())
-      Validate(\.email) { 
-        NotEmpty()
-        Contains("@")
+    Validator { 
+      Validators.Validate(\.name, using: String.notEmpty())
+      Validators.Validate(\.email) { 
+        String.notEmpty()
+        String.contains("@")
       }
     }
   }
@@ -67,7 +67,7 @@ try User(name: "", email: "blob@example.com").validate() // throws error.
 try User(name: "Blob", email: "blob.example.com").validate() // throws error.
 ```
 
-However you can also implement the ``Validation/body-swift.property-7hgef``.
+However you can also implement the ``Validation/validate(_:)-lqpu``.
 
 ```swift
 enum UserError: Error { 
@@ -93,7 +93,22 @@ extension User: Validatable {
 
 ### Validation Types
 
-* ``Validation``
-* ``Validatable``
 * ``AsyncValidation``
+* ``Validation``
 * ``AsyncValidatable``
+* ``Validatable``
+
+### Concrete Validation Types
+
+* ``AsyncValidator``
+* ``AnyAsyncValidator``
+* ``Validator``
+* ``AnyValidator``
+* ``Validators``
+
+### Builder Types
+
+* ``AccumulatingErrorBuilder``
+* ``AsyncValidationBuilder``
+* ``OneOfBuilder``
+* ``ValidationBuilder``

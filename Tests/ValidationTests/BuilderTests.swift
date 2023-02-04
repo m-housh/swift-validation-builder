@@ -21,12 +21,12 @@ final class BuilderTests: XCTestCase {
       let number: Int
       
       var body: some Validation<Self> {
-        OneOf {
+        Validators.OneOf {
           if shouldAllowOnes {
             Validators.Success()
           } else {
-            Validate(\.number) {
-              Not(.equals(1))
+            Validators.Validate(\.number) {
+              Validators.Not(.equals(1))
             }
           }
         }
@@ -39,7 +39,7 @@ final class BuilderTests: XCTestCase {
   
   func test_oneOfBuilder_limitedAvailability() {
     let validator = Validator {
-      OneOf {
+      Validators.OneOf {
         if #available(macOS 10.15, *) {
           Validators.Success<Int>()
         } else {
@@ -57,11 +57,11 @@ final class BuilderTests: XCTestCase {
       let number: Int
       
       var body: some Validation<Self> {
-        OneOf {
+        Validators.OneOf {
           Validators.Fail()
           if !shouldAllowOnes {
-            Validate(\.number) {
-              Not(.equals(1))
+            Validators.Validate(\.number) {
+              Validators.Not(.equals(1))
             }
           }
         }
@@ -78,12 +78,12 @@ final class BuilderTests: XCTestCase {
       let number: Int
       
       var body: some Validation<Self> {
-        Accumulating {
+        Validators.Accumulating {
           if shouldAllowOnes {
             Validators.Success()
           } else {
-            Validate(\.number) {
-              Not(.equals(1))
+            Validators.Validate(\.number) {
+              Validators.Not(.equals(1))
             }
           }
         }
@@ -96,7 +96,7 @@ final class BuilderTests: XCTestCase {
   
   func test_accumulatingBuilder_limitedAvailability() {
     let validator = Validator {
-      Accumulating {
+      Validators.Accumulating {
         if #available(macOS 10.15, *) {
           Validators.Success<Int>()
         } else {
@@ -114,11 +114,11 @@ final class BuilderTests: XCTestCase {
       let number: Int
       
       var body: some Validation<Self> {
-        Accumulating {
+        Validators.Accumulating {
           Validators.Success()
           if !shouldAllowOnes {
-            Validate(\.number) {
-              Not(.equals(1))
+            Validators.Validate(\.number) {
+              Validators.Not(.equals(1))
             }
           }
         }
@@ -138,8 +138,8 @@ final class BuilderTests: XCTestCase {
         AsyncValidator {
           Validators.Success()
           if !shouldAllowOnes {
-            Validate(\.number) {
-              Not(.equals(1))
+            Validators.Validate(\.number) {
+              Validators.Not(.equals(1))
             }
           }
         }
@@ -172,8 +172,8 @@ final class BuilderTests: XCTestCase {
           if shouldAllowOnes {
             Validators.Success()
           } else {
-            Validate(\.number) {
-              Not(.equals(1))
+            Validators.Validate(\.number) {
+              Validators.Not(.equals(1))
             }
           }
         }

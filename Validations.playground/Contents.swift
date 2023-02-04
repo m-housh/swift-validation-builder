@@ -17,3 +17,8 @@ var greeting = "Hello, playground"
 
 var optional: Optional<Int> = .some(1)
 
+struct User {
+  let name: String
+}
+
+//let keyPath = \User.name

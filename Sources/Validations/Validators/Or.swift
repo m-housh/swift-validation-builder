@@ -1,9 +1,16 @@
 extension Validators {
   /// A ``Validation`` that succeeds if either of the underlying validators succeed.
   ///
-  /// This type is generally not interacted with directly, instead use one of the ``Validation/or(_:)-7e8zk``
-  /// or ``AsyncValidation/or(_:)-7jj5l``methods on an existing validation.
+  /// This type is generally not interacted with directly, instead use the ``Validation/or(_:)-7e8zk``
+  /// method on a ``Validation`` or the equivalent on an ``AsyncValidation``.
   ///
+  /// ```swift
+  /// let validator = Int.greaterThan(10).or(.lessThan(5))
+  ///
+  /// try validator.validate(11) // success.
+  /// try validator.validate(9) // fails.
+  ///
+  /// ```
   ///
   public struct OrValidator<LhsValidator, RhsValidator> {
     @usableFromInline
@@ -30,14 +37,16 @@ where
   LhsValidator.Value == RhsValidator.Value
 {
 
-  fileprivate var validator: some Validation<LhsValidator.Value> {
-    OneOf {
+  @usableFromInline
+  var validator: some Validation<LhsValidator.Value> {
+    Validators.OneOf {
       lhs
       rhs
     }
     .mapError(ValidationError.failed(summary: "Did not pass any 'or' validations."))
   }
 
+  @inlinable
   public func validate(_ value: LhsValidator.Value) throws {
     try validator.validate(value)
   }
@@ -51,14 +60,16 @@ where
   LhsValidator.Value == RhsValidator.Value
 {
 
+  @usableFromInline
   var asyncValidator: some AsyncValidation<LhsValidator.Value> {
-    OneOf {
+    Validators.OneOf {
       lhs
       rhs
     }
     .mapError(ValidationError.failed(summary: "Did not pass any 'or' validations."))
   }
 
+  @inlinable
   public func validate(_ value: LhsValidator.Value) async throws {
     try await asyncValidator.validate(value)
   }

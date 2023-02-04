@@ -4,9 +4,9 @@ extension Validators {
   /// **Example**
   /// ```swift
   /// let oneOrTwo = ValidatorOf<Int> {
-  ///   OneOf {
-  ///     Equals(1)
-  ///     Equals(2)
+  ///   Validators.OneOf {
+  ///     Int.equals(1)
+  ///     Int.equals(2)
   ///   }
   /// }
   ///
@@ -15,7 +15,7 @@ extension Validators {
   /// try oneOrTwo.validate(3) // fails.
   /// ```
   ///
-  public struct OneOf<Value, Validators> {
+  public struct OneOfValidator<Value, Validators> {
 
     public let validators: Validators
 
@@ -30,7 +30,7 @@ extension Validators {
   }
 }
 
-extension Validators.OneOf: Validation where Validators: Validation, Validators.Value == Value {
+extension Validators.OneOfValidator: Validation where Validators: Validation, Validators.Value == Value {
 
   /// Create a ``OneOf`` validator using builder syntax.
   /// **Example**
@@ -61,7 +61,7 @@ extension Validators.OneOf: Validation where Validators: Validation, Validators.
   }
 }
 
-extension Validators.OneOf: AsyncValidation
+extension Validators.OneOfValidator: AsyncValidation
 where Validators: AsyncValidation, Validators.Value == Value {
 
   @inlinable
@@ -90,14 +90,17 @@ extension AsyncValidator {
   }
 }
 
-public func OneOf<Value, Validators: Validation>(
-  @OneOfBuilder<Value> builder: () -> Validators
-) -> Validations.Validators.OneOf<Value, Validators> {
-  .init(builder())
-}
-
-public func OneOf<Value, Validators: AsyncValidation>(
-  @OneOfBuilder<Value> builder: () -> Validators
-) -> Validations.Validators.OneOf<Value, Validators> {
-  .init(builder())
+extension Validators {
+  
+  public static func OneOf<Value, Validators: Validation>(
+    @OneOfBuilder<Value> builder: () -> Validators
+  ) -> Validations.Validators.OneOfValidator<Value, Validators> {
+    .init(builder())
+  }
+  
+  public static func OneOf<Value, Validators: AsyncValidation>(
+    @OneOfBuilder<Value> builder: () -> Validators
+  ) -> Validations.Validators.OneOfValidator<Value, Validators> {
+    .init(builder())
+  }
 }

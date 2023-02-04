@@ -7,7 +7,8 @@ extension Validators {
   /// you will often create this type through `Swift.Bool` type.
   ///
   /// **Example**
-  /// ```
+  ///
+  /// ```swift
   /// struct User: Validation {
   ///   let name: String
   ///   let isAdmin: Bool

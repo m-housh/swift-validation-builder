@@ -83,5 +83,3 @@ extension Validator {
     .init(Validators.Not(build()))
   }
 }
-
-public typealias Not = Validators.Not
