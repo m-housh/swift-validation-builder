@@ -20,8 +20,8 @@ extension Validators {
   /// }
   ///
   /// let myValidator = OneOf {
-  ///   Validators.Case(/MyEnum.one, using: .greaterThan(0))
-  ///   Validators.Case(/MyEnum.two, using: .greaterThan(10))
+  ///   Validators.case(/MyEnum.one, using: .greaterThan(0))
+  ///   Validators.case(/MyEnum.two, using: .greaterThan(10))
   /// }
   ///
   /// try myValidator.validate(.one(1)) // succeeds.
@@ -78,7 +78,6 @@ extension Validators {
   
   /// Create an enum case validation, using the given ``Validator`` for the value embedded in the case.
   ///
-  /// This is convenience for using static methods, such as ``Validator/greaterThan(_:)``.
   ///
   /// - Parameters:
   ///   - casePath: The case path for the enum.
@@ -88,7 +87,7 @@ extension Validators {
   ///   - line: The line.
   ///
   @inlinable
-  public static func Case<Parent, Child>(
+  public static func `case`<Parent, Child>(
     _ casePath: CasePath<Parent, Child>,
     with validator: Validator<Child>,
     file: StaticString = #file,
@@ -115,7 +114,7 @@ extension Validators {
   ///   - line: The line.
   ///   - validator: The ``Validation`` to use for the embedded value.
   @inlinable
-  public static func Case<Parent, ChildValidator: Validation>(
+  public static func `case`<Parent, ChildValidator: Validation>(
     _ casePath: CasePath<Parent, ChildValidator.Value>,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
@@ -133,7 +132,6 @@ extension Validators {
   
   /// Create an enum case validation, using the given ``AsyncValidator`` for the value embedded in the case.
   ///
-  /// This is convenience for using static methods, such as ``Validator/greaterThan(_:)``.
   ///
   /// - Parameters:
   ///   - casePath: The case path for the enum.
@@ -143,7 +141,7 @@ extension Validators {
   ///   - line: The line.
   ///
   @inlinable
-  public static func Case<Parent, Child>(
+  public static func `case`<Parent, Child>(
     _ casePath: CasePath<Parent, Child>,
     with validator: AsyncValidator<Child>,
     file: StaticString = #file,
@@ -170,7 +168,7 @@ extension Validators {
   ///   - line: The line.
   ///   - validator: The ``AsyncValidation`` to use for the embedded value.
   @inlinable
-  public static func Case<Parent, ChildValidator: AsyncValidation>(
+  public static func `case`<Parent, ChildValidator: AsyncValidation>(
     _ casePath: CasePath<Parent, ChildValidator.Value>,
     file: StaticString = #file,
     fileID: StaticString = #fileID,

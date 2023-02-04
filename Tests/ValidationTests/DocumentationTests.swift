@@ -12,17 +12,17 @@ final class DocumentationTests: XCTestCase {
       let isAdmin: Bool
       
       var body: some Validation<Self> {
-        Validators.Accumulating {
-          Validators.Validate(\.id, with: Int.greaterThan(0))
-          Validators.Validate(\.name, with: String.notEmpty())
+        Validators.accumulating {
+          Validators.validate(\.id, with: Int.greaterThan(0))
+          Validators.validate(\.name, with: String.notEmpty())
         }
       }
     }
 
     let adminUserValidator = ValidatorOf<User> {
-      Validators.Accumulating {
-        Validators.Validate(\.self)
-        Validators.Validate(\.isAdmin, with: true)
+      Validators.accumulating {
+        Validators.validate(\.self)
+        Validators.validate(\.isAdmin, with: true)
       }
     }
     
@@ -121,5 +121,16 @@ final class DocumentationTests: XCTestCase {
     let sut8 = ValidatorOf<Example>.greaterThan(\.count, \.deeply.nested.value)
     XCTAssertNoThrow(try sut8.validate(.init(count: 11)))
     XCTAssertThrowsError(try sut8.validate(.init(count: 9)))
+  }
+  
+  func test_error_label() throws {
+    let validator = Int.greaterThan(0).errorLabel("My Int", inline: true)
+    do {
+      try validator.validate(-1)
+    } catch {
+      let error = error as! ValidationError
+      let expected = "My Int: -1 is not greater than 0"
+      XCTAssertEqual(error.debugDescription, expected)
+    }
   }
 }

@@ -59,7 +59,7 @@ extension Validator {
   where C.Element: Equatable {
     .init(
       Self.lazy { parent in
-        Validators.Validate(toCollection) {
+        Validators.validate(toCollection) {
           C.contains(parent[keyPath: toElement])
         }
       }
@@ -94,7 +94,7 @@ extension Validator {
   ) -> Self
   where C.Element: Equatable {
     .init(
-      Validators.Validate(toCollection) {
+      Validators.validate(toCollection) {
         Validators.Contains(element: element)
       }
     )

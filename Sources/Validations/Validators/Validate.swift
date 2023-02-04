@@ -2,7 +2,7 @@ extension Validators {
   /// Validates a child value, generally used when creating a validation for a nested value.
   ///
   /// This type is not interacted with directly, instead use one of the static methods to create
-  /// a valid instance, such as ``Validators/Validate(_:with:)-4yq8h``.
+  /// a valid instance, such as ``Validators/validate(_:with:)-8xxlw``.
   ///
   /// **Example**
   ///
@@ -13,8 +13,8 @@ extension Validators {
   ///
   ///   var body: some Validation<Self> {
   ///     Validator {
-  ///       Validators.Validate(\.name, with: String.notEmtpy())
-  ///       Validators.Validate(\.email) {
+  ///       Validators.validate(\.name, with: String.notEmtpy())
+  ///       Validators.validate(\.email) {
   ///         String.notEmpty()
   ///         String.contains("@")
   ///       }
@@ -35,7 +35,7 @@ extension Validators {
   ///   let user: User
   ///
   ///   var body: some Validation<Self> {
-  ///     Validators.Validate(\.user)
+  ///     Validators.validate(\.user)
   ///   }
   /// }
   ///
@@ -79,7 +79,7 @@ where
 
 extension Validators {
   @inlinable
-  public static func Validate<Parent, Child>(
+  public static func validate<Parent, Child>(
     _ toChild: @escaping (Parent) -> Child,
     with validator: Validator<Child>
   ) -> Validators.ValidateValidator<Parent, Child, Validator<Child>> {
@@ -87,7 +87,7 @@ extension Validators {
   }
   
   @inlinable
-  public static func Validate<Parent, Child, ChildValidator: Validation>(
+  public static func validate<Parent, Child, ChildValidator: Validation>(
     _ toChild: KeyPath<Parent, Child>,
     @ValidationBuilder<Child> build: @escaping () -> ChildValidator
   ) -> Validators.ValidateValidator<Parent, Child, ChildValidator>
@@ -96,7 +96,7 @@ extension Validators {
   }
   
   @inlinable
-  public static func Validate<Parent, Child>(
+  public static func validate<Parent, Child>(
     _ toChild: KeyPath<Parent, Child>,
     with validator: any Validation<Child>
   ) -> Validators.ValidateValidator<Parent, Child, AnyValidator<Child>> {
@@ -104,7 +104,7 @@ extension Validators {
   }
   
   @inlinable
-  public static func Validate<Parent, Child: Validatable>(
+  public static func validate<Parent, Child: Validatable>(
     _ toChild: KeyPath<Parent, Child>
   ) -> Validators.ValidateValidator<Parent, Child, Child> {
     .init(toChild.value(from:), validator: toChild.value(from:))
@@ -115,7 +115,7 @@ extension Validators {
 extension Validators {
   
   @inlinable
-  public static func Validate<Parent, Child>(
+  public static func validate<Parent, Child>(
     _ toChild: @escaping (Parent) -> Child,
     with validator: AsyncValidator<Child>
   ) -> Validators.ValidateValidator<Parent, Child, AsyncValidator<Child>> {
@@ -123,7 +123,7 @@ extension Validators {
   }
   
   @inlinable
-  public static func Validate<Parent, Child, ChildValidator: AsyncValidation>(
+  public static func validate<Parent, Child, ChildValidator: AsyncValidation>(
     _ toChild: KeyPath<Parent, Child>,
     @AsyncValidationBuilder<Child> build: @escaping () -> ChildValidator
   ) -> Validators.ValidateValidator<Parent, Child, ChildValidator>
@@ -132,7 +132,7 @@ extension Validators {
   }
   
   @inlinable
-  public static func Validate<Parent, Child>(
+  public static func validate<Parent, Child>(
     _ toChild: KeyPath<Parent, Child>,
     with validator: any AsyncValidation<Child>
   ) -> Validators.ValidateValidator<Parent, Child, AnyAsyncValidator<Child>> {
@@ -140,7 +140,7 @@ extension Validators {
   }
   
   @inlinable
-  public static func Validate<Parent, Child: AsyncValidatable>(
+  public static func validate<Parent, Child: AsyncValidatable>(
     _ toChild: KeyPath<Parent, Child>
   ) -> Validators.ValidateValidator<Parent, Child, Child> {
     .init(toChild.value(from:), validator: toChild.value(from:))

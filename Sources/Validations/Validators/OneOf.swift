@@ -92,13 +92,13 @@ extension AsyncValidator {
 
 extension Validators {
   
-  public static func OneOf<Value, Validators: Validation>(
+  public static func oneOf<Value, Validators: Validation>(
     @OneOfBuilder<Value> builder: () -> Validators
   ) -> Validations.Validators.OneOfValidator<Value, Validators> {
     .init(builder())
   }
   
-  public static func OneOf<Value, Validators: AsyncValidation>(
+  public static func oneOf<Value, Validators: AsyncValidation>(
     @OneOfBuilder<Value> builder: () -> Validators
   ) -> Validations.Validators.OneOfValidator<Value, Validators> {
     .init(builder())

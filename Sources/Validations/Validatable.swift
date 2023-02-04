@@ -9,8 +9,8 @@
 /// extension User: Validatable {
 ///   var body: some Validator<Self> {
 ///     Validation {
-///       Validators.Validate(\.name, with: String.notEmpty())
-///       Validators.Validate(\.email, with: String.notEmpty())
+///       Validators.validate(\.name, with: String.notEmpty())
+///       Validators.validate(\.email, with: String.notEmpty())
 ///     }
 ///   }
 /// }

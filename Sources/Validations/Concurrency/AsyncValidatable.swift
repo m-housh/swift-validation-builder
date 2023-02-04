@@ -9,8 +9,8 @@
 /// extension User: AsyncValidatable {
 ///   var body: some AsyncValidation<Self> {
 ///     AsyncValidator {
-///       Validators.Validate(\.name, using: .notEmtpy())
-///       Validators.Validate(\.email, using: .email())
+///       Validators.validate(\.name, using: .notEmtpy())
+///       Validators.validate(\.email, using: .email())
 ///     }
 ///   }
 /// }

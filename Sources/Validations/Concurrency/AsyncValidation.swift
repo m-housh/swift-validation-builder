@@ -21,8 +21,8 @@
 ///   struct BlobValidator: AsyncValidation {
 ///     var body: some AsyncValidation<User> {
 ///       AsyncValidator {
-///         Validators.Validate(\.name, with: .equals("Blob"))
-///         Validators.Validate(\.email, with: .equals("blob@example.com"))
+///         Validators.validate(\.name, with: .equals("Blob"))
+///         Validators.validate(\.email, with: .equals("blob@example.com"))
 ///       }
 ///     }
 ///   }

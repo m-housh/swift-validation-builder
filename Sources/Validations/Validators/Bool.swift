@@ -14,13 +14,13 @@ extension Validators {
   ///   let isAdmin: Bool
   ///
   ///   var body: some Validation<Self> {
-  ///     Validate(\.name, using: String.notEmpty())
+  ///     validate(\.name, using: String.notEmpty())
   ///   }
   /// }
   ///
   /// let adminUserValidator = ValidatorOf<User> {
-  ///   Validate(\.self) // run default validations
-  ///   Validate(\.isAdmin, using: true) // use the `Bool` type as the validator.
+  ///   validate(\.self) // run default validations
+  ///   validate(\.isAdmin, using: true) // use the `Bool` type as the validator.
   /// }
   ///
   /// let adminUser = User(name: "Blob", isAdmin: true)

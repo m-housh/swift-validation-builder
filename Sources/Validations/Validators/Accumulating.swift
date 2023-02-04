@@ -18,8 +18,8 @@ extension Validators {
   ///
   ///   var body: some Validator<Self> {
   ///     Validators.Accumulating {
-  ///       Validators.Validate(\.name, using: NotEmpty())
-  ///       Validators.Validate(\.email) {
+  ///       Validators.validate(\.name, using: NotEmpty())
+  ///       Validators.validate(\.email) {
   ///         Validators.Accumulating { // accumulate errors for the email child validator.
   ///           NotEmpty()
   ///           Contains("@")
@@ -103,8 +103,8 @@ extension Validator {
   ///
   ///   var body: some Validation<Self> {
   ///     Validator.accumulating {
-  ///       Validators.Validate(\.name, using: .notEmpty())
-  ///       Validate(\.email, using: .accumulating {
+  ///       Validators.validate(\.name, using: .notEmpty())
+  ///       validate(\.email, using: .accumulating {
   ///            NotEmpty()
   ///           String.contains("@")
   ///       })
@@ -139,8 +139,8 @@ extension AsyncValidator {
   ///
   ///   var body: some AsyncValidation<Self> {
   ///     AsyncValidator.accumulating {
-  ///       Validators.Validate(\.name, using: .notEmpty())
-  ///       Validate(\.email, using: .accumulating {
+  ///       Validators.validate(\.name, using: .notEmpty())
+  ///       validate(\.email, using: .accumulating {
   ///            NotEmpty()
   ///           String.contains("@")
   ///       })
@@ -175,10 +175,10 @@ extension Validators {
   ///   let email: String
   ///
   ///   var body: some Validator<Self> {
-  ///     Validators.Accumulating {
-  ///       Validate(\.name, with: String.notEmpty())
-  ///       Validate(\.email) {
-  ///         Validators.Accumulating { // accumulate errors for the email child validator.
+  ///     Validators.accumulating {
+  ///       validate(\.name, with: String.notEmpty())
+  ///       validate(\.email) {
+  ///         Validators.accumulating { // accumulate errors for the email child validator.
   ///           String.notEmpty()
   ///           String.contains("@")
   ///         }
@@ -191,7 +191,7 @@ extension Validators {
   /// try User(name: "", email: "") // fails with 3 errors.
   /// ```
   ///
-  public static func Accumulating<Value, Validators: Validation>(
+  public static func accumulating<Value, Validators: Validation>(
     @AccumulatingErrorBuilder<Value> _ builder: () -> Validators
   ) -> Validations.Validators.AccumulatingValidator<Value, Validators>
   where Validators.Value == Value {
@@ -212,10 +212,10 @@ extension Validators {
   ///   let email: String
   ///
   ///   var body: some AsyncValidator<Self> {
-  ///     Validators.Accumulating {
-  ///       Validate(\.name, with: String.notEmpty()).async
-  ///       Validate(\.email) {
-  ///         Validators.Accumulating { // accumulate errors for the email child validator.
+  ///     Validators.accumulating {
+  ///       validate(\.name, with: String.notEmpty()).async
+  ///       validate(\.email) {
+  ///         Validators.accumulating { // accumulate errors for the email child validator.
   ///           String.notEmpty()
   ///           String.contains("@")
   ///         }.async
@@ -228,7 +228,7 @@ extension Validators {
   /// try User(name: "", email: "") // fails with 3 errors.
   /// ```
   ///
-  public static func Accumulating<Value, Validators: AsyncValidation>(
+  public static func accumulating<Value, Validators: AsyncValidation>(
     @AccumulatingErrorBuilder<Value> _ builder: () -> Validators
   ) -> Validations.Validators.AccumulatingValidator<Value, Validators>
   where Validators.Value == Value {

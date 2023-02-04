@@ -23,8 +23,8 @@ import Foundation
 ///   struct BlobValidator: Validator {
 ///     var body: some Validator<User> {
 ///       Validator {
-///         Validators.Validate(\.name, with: String.equals("Blob"))
-///         Validators.Validate(\.email, with: String.equals("blob@example.com"))
+///         Validators.validate(\.name, with: String.equals("Blob"))
+///         Validators.validate(\.email, with: String.equals("blob@example.com"))
 ///       }
 ///     }
 ///   }

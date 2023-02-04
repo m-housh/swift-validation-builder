@@ -1,4 +1,4 @@
-//import Validations
+import Validations
 import Foundation
 
 var greeting = "Hello, playground"
@@ -15,10 +15,6 @@ var greeting = "Hello, playground"
 //try MatchCharacter(input: "blob around the world", character: "a").validate() // success.
 //try MatchCharacter(input: "blob jr.", character: "z").validate() // fails.
 
-var optional: Optional<Int> = .some(1)
+let validator = Int.greaterThan(0).errorLabel("My Int")
 
-struct User {
-  let name: String
-}
-
-//let keyPath = \User.name
+try validator.validate(-1)

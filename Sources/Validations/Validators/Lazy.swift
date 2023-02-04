@@ -15,7 +15,7 @@ extension Validators {
   ///  ) -> Self {
   ///   .init(
   ///     Validators.Lazy { parent in
-  ///       Validate(toCollection) {
+  ///       validate(toCollection) {
   ///          C.contains(parent[keyPath: toElement])
   ///        }
   ///      }
