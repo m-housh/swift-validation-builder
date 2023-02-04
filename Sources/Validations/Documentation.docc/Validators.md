@@ -94,7 +94,7 @@ whether to be synchonous or asynchronous based on the context.
 - ``Validators/Validate(_:with:)-4yq8h``
 - ``Validators/Validate(_:with:)-528c1``
 - ``Validators/Validate(_:with:)-5qrzz``
+- ``Validators/Validate(_:with:)-sk1r``
 - ``Validators/Validate(_:build:)-4cdzq``
 - ``Validators/Validate(_:build:)-nuvc``
-- ``Validators/Validate(_:with:)-sk1r``
 
