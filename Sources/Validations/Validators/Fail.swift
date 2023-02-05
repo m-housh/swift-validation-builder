@@ -4,9 +4,9 @@ extension Validators {
   /// **Example**
   /// ```swift
   /// let intValidator = ValidatorOf<Int> {
-  ///   Accumulating {
-  ///     Fail()
-  ///     Equals(1)
+  ///   Validator.accumulating {
+  ///     Validator.fail()
+  ///     Int.equals(1)
   ///   }
   /// }
   ///
@@ -14,7 +14,7 @@ extension Validators {
   /// try intValidator.validate(1) // fails with 1 error.
   ///```
   ///
-  public struct Fail<Value>: Validation {
+  public struct FailingValidator<ValidationType> {
 
     /// Create a  validation that always fails.
     ///
@@ -22,10 +22,14 @@ extension Validators {
     @inlinable
     init() {}
 
-    @inlinable
-    public func validate(_ value: Value) throws {
-      throw ValidationError.failed(summary: "Fail validation error.")
-    }
+  }
+}
+
+extension Validators.FailingValidator: Validation where ValidationType: Validation {
+  
+  @inlinable
+  public func validate(_ value: ValidationType.Value) throws {
+    throw ValidationError.failed(summary: "Fail validation error.")
   }
 }
 
@@ -36,9 +40,9 @@ extension Validator {
   /// **Example**
   /// ```swift
   /// let intValidator = ValidatorOf<Int> {
-  ///   Accumulating {
-  ///     Validation.fail()
-  ///     Equals(1)
+  ///   Validator.accumulating {
+  ///     Validator.fail()
+  ///     Int.equals(1)
   ///   }
   /// }
   ///
@@ -49,7 +53,7 @@ extension Validator {
   ///
   @inlinable
   public static func fail() -> Self {
-    .init(Validations.Validators.Fail<Value>())
+    .init(Validations.Validators.FailingValidator<Self>())
   }
 }
 
@@ -62,7 +66,7 @@ extension AsyncValidator {
   /// let intValidator = AsyncValidatorOf<Int> {
   ///   AsyncValidator.accumulating {
   ///     AsyncValidator.fail()
-  ///     Int.equals(1)
+  ///     Int.equals(1).async
   ///   }
   /// }
   ///
@@ -73,6 +77,6 @@ extension AsyncValidator {
   ///
   @inlinable
   public static func fail() -> Self {
-    .init(Validator.fail().async)
+    .init(Validator.fail().async())
   }
 }

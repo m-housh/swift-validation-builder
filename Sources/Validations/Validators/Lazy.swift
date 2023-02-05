@@ -1,10 +1,45 @@
+
+extension Validator {
+
+  /// Create a ``Validators/LazyValidator`` validation.
+  ///
+  /// - Parameters:
+  ///   - validator: The validation that gets created lazily.
+  ///
+  @inlinable
+  public static func `lazy`<V: Validation>(
+    _ validator: @escaping (Value) -> V
+  )
+    -> Self
+  where V.Value == Value {
+    .init(Validators.LazyValidator(validator))
+  }
+}
+
+extension AsyncValidator {
+
+  /// Create a ``Validators/LazyValidator`` validation.
+  ///
+  /// - Parameters:
+  ///   - validator: The validation that gets created lazily.
+  ///
+  @inlinable
+  public static func `lazy`<V: AsyncValidation>(
+    _ validator: @escaping (Value) -> V
+  )
+    -> Self
+  where V.Value == Value {
+    .init(Validators.LazyValidator(validator))
+  }
+}
+
 extension Validators {
 
   /// A ``Validation`` that is created lazily.
   ///
   /// This generally used when you need access to the value in order to create the
-  /// nested validation.  For example, this is used under the hood when creating a ``Validators/Contains`` validator,
-  /// that requires access to the `Collection` and the `Element` using `KeyPath`'s in ``Validator/contains(_:_:)-7h8o5``.
+  /// nested validation.  For example, this is used under the hood when creating a ``Validators/ContainsValidator`` validator,
+  /// that requires access to the `Collection` and the `Element` using `KeyPath`'s in ``Validator/contains(_:element:)``.
   ///
   ///  **That implementation looks something like below**
   ///
@@ -22,12 +57,12 @@ extension Validators {
   ///    )
   ///  }
   /// ```
-  public struct Lazy<Value, Validator> {
+  public struct LazyValidator<Value, Validator> {
 
     @usableFromInline
     let validator: (Value) -> Validator
 
-    /// Create a ``Validators/Lazy`` validation.
+    /// Create a ``Validators/LazyValidator`` validation.
     ///
     /// - Parameters:
     ///   - validator: The validation that gets created lazily.
@@ -42,7 +77,7 @@ extension Validators {
   }
 }
 
-extension Validators.Lazy: Validation
+extension Validators.LazyValidator: Validation
 where
   Validator: Validation,
   Validator.Value == Value
@@ -55,7 +90,7 @@ where
 
 }
 
-extension Validators.Lazy: AsyncValidation
+extension Validators.LazyValidator: AsyncValidation
 where
   Validator: AsyncValidation,
   Validator.Value == Value
@@ -64,40 +99,5 @@ where
   @inlinable
   public func validate(_ value: Value) async throws {
     try await validator(value).validate(value)
-  }
-
-}
-
-extension Validator {
-
-  /// Create a ``Validators/Lazy`` validation.
-  ///
-  /// - Parameters:
-  ///   - validator: The validation that gets created lazily.
-  ///
-  @inlinable
-  public static func `lazy`<V: Validation>(
-    _ validator: @escaping (Value) -> V
-  )
-    -> Self
-  where V.Value == Value {
-    .init(Validators.Lazy(validator))
-  }
-}
-
-extension AsyncValidator {
-
-  /// Create a ``Validators/Lazy`` validation.
-  ///
-  /// - Parameters:
-  ///   - validator: The validation that gets created lazily.
-  ///
-  @inlinable
-  public static func `lazy`<V: AsyncValidation>(
-    _ validator: @escaping (Value) -> V
-  )
-    -> Self
-  where V.Value == Value {
-    .init(Validators.Lazy(validator))
   }
 }

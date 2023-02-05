@@ -91,19 +91,19 @@ extension User: Validatable {
 
 * <doc:GettingStarted>
 
-### Validation Types
+### Validation Protocols
 
-* ``AsyncValidation``
 * ``Validation``
-* ``AsyncValidatable``
+* ``AsyncValidation``
 * ``Validatable``
+* ``AsyncValidatable``
 
 ### Concrete Validation Types
 
-* ``AsyncValidator``
-* ``AnyAsyncValidator``
 * ``Validator``
+* ``AsyncValidator``
 * ``AnyValidator``
+* ``AnyAsyncValidator``
 * ``Validators``
 
 ### Builder Types

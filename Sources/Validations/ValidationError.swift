@@ -167,20 +167,6 @@ extension ValidationError: CustomDebugStringConvertible {
   }
 }
 
-//private func flatten(errors: [Error]) -> [Error] {
-//  var flattened = [Error]()
-//  for error in errors {
-//    if let validationError = error as? ValidationError,
-//      case let .manyFailed(manyErrors, _) = validationError
-//    {
-//      flattened += flatten(errors: manyErrors)
-//    } else {
-//      flattened.append(error)
-//    }
-//  }
-//  return flattened
-//}
-
 private func formatError(_ error: Error) -> String {
   switch error {
   case let error as ValidationError:

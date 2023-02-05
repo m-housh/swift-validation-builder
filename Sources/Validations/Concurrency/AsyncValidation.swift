@@ -19,10 +19,13 @@
 ///   }
 ///
 ///   struct BlobValidator: AsyncValidation {
+///
+///     typealias Value = User
+///
 ///     var body: some AsyncValidation<User> {
 ///       AsyncValidator {
-///         Validators.validate(\.name, with: .equals("Blob"))
-///         Validators.validate(\.email, with: .equals("blob@example.com"))
+///         AsyncValidator.validate(\.name, with: .equals("Blob"))
+///         AsyncValidator.validate(\.email, with: .equals("blob@example.com"))
 ///       }
 ///     }
 ///   }

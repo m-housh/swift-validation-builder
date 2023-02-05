@@ -2,7 +2,7 @@ extension Validators {
   /// Validates a child value, generally used when creating a validation for a nested value.
   ///
   /// This type is not interacted with directly, instead use one of the static methods to create
-  /// a valid instance, such as ``Validators/validate(_:with:)-8xxlw``.
+  /// a valid instance, such as the``Validator/validate(_:with:)-9hzlv``.
   ///
   /// **Example**
   ///
@@ -129,6 +129,16 @@ extension AsyncValidator {
   {
     .init(Validators.ValidateValidator(toChild, validator: { _ in validator }))
   }
+  
+//  @inlinable
+//  public static func validate<Child>(
+//    _ toChild: @escaping (Value) -> Child,
+//    with validator: Validator<Child>
+//  )
+//    -> Self
+//  {
+//    .init(Validators.ValidateValidator(toChild, validator: { _ in validator.async() }))
+//  }
 
   @inlinable
   public static func validate<Child>(

@@ -8,7 +8,7 @@ extension Validator where Value == String {
   ///
   @inlinable
   public static func regex(matching pattern: String) -> Self {
-    .init(Validators.Regex<Self>(pattern: pattern))
+    .init(Validators.RegexValidator<Self>(pattern: pattern))
   }
 }
 
@@ -22,7 +22,7 @@ extension AsyncValidator where Value == String {
   ///
   @inlinable
   public static func regex(matching pattern: String) -> Self {
-    .init(Validators.Regex<Self>(pattern: pattern))
+    .init(Validators.RegexValidator<Self>(pattern: pattern))
   }
 }
 
@@ -32,7 +32,7 @@ extension Validators {
   /// A ``Validation`` that matches a regular expression pattern for validation.
   ///
   ///
-  public struct Regex<ValidationType> {
+  public struct RegexValidator<ValidationType> {
 
     /// The regex pattern string.
     public let pattern: String
@@ -50,7 +50,7 @@ extension Validators {
   }
 }
 
-extension Validators.Regex: Validation where ValidationType: Validation {
+extension Validators.RegexValidator: Validation where ValidationType: Validation {
   @inlinable
   public func validate(_ value: String) throws {
     guard let range = value.range(of: pattern, options: [.regularExpression]),
@@ -61,7 +61,7 @@ extension Validators.Regex: Validation where ValidationType: Validation {
   }
 }
 
-extension Validators.Regex: AsyncValidation where ValidationType: AsyncValidation {
+extension Validators.RegexValidator: AsyncValidation where ValidationType: AsyncValidation {
   @inlinable
   public func validate(_ value: String) async throws {
     guard let range = value.range(of: pattern, options: [.regularExpression]),

@@ -1,3 +1,45 @@
+
+
+extension Validator {
+
+  @inlinable
+  public static func not(
+    @ValidationBuilder<Value> with build: () -> some Validation<Value>
+  ) -> Self {
+    .init(Validators.NotValidator(build()))
+  }
+
+  @inlinable
+  public static func not(_ validation: some Validation<Value>) -> Self {
+    .init(Validators.NotValidator(validation))
+  }
+
+  @inlinable
+  public static func not(_ validation: Self) -> Self {
+    .init(Validators.NotValidator(validation))
+  }
+}
+
+extension AsyncValidator {
+
+  @inlinable
+  public static func not(
+    @AsyncValidationBuilder<Value> with build: () -> some Validation<Value>
+  ) -> Self {
+    .init(Validators.NotValidator(build()))
+  }
+
+  @inlinable
+  public static func not(_ validation: some AsyncValidation<Value>) -> Self {
+    .init(Validators.NotValidator(validation))
+  }
+
+  @inlinable
+  public static func not(_ validation: Self) -> Self {
+    .init(Validators.NotValidator(validation))
+  }
+}
+
 extension Validators {
   /// Inverses a validator.
   ///
@@ -11,7 +53,7 @@ extension Validators {
   /// try noOnes.validate(1) // fails.
   ///
   /// ```
-  public struct Not<Validations> {
+  public struct NotValidator<Validations> {
 
     @usableFromInline
     let validations: Validations
@@ -38,7 +80,7 @@ extension Validators {
   }
 }
 
-extension Validators.Not: Validation where Validations: Validation {
+extension Validators.NotValidator: Validation where Validations: Validation {
   @inlinable
   public func validate(_ value: Validations.Value) throws {
     do {
@@ -52,7 +94,7 @@ extension Validators.Not: Validation where Validations: Validation {
   }
 }
 
-extension Validators.Not: AsyncValidation where Validations: AsyncValidation {
+extension Validators.NotValidator: AsyncValidation where Validations: AsyncValidation {
   @inlinable
   public func validate(_ value: Validations.Value) async throws {
     do {
@@ -64,45 +106,4 @@ extension Validators.Not: AsyncValidation where Validations: AsyncValidation {
     }
     throw ValidationError.failed(summary: "Not validator did not succeed.")
   }
-}
-
-extension Validator {
-
-  @inlinable
-  public static func not(
-    @ValidationBuilder<Value> with build: () -> some Validation<Value>
-  ) -> Self {
-    .init(Validators.Not(build()))
-  }
-
-  @inlinable
-  public static func not(_ validation: some Validation<Value>) -> Self {
-    .init(Validators.Not(validation))
-  }
-
-  @inlinable
-  public static func not(_ validation: Self) -> Self {
-    .init(Validators.Not(validation))
-  }
-  /// Create a not validator using builder syntax.
-  ///
-  /// **Example**
-  /// ```swift
-  /// let blobValidator = ValidatorOf<String> {
-  ///   Equals("blob")
-  /// }
-  ///
-  /// let notBlobValidator = Not {
-  ///   blobValidator
-  /// }
-  ///
-  /// try notBlobValidator.validate("blob jr.") // success.
-  /// try notBlobValidator.validate("blob") // fails
-  /// ```
-  ///
-  //    @inlinable
-  //    public init(@ValidationBuilder<Validate.Value> _ build: () -> Validate) {
-  //      self.init(build())
-  //    }
-
 }

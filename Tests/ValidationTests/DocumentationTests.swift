@@ -66,7 +66,7 @@ final class DocumentationTests: XCTestCase {
     XCTAssertNoThrow(try hasOneValidator.validate([2, 3, 6, 4, 1])) // success.
     XCTAssertThrowsError(try hasOneValidator.validate([4, 9, 7, 3])) // fails
     
-    let sut = ValidatorOf<MatchCharacter>.contains(\.input, "z")
+    let sut = ValidatorOf<MatchCharacter>.contains(\.input, element: "z")
     XCTAssertNoThrow(try sut.validate(.init(input: "baz", character: "f")))
     XCTAssertThrowsError(try sut.validate(.init(input: "foo", character: "f")))
   
@@ -132,5 +132,32 @@ final class DocumentationTests: XCTestCase {
       let expected = "My Int: -1 is not greater than 0"
       XCTAssertEqual(error.debugDescription, expected)
     }
+  }
+  
+  func test_async_validation_doc() async {
+    
+    struct User {
+      let name: String
+      let email: String
+    }
+    
+    struct BlobValidator: AsyncValidation {
+      typealias Value = User
+      
+      var body: some AsyncValidation<User> {
+        AsyncValidator {
+          AsyncValidator.validate(\.name, with: .equals("Blob"))
+          AsyncValidator.validate(\.email, with: .equals("blob@example.com"))
+        }
+      }
+    }
+    
+    let blob = User(name: "Blob", email: "blob@example.com")
+    let notBlob = User(name: "Blob Jr.", email: "blob.jr@example.com")
+    
+    let validator = BlobValidator()
+    
+    await XCTAssertNoThrowAsync(try await validator.validate(blob)) // success.
+    await XCTAssertThrowsAsyncError(try await validator.validate(notBlob)) // throws.
   }
 }

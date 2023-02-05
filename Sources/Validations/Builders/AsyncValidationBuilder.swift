@@ -25,7 +25,7 @@ public enum AsyncValidationBuilder<Value> {
     V.Value
   >
   where V.Value == Value {
-    expression.async
+    expression.async()
   }
 
   @inlinable

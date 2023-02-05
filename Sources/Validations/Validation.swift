@@ -20,11 +20,14 @@ import Foundation
 ///     let email: String
 ///   }
 ///
-///   struct BlobValidator: Validator {
-///     var body: some Validator<User> {
+///   struct BlobValidator: Validation {
+///
+///     typealias Value = User
+///
+///     var body: some Validation<User> {
 ///       Validator {
-///         Validators.validate(\.name, with: String.equals("Blob"))
-///         Validators.validate(\.email, with: String.equals("blob@example.com"))
+///         Validator.validate(\.name, with: String.equals("Blob"))
+///         Validator.validate(\.email, with: String.equals("blob@example.com"))
 ///       }
 ///     }
 ///   }

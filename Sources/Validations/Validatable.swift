@@ -7,7 +7,7 @@
 /// }
 ///
 /// extension User: Validatable {
-///   var body: some Validator<Self> {
+///   var body: some Validation<Self> {
 ///     Validation {
 ///       Validators.validate(\.name, with: String.notEmpty())
 ///       Validators.validate(\.email, with: String.notEmpty())

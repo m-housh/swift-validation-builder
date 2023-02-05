@@ -25,6 +25,31 @@ extension Validator where Value == String {
   }
 }
 
+extension AsyncValidator where Value == String {
+
+  /// An``AsyncValidator`` that validates a string is a valid email.
+  ///
+  /// **Example**
+  /// ```swift
+  ///
+  /// let emailValidator = ValidatorOf<String>.email()
+  ///
+  /// try emailValidator.validate("blob@example.com") // succeeds.
+  /// try emailValidator.validate("blob.example.com") // fails.
+  ///
+  /// ```
+  ///
+  /// > Note: The above validator is also be available from the `String` type as well `String.email()`
+  ///
+  /// - Parameters:
+  ///   - style: The email style to validate.
+  ///
+  @inlinable
+  public static func email(_ style: Validators.EmailValidator<Self>.Style = .default) -> Self {
+    .init(Validators.EmailValidator<Self>(style: style))
+  }
+}
+
 extension String {
   /// A ``Validation`` that validates a string is a valid email.
   ///
@@ -69,7 +94,7 @@ extension Validators {
 
     public let style: Style
 
-    /// Create an ``Validators/Email`` validationl.
+    /// Create an ``Validators/EmailValidator`` validationl.
     ///
     /// - Parameters:
     ///   - style: The email style to validate.
@@ -97,7 +122,10 @@ extension Validators.EmailValidator: Validation where ValidationType: Validation
         // total length
         Validator.lessThanOrEquals(\.count, 320)
         // length before the @
-        Validators.MapValue({ $0.split(separator: "@")[0].count }, using: .lessThanOrEquals(64))
+        Validator.mapValue(
+          { $0.split(separator: "@")[0].count },
+          with: Int.lessThanOrEquals(64)
+        )
       }
     }
   }
@@ -107,14 +135,16 @@ extension Validators.EmailValidator: AsyncValidation where ValidationType: Async
 
   public var body: some AsyncValidation<String> {
     AsyncValidator<Value> {
-      String.notEmpty().async  // fail early if the string is empty
+      String.notEmpty().async()  // fail early if the string is empty
       AsyncValidator.accumulating {  // accumulate errors if not.
-        Validator.regex(matching: style.regex).async
+        AsyncValidator.regex(matching: style.regex)
         // total length
-        Validator.lessThanOrEquals(\.count, 320).async
+        AsyncValidator.lessThanOrEquals(\.count, 320)
         // length before the @
-        Validators.MapValue({ $0.split(separator: "@")[0].count }, using: .lessThanOrEquals(64))
-          .async
+        AsyncValidator.mapValue(
+          { $0.split(separator: "@")[0].count },
+          with: Int.lessThanOrEquals(64)
+        )
       }
     }
   }

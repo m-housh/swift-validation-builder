@@ -8,7 +8,7 @@ extension Validators {
   /// method is called with an un-handled case an `XCTFail` and runtime warning will be thrown,
   /// when not inside a testing context.
   ///
-  /// This is not interected with directly, instead use one of the ``Validators/Case(_:with:file:fileID:line:)-6rsds`` methods
+  /// This is not interected with directly, instead use one of the ``Validator/case(_:with:file:fileID:line:)-4j9wy`` methods
   /// to create a ``Validators/CaseValidator``.
   ///
   /// **Example**

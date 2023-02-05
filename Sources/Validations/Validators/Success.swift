@@ -8,18 +8,29 @@ extension Validators {
   /// try! always.validate("")
   /// // succeeds
   /// ```
-  public struct Success<Value>: Validation {
+  public struct SuccessValidator<ValidationType, Value> {
 
     @inlinable
     public init() {}
 
-    @inlinable
-    public func validate(_ value: Value) throws {
-      // do nothing.
-    }
   }
 }
 
+extension Validators.SuccessValidator: Validation where ValidationType: Validation {
+  
+  @inlinable
+  public func validate(_ value: Value) throws {
+    // do nothing.
+  }
+}
+
+extension Validators.SuccessValidator: AsyncValidation where ValidationType: AsyncValidation {
+  
+  @inlinable
+  public func validate(_ value: Value) throws {
+    // do nothing.
+  }
+}
 extension Validator {
 
   /// A validator that always succeeds.
@@ -32,7 +43,7 @@ extension Validator {
   /// // succeeds
   /// ```
   public static func success() -> Self {
-    .init(Validators.Success())
+    .init(Validators.SuccessValidator<Self, Value>())
   }
 }
 
@@ -48,7 +59,7 @@ extension AsyncValidator {
   /// // succeeds
   /// ```
   public static func success() -> Self {
-    Validators.Success().async
+    Validator.success().async()
   }
 }
 //public typealias Always = Validators.Success

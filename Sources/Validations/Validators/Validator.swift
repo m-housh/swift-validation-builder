@@ -4,7 +4,7 @@
 /// **Example**
 /// ```swift
 /// let nonEmptyString = Validator<String> {
-///   Validators.NotEmtpy()
+///   String.notEmtpy()
 /// }
 ///
 /// try nonEmptyString.validate("foo") // success.
@@ -20,7 +20,7 @@ public struct Validator<Value>: Validation {
   /// **Example**
   ///
   /// ```swift
-  /// let notEmptyString = Validator<String>(Validators.NotEmpty())
+  /// let notEmptyString = Validator<String>(String.notEmpty())
   /// ```
   @inlinable
   public init<V: Validation>(_ validators: V) where V.Value == Value {

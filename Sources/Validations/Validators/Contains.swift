@@ -1,48 +1,3 @@
-extension Validators {
-  /// A ``Validation`` for if a collection contains a value.
-  ///
-  /// ```swift
-  /// let validator = ValidatorOf<String> {
-  ///   Validator.contains("@")
-  ///   // or String.contains("@") could be used.
-  /// }
-  ///
-  /// try validator.validate("blob@example.com") // success.
-  /// try validator.validate("blob.jr.example.com") // fails.
-  ///
-  /// ```
-  ///
-  public struct Contains<Value: Collection> {
-
-    public let element: Value.Element
-
-    @inlinable
-    public init(element: Value.Element) {
-      self.element = element
-    }
-
-  }
-}
-
-extension Validators.Contains: Validation
-where
-  Value.Element: Equatable
-{
-
-  @usableFromInline
-  func _validate(_ value: Value) throws {
-    guard value.contains(element) else {
-      throw ValidationError.failed(summary: "Does not contain \(element)")
-    }
-  }
-
-  @inlinable
-  public func validate(_ value: Value) throws {
-    try _validate(value)
-  }
-
-}
-
 extension Validator {
   /// A ``Validation`` for if a `Collection` contains a value.
   ///
@@ -104,7 +59,7 @@ extension Validator {
   @inlinable
   public static func contains<C: Collection>(
     _ toCollection: KeyPath<Value, C>,
-    _ element: C.Element
+    element: C.Element
   ) -> Self
   where C.Element: Equatable {
     .init(
@@ -129,7 +84,7 @@ extension Validator where Value: Collection, Value.Element: Equatable {
   ///
   @inlinable
   public static func contains(_ element: Value.Element) -> Self {
-    .init(Value.contains(element))
+    .init(Validators.ContainsValidator<Self, Value>(element: element))
   }
 }
 
@@ -147,8 +102,8 @@ extension Collection where Element: Equatable {
   /// - Parameters:
   ///   - element: The element to validate is in the collection.
   @inlinable
-  public static func contains(_ element: Element) -> Validators.Contains<Self> {
-    .init(element: element)
+  public static func contains(_ element: Element) -> Validator<Self> {
+    .contains(element)
   }
 }
 
@@ -182,7 +137,7 @@ extension AsyncValidator {
   ) -> Self
   where C.Element: Equatable {
     .init(
-      Validator.contains(toCollection, toElement).async
+      Validator.contains(toCollection, toElement).async()
     )
   }
 
@@ -210,11 +165,71 @@ extension AsyncValidator {
   @inlinable
   public static func contains<C: Collection>(
     _ toCollection: KeyPath<Value, C>,
-    _ element: C.Element
+    element: C.Element
   ) -> Self
   where C.Element: Equatable {
     .init(
-      Validator.contains(toCollection, element).async
+      Validator.contains(toCollection, element: element).async()
     )
   }
+}
+
+extension Validators {
+  /// A ``Validation`` for if a collection contains a value.
+  ///
+  /// ```swift
+  /// let validator = ValidatorOf<String> {
+  ///   Validator.contains("@")
+  ///   // or String.contains("@") could be used.
+  /// }
+  ///
+  /// try validator.validate("blob@example.com") // success.
+  /// try validator.validate("blob.jr.example.com") // fails.
+  ///
+  /// ```
+  ///
+  public struct ContainsValidator<ValidationType, Value: Collection> {
+
+    public let element: Value.Element
+
+    @inlinable
+    public init(element: Value.Element) {
+      self.element = element
+    }
+
+  }
+}
+
+extension Validators.ContainsValidator: Validation
+where
+  Value.Element: Equatable,
+  ValidationType: Validation
+{
+
+  @inlinable
+  public func validate(_ value: Value) throws {
+    guard value.contains(element) else {
+      throw ValidationError.failed(summary: "Does not contain \(element)")
+    }
+  }
+
+}
+
+extension Validators.ContainsValidator: AsyncValidation
+where
+  Value.Element: Equatable,
+  ValidationType: AsyncValidation
+{
+  
+  public var body: some AsyncValidation<Value> {
+    Validator.contains(self.element).async()
+  }
+
+//  @inlinable
+//  public func validate(_ value: Value) throws {
+//    guard value.contains(element) else {
+//      throw ValidationError.failed(summary: "Does not contain \(element)")
+//    }
+//  }
+
 }

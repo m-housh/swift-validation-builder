@@ -1,25 +1,3 @@
-extension Validators {
-  /// Validates a collection is empty.
-  ///
-  /// ```swift
-  ///  let emptyValidator = ValidatorOf<String> {
-  ///    Empty()
-  ///  }
-  ///
-  ///  try emptyValidator.validate("") // success.
-  ///  try emptyValidator.validate("foo") // fails.
-  ///  ```
-  public struct Empty<Value: Collection>: Validation {
-
-    public init() {}
-
-    public var body: some Validation<Value> {
-      Validator.validate(\.isEmpty, with: true)
-        .mapError(ValidationError.failed(summary: "Expected empty."))
-    }
-  }
-}
-
 extension Validator where Value: Collection {
   /// Create a ``Validator`` that validates a collection is empty.
   ///
@@ -34,7 +12,7 @@ extension Validator where Value: Collection {
   /// > written as `let emptyValidator = String.empty()`
   ///
   public static func empty() -> Self {
-    self.init(Validators.Empty())
+    self.init(Validators.EmptyValidator<Self, Value>())
   }
 }
 
@@ -52,9 +30,10 @@ extension AsyncValidator where Value: Collection {
   /// > written as `let emptyValidator = String.empty()`
   ///
   public static func empty() -> Self {
-    self.init(Validator.empty().async)
+    self.init(Validator.empty().async())
   }
 }
+
 extension Collection {
   /// Validates a collection is empty.
   ///
@@ -66,7 +45,42 @@ extension Collection {
   ///  ```
   ///
   @inlinable
-  public static func empty() -> Validators.Empty<Self> {
-    Validators.Empty()
+  public static func empty() -> Validator<Self> {
+    .empty()
   }
 }
+
+extension Validators {
+  /// Validates a collection is empty.
+  ///
+  /// ```swift
+  ///  let emptyValidator = ValidatorOf<String> {
+  ///    String.empty()
+  ///  }
+  ///
+  ///  try emptyValidator.validate("") // success.
+  ///  try emptyValidator.validate("foo") // fails.
+  ///  ```
+  public struct EmptyValidator<ValidationType, Value: Collection> {
+
+    public init() {}
+
+    
+  }
+}
+
+extension Validators.EmptyValidator: Validation where ValidationType: Validation {
+  
+  public var body: some Validation<Value> {
+    Validator.validate(\.isEmpty, with: true)
+      .mapError(ValidationError.failed(summary: "Expected to be empty."))
+  }
+}
+
+extension Validators.EmptyValidator: AsyncValidation where ValidationType: AsyncValidation {
+  
+  public var body: some AsyncValidation<Value> {
+    Validator.empty().async()
+  }
+}
+

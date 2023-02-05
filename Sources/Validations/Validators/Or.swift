@@ -220,7 +220,7 @@ extension AsyncValidation {
   public func or(_ validation: Validator<Value>)
     -> Validators.OrValidator<Self, AsyncValidator<Value>>
   {
-    self.or(validation.async)
+    self.or(validation.async())
   }
 
   /// Create an ``AsyncValidation`` that succeeds if one of the validators passes.
@@ -243,6 +243,6 @@ extension AsyncValidation {
   public func or(_ validation: any Validation<Value>)
     -> Validators.OrValidator<Self, AsyncValidator<Value>>
   {
-    self.or(validation.async)
+    self.or(validation.async())
   }
 }

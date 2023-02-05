@@ -152,7 +152,7 @@ extension Validators {
   /// try validator.validate(.none)) // fails.
   /// ```
   ///
-  public struct NotNil<Value: _AnyOptional, Upstream> {
+  public struct NotNilValidator<Value: _AnyOptional, Upstream> {
     @inlinable
     public init() {}
   }
@@ -171,7 +171,7 @@ extension Validators {
   /// try validator.validate(.some(1)) // fails.
   /// ```
   ///
-  public struct Nil<Value: _AnyOptional, Upstream> {
+  public struct NilValidator<Value: _AnyOptional, Upstream> {
 
     @inlinable
     public init() {}
@@ -194,7 +194,7 @@ extension Validator where Value: _AnyOptional {
   ///
   @inlinable
   public static func `nil`() -> Self {
-    .init(Validators.Nil<Value, Self>())
+    .init(Validators.NilValidator<Value, Self>())
   }
 
   /// A ``Validation`` that validates optional values are not nil
@@ -210,7 +210,7 @@ extension Validator where Value: _AnyOptional {
   ///
   @inlinable
   public static func notNil() -> Self {
-    .init(Validators.NotNil<Value, Self>())
+    .init(Validators.NotNilValidator<Value, Self>())
   }
 }
 
@@ -229,7 +229,7 @@ extension AsyncValidator where Value: _AnyOptional {
   ///
   @inlinable
   public static func `nil`() -> Self {
-    .init(Validators.Nil<Value, Self>())
+    .init(Validators.NilValidator<Value, Self>())
   }
 
   /// An``AsyncValidator`` that validates optional values are not nil
@@ -245,7 +245,7 @@ extension AsyncValidator where Value: _AnyOptional {
   ///
   @inlinable
   public static func notNil() -> Self {
-    .init(Validators.NotNil<Value, Self>())
+    .init(Validators.NotNilValidator<Value, Self>())
   }
 }
 
@@ -358,7 +358,7 @@ where
 
 }
 
-extension Validators.NotNil: Validation where Upstream: Validation {
+extension Validators.NotNilValidator: Validation where Upstream: Validation {
   @inlinable
   public func validate(_ value: Value) throws {
     guard let _ = value.wrappedValue else {
@@ -367,7 +367,7 @@ extension Validators.NotNil: Validation where Upstream: Validation {
   }
 }
 
-extension Validators.NotNil: AsyncValidation where Upstream: AsyncValidation {
+extension Validators.NotNilValidator: AsyncValidation where Upstream: AsyncValidation {
   @inlinable
   public func validate(_ value: Value) throws {
     guard let _ = value.wrappedValue else {
@@ -376,7 +376,7 @@ extension Validators.NotNil: AsyncValidation where Upstream: AsyncValidation {
   }
 }
 
-extension Validators.Nil: Validation where Upstream: Validation {
+extension Validators.NilValidator: Validation where Upstream: Validation {
 
   @inlinable
   public func validate(_ value: Value) throws {
@@ -386,7 +386,7 @@ extension Validators.Nil: Validation where Upstream: Validation {
   }
 }
 
-extension Validators.Nil: AsyncValidation where Upstream: AsyncValidation {
+extension Validators.NilValidator: AsyncValidation where Upstream: AsyncValidation {
 
   @inlinable
   public func validate(_ value: Value) async throws {

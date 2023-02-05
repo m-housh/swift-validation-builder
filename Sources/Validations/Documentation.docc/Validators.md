@@ -8,17 +8,17 @@
 
 ## Overview
 
-The various operators defined as extensions on the ``Validation`` protocol or the
-``Validator`` type implement their functionality as classes or structures that extend
-this enumeration.  For example the ``Validation/map(_:)-8owqv`` returns a
-``Validators/Map`` validation.
+The various operators defined as extensions on the ``Validation`` protocol, the
+``Validator`` type, and the ``AsyncValidator`` type, they implement their functionality as 
+classes or structures that extend this enumeration.  For example the ``Validation/map(_:)-8owqv`` 
+returns a ``Validators/Map`` validation.
+
+These are generally not interacted with directly, instead use methods on concrete validation types
+for these to be generated properly for the context.
 
 ## Topics
 
 ### Top Level Types
-
-These are types that you generally don't interact with directly, however they
-do offer explanation into how to use them and the static methods to create them.
 
 - ``Validators/AccumulatingValidator``
 - ``Validators/BoolValidator``
@@ -34,14 +34,14 @@ do offer explanation into how to use them and the static methods to create them.
 
 These are types that work on `Collection` types.
 
-- ``Validators/Contains``
-- ``Validators/Empty``
-- ``Validators/NotEmpty``
+- ``Validators/ContainsValidator``
+- ``Validators/EmptyValidator``
+- ``Validators/NotEmptyValidator``
 
 ### String Validations
 
-- ``Validators/Email``
-- ``Validators/Regex``
+- ``Validators/EmailValidator``
+- ``Validators/RegexValidator``
 
 ### Map Operations
 
@@ -55,16 +55,17 @@ These are types that are used to perform `map` operations on existing ``Validati
 
 ### Optional Validations
 
-- ``Validators/Nil``
-- ``Validators/NotNil``
+- ``Validators/NilValidator``
+- ``Validators/NotNilValidator``
 
 ### Utility Types
 
-- ``Validators/Fail``
-- ``Validators/Lazy``
-- ``Validators/Not``
-- ``Validators/Success``
+- ``Validators/FailingValidator``
+- ``Validators/LazyValidator``
+- ``Validators/NotValidator``
+- ``Validators/SuccessValidator``
 
+<!--
 ## Type Methods
 
 These methods create concrete versions of some of the top level types.  They infer
@@ -98,3 +99,4 @@ whether to be synchonous or asynchronous based on the context.
 - ``Validators/validate(_:build:)-96v5q``
 - ``Validators/validate(_:build:)-5pnod``
 
+-->
