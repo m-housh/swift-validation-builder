@@ -22,10 +22,10 @@ extension Validators {
   ///    )
   ///  }
   /// ```
-  public struct Lazy<Value>: Validation {
+  public struct Lazy<Value, Validator> {
 
     @usableFromInline
-    let validator: (Value) -> any Validation<Value>
+    let validator: (Value) -> Validator
 
     /// Create a ``Validators/Lazy`` validation.
     ///
@@ -34,16 +34,38 @@ extension Validators {
     ///
     @inlinable
     public init(
-      _ validator: @escaping (Value) -> any Validation<Value>
+      _ validator: @escaping (Value) -> Validator
     ) {
       self.validator = validator
     }
 
-    @inlinable
-    public func validate(_ value: Value) throws {
-      try validator(value).validate(value)
-    }
   }
+}
+
+extension Validators.Lazy: Validation
+where
+  Validator: Validation,
+  Validator.Value == Value
+{
+
+  @inlinable
+  public func validate(_ value: Value) throws {
+    try validator(value).validate(value)
+  }
+
+}
+
+extension Validators.Lazy: AsyncValidation
+where
+  Validator: AsyncValidation,
+  Validator.Value == Value
+{
+
+  @inlinable
+  public func validate(_ value: Value) async throws {
+    try await validator(value).validate(value)
+  }
+
 }
 
 extension Validator {
@@ -54,9 +76,28 @@ extension Validator {
   ///   - validator: The validation that gets created lazily.
   ///
   @inlinable
-  public static func `lazy`(
-    _ validator: @escaping (Value) -> any Validation<Value>
-  ) -> Self {
+  public static func `lazy`<V: Validation>(
+    _ validator: @escaping (Value) -> V
+  )
+    -> Self
+  where V.Value == Value {
+    .init(Validators.Lazy(validator))
+  }
+}
+
+extension AsyncValidator {
+
+  /// Create a ``Validators/Lazy`` validation.
+  ///
+  /// - Parameters:
+  ///   - validator: The validation that gets created lazily.
+  ///
+  @inlinable
+  public static func `lazy`<V: AsyncValidation>(
+    _ validator: @escaping (Value) -> V
+  )
+    -> Self
+  where V.Value == Value {
     .init(Validators.Lazy(validator))
   }
 }

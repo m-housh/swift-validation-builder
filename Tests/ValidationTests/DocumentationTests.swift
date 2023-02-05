@@ -12,17 +12,17 @@ final class DocumentationTests: XCTestCase {
       let isAdmin: Bool
       
       var body: some Validation<Self> {
-        Validators.accumulating {
-          Validators.validate(\.id, with: Int.greaterThan(0))
-          Validators.validate(\.name, with: String.notEmpty())
+        Validator.accumulating {
+          Validator.validate(\.id, with: Int.greaterThan(0))
+          Validator.validate(\.name, with: String.notEmpty())
         }
       }
     }
 
     let adminUserValidator = ValidatorOf<User> {
-      Validators.accumulating {
-        Validators.validate(\.self)
-        Validators.validate(\.isAdmin, with: true)
+      Validator.accumulating {
+        Validator.validate(\.self)
+        Validator.validate(\.isAdmin, with: true)
       }
     }
     

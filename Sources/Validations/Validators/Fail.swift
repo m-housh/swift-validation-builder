@@ -52,3 +52,27 @@ extension Validator {
     .init(Validations.Validators.Fail<Value>())
   }
 }
+
+extension AsyncValidator {
+
+  /// A validation that never succeeds.  This is useful for some testing purposes.
+  ///
+  /// **Example**
+  /// ```swift
+  /// let intValidator = AsyncValidatorOf<Int> {
+  ///   AsyncValidator.accumulating {
+  ///     AsyncValidator.fail()
+  ///     Int.equals(1)
+  ///   }
+  /// }
+  ///
+  /// try intValidator.validate(0) // fails with 2 errors.
+  /// try intValidator.validate(1) // fails with 1 error.
+  ///```
+  ///
+  ///
+  @inlinable
+  public static func fail() -> Self {
+    .init(Validator.fail().async)
+  }
+}

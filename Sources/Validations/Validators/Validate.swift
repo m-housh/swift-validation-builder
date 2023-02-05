@@ -13,8 +13,8 @@ extension Validators {
   ///
   ///   var body: some Validation<Self> {
   ///     Validator {
-  ///       Validators.validate(\.name, with: String.notEmtpy())
-  ///       Validators.validate(\.email) {
+  ///       Validator.validate(\.name, with: String.notEmtpy())
+  ///       Validator.validate(\.email) {
   ///         String.notEmpty()
   ///         String.contains("@")
   ///       }
@@ -35,7 +35,7 @@ extension Validators {
   ///   let user: User
   ///
   ///   var body: some Validation<Self> {
-  ///     Validators.validate(\.user)
+  ///     Validator.validate(\.user)
   ///   }
   /// }
   ///
@@ -77,73 +77,84 @@ where
 
 }
 
-extension Validators {
+extension Validator {
+
   @inlinable
-  public static func validate<Parent, Child>(
-    _ toChild: @escaping (Parent) -> Child,
+  public static func validate<Child>(
+    _ toChild: @escaping (Value) -> Child,
     with validator: Validator<Child>
-  ) -> Validators.ValidateValidator<Parent, Child, Validator<Child>> {
-    .init(toChild, validator: { _ in validator })
+  )
+    -> Self
+  {
+    .init(Validators.ValidateValidator(toChild, validator: { _ in validator }))
   }
-  
+
   @inlinable
-  public static func validate<Parent, Child, ChildValidator: Validation>(
-    _ toChild: KeyPath<Parent, Child>,
-    @ValidationBuilder<Child> build: @escaping () -> ChildValidator
-  ) -> Validators.ValidateValidator<Parent, Child, ChildValidator>
-  where ChildValidator.Value == Child {
-    .init(toChild.value(from:), validator: { _ in build() })
+  public static func validate<Child>(
+    _ toChild: KeyPath<Value, Child>,
+    @ValidationBuilder<Child> build: @escaping () -> some Validation<Child>
+  ) -> Self {
+    self.validate(toChild, with: build())
   }
-  
+
   @inlinable
-  public static func validate<Parent, Child>(
-    _ toChild: KeyPath<Parent, Child>,
-    with validator: any Validation<Child>
-  ) -> Validators.ValidateValidator<Parent, Child, AnyValidator<Child>> {
-    .init(toChild.value(from:), validator: { _ in validator.eraseToAnyValidator() })
+  public static func validate<ChildValidator: Validation>(
+    _ toChild: KeyPath<Value, ChildValidator.Value>,
+    with validator: ChildValidator
+  )
+    -> Self
+  {
+    .init(Validators.ValidateValidator.init(toChild.value(from:), validator: { _ in validator }))
   }
-  
+
   @inlinable
-  public static func validate<Parent, Child: Validatable>(
-    _ toChild: KeyPath<Parent, Child>
-  ) -> Validators.ValidateValidator<Parent, Child, Child> {
-    .init(toChild.value(from:), validator: toChild.value(from:))
+  public static func validate<Child: Validatable>(
+    _ toChild: KeyPath<Value, Child>
+  )
+    -> Self
+  {
+    .init(Validators.ValidateValidator.init(toChild.value(from:), validator: toChild.value(from:)))
   }
 }
-  
-  // MARK: - Async Support
-extension Validators {
-  
+
+// MARK: - Async Support
+extension AsyncValidator {
+
   @inlinable
-  public static func validate<Parent, Child>(
-    _ toChild: @escaping (Parent) -> Child,
+  public static func validate<Child>(
+    _ toChild: @escaping (Value) -> Child,
     with validator: AsyncValidator<Child>
-  ) -> Validators.ValidateValidator<Parent, Child, AsyncValidator<Child>> {
-    .init(toChild, validator: { _ in validator })
+  )
+    -> Self
+  {
+    .init(Validators.ValidateValidator(toChild, validator: { _ in validator }))
   }
-  
+
   @inlinable
-  public static func validate<Parent, Child, ChildValidator: AsyncValidation>(
-    _ toChild: KeyPath<Parent, Child>,
-    @AsyncValidationBuilder<Child> build: @escaping () -> ChildValidator
-  ) -> Validators.ValidateValidator<Parent, Child, ChildValidator>
-  where ChildValidator.Value == Child {
-    .init(toChild.value(from:), validator: { _ in build() })
+  public static func validate<Child>(
+    _ toChild: KeyPath<Value, Child>,
+    @AsyncValidationBuilder<Child> build: @escaping () -> some AsyncValidation<Child>
+  ) -> Self {
+    self.validate(toChild, with: build())
   }
-  
+
   @inlinable
-  public static func validate<Parent, Child>(
-    _ toChild: KeyPath<Parent, Child>,
-    with validator: any AsyncValidation<Child>
-  ) -> Validators.ValidateValidator<Parent, Child, AnyAsyncValidator<Child>> {
-    .init(toChild.value(from:), validator: { _ in validator.eraseToAnyAsyncValidator() })
+  public static func validate<ChildValidator: AsyncValidation>(
+    _ toChild: KeyPath<Value, ChildValidator.Value>,
+    with validator: ChildValidator
+  )
+    -> Self
+  {
+    .init(Validators.ValidateValidator.init(toChild.value(from:), validator: { _ in validator }))
   }
-  
+
   @inlinable
-  public static func validate<Parent, Child: AsyncValidatable>(
-    _ toChild: KeyPath<Parent, Child>
-  ) -> Validators.ValidateValidator<Parent, Child, Child> {
-    .init(toChild.value(from:), validator: toChild.value(from:))
+  public static func validate<Child: AsyncValidatable>(
+    _ toChild: KeyPath<Value, Child>
+  )
+    -> Self
+  {
+    .init(Validators.ValidateValidator.init(toChild.value(from:), validator: toChild.value(from:)))
   }
 }
 
@@ -152,11 +163,11 @@ where
   ChildValidator: AsyncValidation,
   ChildValidator.Value == Child
 {
-  
+
   @inlinable
   public func validate(_ parent: Parent) async throws {
     let value = child(parent)
     try await validator(parent).validate(value)
   }
-  
+
 }

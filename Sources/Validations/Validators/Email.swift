@@ -20,13 +20,13 @@ extension Validator where Value == String {
   ///   - style: The email style to validate.
   ///
   @inlinable
-  public static func email(_ style: Validators.Email.Style = .default) -> Self {
-    .init(Validators.Email(style: style))
+  public static func email(_ style: Validators.EmailValidator<Self>.Style = .default) -> Self {
+    .init(Validators.EmailValidator<Self>(style: style))
   }
 }
 
 extension String {
-  /// A ``Validator`` that validates a string is a valid email.
+  /// A ``Validation`` that validates a string is a valid email.
   ///
   /// **Example**
   /// ```swift
@@ -42,9 +42,12 @@ extension String {
   ///   - style: The email style to validate.
   ///
   @inlinable
-  public static func email(_ style: Validators.Email.Style = .default) -> Validators.Email {
+  public static func email(
+    _ style: Validators.EmailValidator<Validator<String>>.Style = .default
+  ) -> Validators.EmailValidator<Validator<String>> {
     .init(style: style)
   }
+
 }
 
 extension Validators {
@@ -60,7 +63,7 @@ extension Validators {
   ///
   /// ```
   ///
-  public struct Email: Validation {
+  public struct EmailValidator<ValidationType> {
 
     public typealias Value = String
 
@@ -76,19 +79,6 @@ extension Validators {
       self.style = style
     }
 
-    public var body: some Validation<String> {
-      Validator<Value> {
-        String.notEmpty()  // fail early if the string is empty
-        Validator.accumulating {  // accumulate errors if not.
-          Validator.pattern(matching: style.regex)
-          // total length
-          Validator.lessThanOrEquals(\.count, 320)
-          // length before the @
-          Validators.MapValue({ $0.split(separator: "@")[0].count }, using: .lessThanOrEquals(64))
-        }
-      }
-    }
-
     /// Represents the different styles of email to validate.
     public enum Style: Hashable {
       case `default`
@@ -97,7 +87,40 @@ extension Validators {
   }
 }
 
-extension Validators.Email.Style {
+extension Validators.EmailValidator: Validation where ValidationType: Validation {
+
+  public var body: some Validation<String> {
+    Validator<Value> {
+      String.notEmpty()  // fail early if the string is empty
+      Validator.accumulating {  // accumulate errors if not.
+        Validator.regex(matching: style.regex)
+        // total length
+        Validator.lessThanOrEquals(\.count, 320)
+        // length before the @
+        Validators.MapValue({ $0.split(separator: "@")[0].count }, using: .lessThanOrEquals(64))
+      }
+    }
+  }
+}
+
+extension Validators.EmailValidator: AsyncValidation where ValidationType: AsyncValidation {
+
+  public var body: some AsyncValidation<String> {
+    AsyncValidator<Value> {
+      String.notEmpty().async  // fail early if the string is empty
+      AsyncValidator.accumulating {  // accumulate errors if not.
+        Validator.regex(matching: style.regex).async
+        // total length
+        Validator.lessThanOrEquals(\.count, 320).async
+        // length before the @
+        Validators.MapValue({ $0.split(separator: "@")[0].count }, using: .lessThanOrEquals(64))
+          .async
+      }
+    }
+  }
+}
+
+extension Validators.EmailValidator.Style {
 
   fileprivate var regex: String {
     switch self {

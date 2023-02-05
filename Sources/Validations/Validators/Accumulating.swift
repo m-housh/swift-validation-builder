@@ -191,13 +191,13 @@ extension Validators {
   /// try User(name: "", email: "") // fails with 3 errors.
   /// ```
   ///
-  public static func accumulating<Value, Validators: Validation>(
-    @AccumulatingErrorBuilder<Value> _ builder: () -> Validators
-  ) -> Validations.Validators.AccumulatingValidator<Value, Validators>
-  where Validators.Value == Value {
-    .init(builder())
-  }
-  
+  //  public static func accumulating<Value, Validators: Validation>(
+  //    @AccumulatingErrorBuilder<Value> _ builder: () -> Validators
+  //  ) -> Validations.Validators.AccumulatingValidator<Value, Validators>
+  //  where Validators.Value == Value {
+  //    .init(builder())
+  //  }
+
   /// An ``AsyncValidation`` that accumulates errors for the child validators upon validation failures.
   ///
   /// This type only accumulates errors for the top-level items that are passed into the build context.
@@ -228,10 +228,10 @@ extension Validators {
   /// try User(name: "", email: "") // fails with 3 errors.
   /// ```
   ///
-  public static func accumulating<Value, Validators: AsyncValidation>(
-    @AccumulatingErrorBuilder<Value> _ builder: () -> Validators
-  ) -> Validations.Validators.AccumulatingValidator<Value, Validators>
-  where Validators.Value == Value {
-    .init(builder())
-  }
+  //  public static func accumulating<Value, Validators: AsyncValidation>(
+  //    @AccumulatingErrorBuilder<Value> _ builder: () -> Validators
+  //  ) -> Validations.Validators.AccumulatingValidator<Value, Validators>
+  //  where Validators.Value == Value {
+  //    .init(builder())
+  //  }
 }

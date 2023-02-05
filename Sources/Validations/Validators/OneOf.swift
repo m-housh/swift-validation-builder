@@ -30,7 +30,11 @@ extension Validators {
   }
 }
 
-extension Validators.OneOfValidator: Validation where Validators: Validation, Validators.Value == Value {
+extension Validators.OneOfValidator: Validation
+where
+  Validators: Validation,
+  Validators.Value == Value
+{
 
   /// Create a ``OneOf`` validator using builder syntax.
   /// **Example**
@@ -90,17 +94,17 @@ extension AsyncValidator {
   }
 }
 
-extension Validators {
-  
-  public static func oneOf<Value, Validators: Validation>(
-    @OneOfBuilder<Value> builder: () -> Validators
-  ) -> Validations.Validators.OneOfValidator<Value, Validators> {
-    .init(builder())
-  }
-  
-  public static func oneOf<Value, Validators: AsyncValidation>(
-    @OneOfBuilder<Value> builder: () -> Validators
-  ) -> Validations.Validators.OneOfValidator<Value, Validators> {
-    .init(builder())
-  }
-}
+//extension Validators {
+//
+//  public static func oneOf<Value, Validators: Validation>(
+//    @OneOfBuilder<Value> builder: () -> Validators
+//  ) -> Validations.Validators.OneOfValidator<Value, Validators> {
+//    .init(builder())
+//  }
+//
+//  public static func oneOf<Value, Validators: AsyncValidation>(
+//    @OneOfBuilder<Value> builder: () -> Validators
+//  ) -> Validations.Validators.OneOfValidator<Value, Validators> {
+//    .init(builder())
+//  }
+//}

@@ -3,7 +3,7 @@ extension Validators {
   ///
   /// ```swift
   /// let validator = ValidatorOf<String> {
-  ///   Validators.Contains("@")
+  ///   Validator.contains("@")
   ///   // or String.contains("@") could be used.
   /// }
   ///
@@ -12,7 +12,7 @@ extension Validators {
   ///
   /// ```
   ///
-  public struct Contains<Value: Collection>: Validation where Value.Element: Equatable {
+  public struct Contains<Value: Collection> {
 
     public let element: Value.Element
 
@@ -21,12 +21,26 @@ extension Validators {
       self.element = element
     }
 
-    public func validate(_ value: Value) throws {
-      guard value.contains(element) else {
-        throw ValidationError.failed(summary: "Does not contain \(element)")
-      }
+  }
+}
+
+extension Validators.Contains: Validation
+where
+  Value.Element: Equatable
+{
+
+  @usableFromInline
+  func _validate(_ value: Value) throws {
+    guard value.contains(element) else {
+      throw ValidationError.failed(summary: "Does not contain \(element)")
     }
   }
+
+  @inlinable
+  public func validate(_ value: Value) throws {
+    try _validate(value)
+  }
+
 }
 
 extension Validator {
@@ -59,7 +73,7 @@ extension Validator {
   where C.Element: Equatable {
     .init(
       Self.lazy { parent in
-        Validators.validate(toCollection) {
+        Validator.validate(toCollection) {
           C.contains(parent[keyPath: toElement])
         }
       }
@@ -94,8 +108,8 @@ extension Validator {
   ) -> Self
   where C.Element: Equatable {
     .init(
-      Validators.validate(toCollection) {
-        Validators.Contains(element: element)
+      Validator.validate(toCollection) {
+        C.contains(element)
       }
     )
   }
@@ -115,7 +129,7 @@ extension Validator where Value: Collection, Value.Element: Equatable {
   ///
   @inlinable
   public static func contains(_ element: Value.Element) -> Self {
-    .init(Validators.Contains(element: element))
+    .init(Value.contains(element))
   }
 }
 
@@ -133,7 +147,74 @@ extension Collection where Element: Equatable {
   /// - Parameters:
   ///   - element: The element to validate is in the collection.
   @inlinable
-  public static func contains(_ element: Element) -> Validator<Self> {
-    .contains(element)
+  public static func contains(_ element: Element) -> Validators.Contains<Self> {
+    .init(element: element)
+  }
+}
+
+// MARK: - Async
+extension AsyncValidator {
+  /// An ``AsyncValidation`` for if a `Collection` contains a value.
+  ///
+  /// Use this validator, when you need to validate a collection and value that is accessed by a `KeyPath` from
+  /// the parent context.
+  ///
+  /// ```swift
+  /// struct MatchCharacter: AsyncValidatable {
+  ///   let input: String
+  ///   let character: Character
+  ///
+  ///   var body: some AsyncValidation<Self> {
+  ///     AsyncValidator.contains(\.input, \.character)
+  ///   }
+  /// }
+  ///
+  ///
+  /// try await MatchWord(input: "blob around the world", character: "a").validate() // success.
+  /// try await MatchWord(input: "blob jr.", character: "z").validate() // fails.
+  ///
+  /// ```
+  ///
+  @inlinable
+  public static func contains<C: Collection>(
+    _ toCollection: KeyPath<Value, C>,
+    _ toElement: KeyPath<Value, C.Element>
+  ) -> Self
+  where C.Element: Equatable {
+    .init(
+      Validator.contains(toCollection, toElement).async
+    )
+  }
+
+  /// An ``AsyncValidation`` for if a `Collection` contains a value.
+  ///
+  /// Use this validator, when you need to validate a collection that is accessed by a `KeyPath` from
+  /// the parent context, using the given element for the value to look for.
+  ///
+  /// ```swift
+  /// struct MatchCharacter: AsyncValidatable {
+  ///   let input: String
+  ///   let character: Character
+  ///
+  ///   var body: some AsyncValidation<Self> {
+  ///     AsyncValidator.contains(\.input, \.character)
+  ///   }
+  /// }
+  ///
+  /// let containsZ = AsyncValidatorOf<MatchCharacter>.contains(\.input, "z")
+  ///
+  /// try await containsZ.validate(.init(input: "baz", character: "f")) // success.
+  /// try await containsZ.validate(.init(input: "foo", character: "f")) // fails.
+  ///
+  /// ```
+  @inlinable
+  public static func contains<C: Collection>(
+    _ toCollection: KeyPath<Value, C>,
+    _ element: C.Element
+  ) -> Self
+  where C.Element: Equatable {
+    .init(
+      Validator.contains(toCollection, element).async
+    )
   }
 }

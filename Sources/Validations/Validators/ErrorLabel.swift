@@ -1,5 +1,5 @@
 extension Validation {
-  
+
   /// Add a label to the error(s) for this ``Validation``.
   ///
   /// **Example**
@@ -14,10 +14,12 @@ extension Validation {
   /// - Parameters:
   ///   - label: The label to use.
   ///   - inline: Whether to display the label inline with the first error string.
-  public func errorLabel(_ label: String, inline: Bool = false) -> Validators.ErrorLabelValidator<Self> {
+  public func errorLabel(_ label: String, inline: Bool = false)
+    -> Validators.ErrorLabelValidator<Self>
+  {
     .init(label: label, inlineLabel: inline, validator: self)
   }
-  
+
 }
 
 extension AsyncValidation {
@@ -35,14 +37,16 @@ extension AsyncValidation {
   /// - Parameters:
   ///   - label: The label to use.
   ///   - inline: Whether to display the label inline with the first error string.
-  public func errorLabel(_ label: String, inline: Bool = false) -> Validators.ErrorLabelValidator<Self> {
+  public func errorLabel(_ label: String, inline: Bool = false)
+    -> Validators.ErrorLabelValidator<Self>
+  {
     .init(label: label, inlineLabel: inline, validator: self)
   }
-  
+
 }
 
 extension Validators {
-  
+
   /// A validation that add's a label to errors that are thrown.
   ///
   /// This is generally not interacted with directly, instead you use ``Validation/errorLabel(_:inline:)`` method on
@@ -62,11 +66,11 @@ extension Validators {
   ///   - inline: Whether to display the label inline with the first error string.
   ///
   public struct ErrorLabelValidator<Validator> {
-    
+
     public let label: String
     public let inlineLabel: Bool
     public let validator: Validator
-    
+
     @inlinable
     public init(
       label: String,
@@ -81,7 +85,7 @@ extension Validators {
 }
 
 extension Validators.ErrorLabelValidator: Validation where Validator: Validation {
-  
+
   @inlinable
   public func validate(_ value: Validator.Value) throws {
     do {
@@ -93,7 +97,7 @@ extension Validators.ErrorLabelValidator: Validation where Validator: Validation
 }
 
 extension Validators.ErrorLabelValidator: AsyncValidation where Validator: AsyncValidation {
-  
+
   @inlinable
   public func validate(_ value: Validator.Value) async throws {
     do {

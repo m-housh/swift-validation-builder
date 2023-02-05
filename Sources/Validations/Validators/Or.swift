@@ -39,7 +39,7 @@ where
 
   @usableFromInline
   var validator: some Validation<LhsValidator.Value> {
-    Validators.oneOf {
+    Validator.oneOf {
       lhs
       rhs
     }
@@ -62,7 +62,7 @@ where
 
   @usableFromInline
   var asyncValidator: some AsyncValidation<LhsValidator.Value> {
-    Validators.oneOf {
+    AsyncValidator.oneOf {
       lhs
       rhs
     }

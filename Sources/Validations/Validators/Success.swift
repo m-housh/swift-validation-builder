@@ -26,14 +26,29 @@ extension Validator {
   ///
   /// Example:
   /// ```swift
-  /// let always = Validation<String>.always()
+  /// let always = Validation<String>.success()
   ///
   /// try! always.validate("")
   /// // succeeds
   /// ```
-  public static func always() -> Self {
+  public static func success() -> Self {
     .init(Validators.Success())
   }
 }
 
+extension AsyncValidator {
+
+  /// A validator that always succeeds.
+  ///
+  /// Example:
+  /// ```swift
+  /// let always = Validation<String>.success()
+  ///
+  /// try! always.validate("")
+  /// // succeeds
+  /// ```
+  public static func success() -> Self {
+    Validators.Success().async
+  }
+}
 //public typealias Always = Validators.Success

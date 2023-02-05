@@ -8,7 +8,7 @@ extension Validators {
   public struct MapError<Upstream> {
 
     public let upstream: Upstream
-    public let error: Error
+    public let error: (Error) -> Error
 
     /// Create a ``Validators/MapError`` that replaces the underlying error if validation fails.
     ///
@@ -16,7 +16,7 @@ extension Validators {
     ///   - upstream: The upstream validator.
     ///   - error: The error to throw if validation fails.
     @inlinable
-    public init(upstream: Upstream, with error: Error) {
+    public init(upstream: Upstream, with error: @escaping (Error) -> Error) {
       self.upstream = upstream
       self.error = error
     }
@@ -31,7 +31,7 @@ extension Validators.MapError: Validation where Upstream: Validation {
       try upstream.validate(value)
     } catch {
       // map the error.
-      throw self.error
+      throw self.error(error)
     }
   }
 }
@@ -43,7 +43,7 @@ extension Validators.MapError: AsyncValidation where Upstream: AsyncValidation {
       try await upstream.validate(value)
     } catch {
       // map the error.
-      throw self.error
+      throw self.error(error)
     }
   }
 }
@@ -68,6 +68,30 @@ extension Validation {
   ///
   @inlinable
   public func mapError(_ error: Error) -> Validators.MapError<Self> {
+    Validators.MapError(upstream: self, with: { _ in error })
+  }
+
+  /// Replaces the error of a ``Validation`` when it fails.
+  ///
+  /// **Example**
+  /// ```swift
+  ///  enum MyError: Error {
+  ///   case invalidString
+  ///  }
+  ///
+  ///  let validator = String.notEmpty().mapError { error in
+  ///   // do something
+  ///   throw MyError.invalidString
+  ///  }
+  ///
+  ///  try validator.validate("") // throws MyError.invalidString
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - error: The error that replaces the underlying error.
+  ///
+  @inlinable
+  public func mapError(_ error: @escaping (Error) -> Error) -> Validators.MapError<Self> {
     Validators.MapError(upstream: self, with: error)
   }
 }
@@ -92,6 +116,30 @@ extension AsyncValidation {
   ///
   @inlinable
   public func mapError(_ error: Error) -> Validators.MapError<Self> {
+    Validators.MapError(upstream: self, with: { _ in error })
+  }
+
+  /// Replaces the error of a ``AsyncValidation`` when it fails.
+  ///
+  /// **Example**
+  /// ```swift
+  ///  enum MyError: Error {
+  ///   case invalidString
+  ///  }
+  ///
+  ///  let validator = String.notEmpty().async.mapError { error in
+  ///   // do something
+  ///   throw MyError.invalidString
+  ///  }
+  ///
+  ///  try await validator.validate("") // throws MyError.invalidString
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - error: The error that replaces the underlying error.
+  ///
+  @inlinable
+  public func mapError(_ error: @escaping (Error) -> Error) -> Validators.MapError<Self> {
     Validators.MapError(upstream: self, with: error)
   }
 }

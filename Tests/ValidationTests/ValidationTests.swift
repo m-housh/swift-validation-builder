@@ -12,7 +12,7 @@ final class ValidationTests: XCTestCase {
   func test_or_validator() throws {
     let validators = [
       Validator {
-        Validator.always()
+        Validator.success()
         Int.greaterThan(10).or(.equals(5))
       },
       Validator {
@@ -40,7 +40,7 @@ final class ValidationTests: XCTestCase {
     
     let validators = [
       AsyncValidator {
-        Validator.always().async
+        Validator.success().async
         Int.greaterThan(10).async.or(Int.equals(5).async)
       },
       AsyncValidator {
@@ -90,7 +90,7 @@ final class ValidationTests: XCTestCase {
     }
     
     let sutValidator = ValidatorOf<Sut> {
-      Validators.validate(\.values, with: .notEmpty())
+      Validator.validate(\Sut.values, with: [Int].notEmpty())
     }
     
     XCTAssertNoThrow(try sutValidator.validate(.init(values: [1, 2])))
@@ -137,7 +137,7 @@ final class ValidationTests: XCTestCase {
     }
   
     let sut = ValidatorOf<Sut> {
-      Validators.validate(\.one) {
+      Validator.validate(\.one) {
         Int.greaterThan(10)
         Int.greaterThan(10)
         Int.greaterThan(10)
@@ -147,9 +147,9 @@ final class ValidationTests: XCTestCase {
         Int.greaterThan(10)
         Int.greaterThan(10)
         Int.greaterThan(10)
-        Validators.Not(.greaterThan(15))
+        Validator.not(.greaterThan(15))
       }
-      Validators.validate(\.two, with: Int.lessThan(50))
+      Validator.validate(\.two, with: Int.lessThan(50))
     }
     
     XCTAssertNoThrow(try sut.validate(.init(one: 11, two: 10)))
@@ -170,7 +170,7 @@ final class ValidationTests: XCTestCase {
           Validator.lessThan(\.one, 12)
           Validator.lessThanOrEquals(\.one, \.two)
           Validator.lessThan(1, \.two)
-          Validators.validate(\.one, with: Int.lessThanOrEquals(13))
+          Validator.validate(\.one, with: Int.lessThanOrEquals(13))
         }
       }
     }
@@ -243,9 +243,9 @@ final class ValidationTests: XCTestCase {
       
       var body: some AsyncValidation<Self> {
         AsyncValidator {
-          Validators.validate(\.one, with: Int.lessThan(12).async)
+          AsyncValidator.validate(\.one, with: Int.lessThan(12).async)
           Validator.lessThanOrEquals(\.one, \.two).async
-          Validators.validate(\.two, with: Int.lessThan(1).async)
+          AsyncValidator.validate(\.two, with: Int.lessThan(1).async)
         }
       }
     }
@@ -261,9 +261,9 @@ final class ValidationTests: XCTestCase {
       case three(Int)
     }
 
-    let sut = Validators.oneOf {
-      Validators.case(/Sut.one, with: .greaterThan(0))
-      Validators.case(/Sut.two) {
+    let sut = Validator.oneOf {
+      Validator.case(/Sut.one, with: .greaterThan(0))
+      Validator.case(/Sut.two) {
         Int.greaterThan(10)
       }
     }
@@ -282,10 +282,10 @@ final class ValidationTests: XCTestCase {
     }
 
     let sut =  AsyncValidator {
-      Validators.oneOf {
-        Validators.case(/Sut.one, with: .greaterThan(0))
-        Validators.case(/Sut.two) {
-          Int.greaterThan(10)
+      AsyncValidator.oneOf {
+        AsyncValidator.case(/Sut.one, with: Int.greaterThan(0).async)
+        AsyncValidator.case(/Sut.two) {
+          Int.greaterThan(10) // get's transformed into async bc of the builder context.
         }
       }
     }
@@ -297,7 +297,7 @@ final class ValidationTests: XCTestCase {
   }
   
   func test_oneOF() throws {
-    let sut = Validators.oneOf {
+    let sut = Validator.oneOf {
       Int.greaterThan(0)
       Validator.equals(-10)
     }
@@ -307,7 +307,7 @@ final class ValidationTests: XCTestCase {
     XCTAssertNoThrow(try sut.validate(1))
 
     let sut2 = ValidatorOf<Int> {
-      Validators.oneOf {
+      Validator.oneOf {
         Validator.greaterThan(0)
         Validator.equals(-10)
       }
@@ -328,7 +328,7 @@ final class ValidationTests: XCTestCase {
   }
   
   func test_oneOF_async() async {
-    let sut = Validators.oneOf {
+    let sut = AsyncValidator.oneOf {
       Int.greaterThan(0).async
       Validator.equals(-10).async
     }
@@ -338,7 +338,7 @@ final class ValidationTests: XCTestCase {
     await XCTAssertNoThrowAsync(try await sut.validate(1))
 
     let sut2 = AsyncValidatorOf<Int> {
-      Validators.oneOf {
+      AsyncValidator.oneOf {
         Validator.greaterThan(0).async
         Validator.equals(-10).async
       }
@@ -366,9 +366,9 @@ final class ValidationTests: XCTestCase {
       let email: String
       
       var body: some Validation<Self> {
-        Validators.accumulating {
-          Validators.validate(\.name, with: Validators.NotEmpty())
-          Validators.validate(\.email, with: .accumulating {
+        Validator.accumulating {
+          Validator.validate(\.name, with: Validators.NotEmpty())
+          Validator.validate(\.email, with: .accumulating {
             String.notEmpty()
             String.contains("@")
           })
@@ -383,7 +383,7 @@ final class ValidationTests: XCTestCase {
       let user: User
       
       var body: some Validation<Self> {
-        Validators.validate(\.user)
+        Validator.validate(\.user)
       }
     }
     
@@ -448,9 +448,9 @@ final class ValidationTests: XCTestCase {
       let email: String
       
       var body: some Validation<Self> {
-        Validators.accumulating {
-          Validators.validate(\.name, with: Validators.NotEmpty())
-          Validators.validate(\.email) {
+        Validator.accumulating {
+          Validator.validate(\.name, with: Validators.NotEmpty())
+          Validator.validate(\.email) {
             String.notEmpty()
             String.contains("@")
           }
@@ -477,12 +477,12 @@ final class ValidationTests: XCTestCase {
       let email: String
       
       var body: some AsyncValidation<Self> {
-        Validators.accumulating {
-          Validators.validate(\.name, with: Validators.NotEmpty()).async
-          Validators.validate(\.email) {
+        AsyncValidator.accumulating {
+          AsyncValidator.validate(\.name, with: Validators.NotEmpty().async)
+          AsyncValidator.validate(\.email) {
             String.notEmpty()
             String.contains("@")
-          }.async
+          }
         }
       }
     }
@@ -512,8 +512,8 @@ final class ValidationTests: XCTestCase {
       let isAdmin: Bool
       
       var body: some Validation<Self> {
-        Validators.accumulating {
-          Validators.validate(\.isAdmin, with: true)
+        Validator.accumulating {
+          Validator.validate(\.isAdmin, with: true)
         }
       }
     }
@@ -536,8 +536,8 @@ final class ValidationTests: XCTestCase {
       let isAdmin: Bool
       
       var body: some Validation<Self> {
-        Validators.accumulating {
-          Validators.validate(\.isAdmin, with: false)
+        Validator.accumulating {
+          Validator.validate(\.isAdmin, with: false)
         }
       }
     }
@@ -554,7 +554,7 @@ final class ValidationTests: XCTestCase {
   
   func test_email() {
     let sut = ValidatorOf<String>.email()
-    let sut2 = String.email(.international)
+    let sut2 = ValidatorOf<String> { String.email(.international) }
     
     XCTAssertNoThrow(try sut.validate("blob@example.com"))
     XCTAssertNoThrow(try sut2.validate("blob@example.com"))
@@ -610,7 +610,7 @@ final class ValidationTests: XCTestCase {
     }
     
     let sut4 = ValidatorOf<HoldsOptional> {
-      Validators.validate(\.count) {
+      Validator.validate(\HoldsOptional.count) {
         Validator.notNil()
         Int.greaterThan(10).optional()
       }
@@ -651,10 +651,10 @@ final class ValidationTests: XCTestCase {
     }
     
     let sut4 = AsyncValidatorOf<HoldsOptional> {
-      Validators.validate(\.count) { // fix validate to be async
-        Validator.notNil()
-        Int.greaterThan(10).optional()
-      }.async
+      AsyncValidator.validate(\.count) { // fix validate to be async
+        AsyncValidator.notNil()
+        Int.greaterThan(10).optional().async
+      }
     }
     await XCTAssertNoThrowAsync(try await sut4.validate(.init(count: 11)))
     await XCTAssertThrowsAsyncError(try await sut4.validate(.init(count: 9)))
@@ -776,20 +776,20 @@ final class ValidationTests: XCTestCase {
       let foo: String
       
       var body: some Validation<Self> {
-        Validators.accumulating {
-            Validators.validate(\.name) {
-              Validators.accumulating {
+        Validator.accumulating {
+          Validator.validate(\.name) {
+              Validator.accumulating {
                 String.notEmpty()
-                Validators.validate(\.count, with: .greaterThan(5))
+                Validator.validate(\.count, with: .greaterThan(5))
                   .errorLabel("Name.count", inline: true)
               }
             }
               .errorLabel("Name")
           
-          Validators.validate(\.email, with: .email())
+          Validator.validate(\.email, with: .email())
             .errorLabel("Email")
           
-          Validators.validate(\.foo, with: .notEmpty())
+          Validator.validate(\.foo, with: .notEmpty())
         }
       }
     }

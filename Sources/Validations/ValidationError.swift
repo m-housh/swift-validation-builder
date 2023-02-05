@@ -11,7 +11,7 @@ enum ValidationError: Error {
   static func failed(summary: String, label: String = "", inlineLabel: Bool = false) -> Self {
     return .failed(.init(label: label, isInline: inlineLabel), .init(debugDescription: summary))
   }
-  
+
   @usableFromInline
   static func failed(label: String, error: Error, inlineLabel: Bool = false) -> Self {
     .failed(
@@ -42,12 +42,12 @@ enum ValidationError: Error {
       self.underlyingError = underlyingError
     }
   }
-  
+
   @usableFromInline
   enum ErrorLabel {
     case inline(String)
     case notInline(String)
-    
+
     @usableFromInline
     init(label: String, isInline: Bool) {
       if isInline {
@@ -56,10 +56,10 @@ enum ValidationError: Error {
         self = .notInline(label)
       }
     }
-    
+
     @usableFromInline
     var isEmpty: Bool { label.isEmpty }
-    
+
     @usableFromInline
     var isInline: Bool {
       switch self {
@@ -69,7 +69,7 @@ enum ValidationError: Error {
         return false
       }
     }
-    
+
     @usableFromInline
     var label: String {
       switch self {
@@ -82,10 +82,8 @@ enum ValidationError: Error {
   }
 }
 
-
-
 extension ValidationError: CustomDebugStringConvertible {
-  
+
   @usableFromInline
   func flattened() -> Self {
     func flatten(_ depth: Int = 0) -> (Error) -> [(depth: Int, error: Error)] {
@@ -98,7 +96,7 @@ extension ValidationError: CustomDebugStringConvertible {
         }
       }
     }
-    
+
     switch self {
     case .failed:
       return self
@@ -122,7 +120,7 @@ extension ValidationError: CustomDebugStringConvertible {
       return debugDescription(for: errors)
     }
   }
-  
+
   @usableFromInline
   func format(label: ErrorLabel, context: Context) -> String {
     guard !label.isEmpty else {
@@ -131,23 +129,23 @@ extension ValidationError: CustomDebugStringConvertible {
     let seperator = label.isInline ? ": " : ":\n"
     return "\(label.label)\(seperator)\(context.debugDescription)"
   }
-  
+
   @usableFromInline
   func debugDescription(for errors: [Error]) -> String {
-    
+
     func isFailed(_ error: Error) -> (ErrorLabel, Context)? {
       guard let error = error as? ValidationError,
-            case let .failed(label, context) = error else
-      {
+        case let .failed(label, context) = error
+      else {
         return nil
       }
       return (label, context)
-      
+
     }
-    
+
     var description = ""
     var count = 0
-    
+
     func append(_ string: String) {
       count += 1
       if !description.isEmpty {
@@ -155,7 +153,7 @@ extension ValidationError: CustomDebugStringConvertible {
       }
       description.append(string)
     }
-    
+
     var errors = errors[...]
     while let error = errors.popFirst() {
       guard case let .some((label, context)) = isFailed(error) else {
@@ -164,7 +162,7 @@ extension ValidationError: CustomDebugStringConvertible {
       }
       append(format(label: label, context: context))
     }
-   
+
     return "\(description)\n"
   }
 }

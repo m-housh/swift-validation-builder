@@ -5,6 +5,14 @@ test-linux:
 		--workdir "${PWD}" \
 		swift:5.7-focal \
 		swift test
+		
+test-linux-m1:
+	@docker run --rm \
+		--volume "${PWD}:${PWD}" \
+		--workdir "${PWD}" \
+		--platform "linux/arm64" \
+		swift:5.7-focal \
+		swift test
 
 test-swift:
 	@swift test
