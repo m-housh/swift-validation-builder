@@ -71,6 +71,7 @@ This file arranges the static methods on the `AsyncValidator` type for richer do
 
 - ``AsyncValidator/mapValue(_:with:)-2oyu8``
 - ``AsyncValidator/mapValue(_:with:)-6giyv``
+- ``AsyncValidator/mapValue(_:with:)-17b20``
 
 ### Inverse Validators
 

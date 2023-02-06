@@ -33,6 +33,9 @@ final class DocumentationTests: XCTestCase {
         XCTFail("Unkown error: \(error)")
         return
       }
+//      print("")
+//      print(error)
+//      print("")
       // Assert the error message is correct.
       let expected = """
        Failed bool evaluation, expected true

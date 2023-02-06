@@ -71,6 +71,7 @@ This file arranges the static methods on the `Validator` type for richer documen
 
 - ``Validator/mapValue(_:with:)-8xhvp``
 - ``Validator/mapValue(_:with:)-59zlg``
+- ``Validator/mapValue(_:with:)-9f2a9``
 
 ### Inverse Validators
 

@@ -1,5 +1,4 @@
 // MARK: - Equatable
-
 extension Validator {
 
   /// Validates two elements are equal, using closures to access the elements.
@@ -1582,7 +1581,8 @@ extension Validators {
       let lhs = self.lhs(value)
       let rhs = self.rhs(value)
       guard self.operator(lhs, rhs) else {
-        throw ValidationError.failed(summary: "\(lhs) is not \(operatorString) \(rhs)")
+        let message = "\(lhs) is not \(operatorString) \(rhs)"
+        throw ValidationError.failed(summary: message)
       }
     }
 
