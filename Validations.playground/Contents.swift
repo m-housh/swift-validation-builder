@@ -1,4 +1,4 @@
-import Validations
+//import Validations
 import Foundation
 
 var greeting = "Hello, playground"
@@ -15,6 +15,10 @@ var greeting = "Hello, playground"
 //try MatchCharacter(input: "blob around the world", character: "a").validate() // success.
 //try MatchCharacter(input: "blob jr.", character: "z").validate() // fails.
 
-let validator = Int.greaterThan(0).errorLabel("My Int")
 
-try validator.validate(-1)
+enum MyEnum {
+  case ints([Int])
+  case strings([String])
+}
+
+

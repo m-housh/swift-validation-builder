@@ -28,8 +28,8 @@ struct User {
 
 let userValidator = ValidatorOf<User> {  
 
-  Validators.Validate(\.name, using: String.notEmpty())
-  Validators.Validate(\.email) { 
+  Validator.validate(\.name, using: String.notEmpty())
+  Validator.validate(\.email) { 
     String.notEmpty()
     String.contains("@")
   }
@@ -58,8 +58,8 @@ extension User: Validatable {
 
   var body: some Validator<Self> { 
     Validator { 
-      Validators.Validate(\.name, using: String.notEmpty())
-      Validators.Validate(\.email) { 
+      Validator.validate(\.name, using: String.notEmpty())
+      Validator.validate(\.email) { 
         String.notEmpty()
         String.contains("@")
       }
