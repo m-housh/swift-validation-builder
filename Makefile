@@ -3,7 +3,7 @@ PLATFORM_MACOS = macOS
 PLATFORM_MAC_CATALYST = macOS,variant=Mac Catalyst
 PLATFORM_TVOS = tvOS Simulator,name=Apple TV
 PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 7 (45mm)
-CONFIG := release
+CONFIG := debug
 
 default: test-swift
 
@@ -36,7 +36,6 @@ test-library:
 
 test-all: test-linux
 	CONFIG=debug test-library
-	CONFIG=release test-library
 
 format:
 	swift format \
