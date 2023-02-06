@@ -3,19 +3,19 @@ PLATFORM_MACOS = macOS
 PLATFORM_MAC_CATALYST = macOS,variant=Mac Catalyst
 PLATFORM_TVOS = tvOS Simulator,name=Apple TV
 PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 7 (45mm)
-CONFIG := debug
+CONFIG := release
 
 default: test-swift
 
 test-linux:
-	@docker run --rm \
+	docker run --rm \
 		--volume "${PWD}:${PWD}" \
 		--workdir "${PWD}" \
 		swift:5.7-focal \
 		swift test
 		
 test-linux-m1:
-	@docker run --rm \
+	docker run --rm \
 		--volume "${PWD}:${PWD}" \
 		--workdir "${PWD}" \
 		--platform "linux/arm64" \
@@ -23,7 +23,7 @@ test-linux-m1:
 		swift test
 
 test-swift:
-	@swift test
+	swift test
 	
 test-library:
 	for platform in "$(PLATFORM_IOS)"  "$(PLATFORM_MACOS)" "$(PLATFORM_MAC_CATALYST)" "${PLATFORM_TVOS}" "${PLATFORM_WATCHOS}"; do \
@@ -34,12 +34,12 @@ test-library:
 			-destination platform="$$platform" || exit 1; \
 	done;
 
-test-all: test-swift test-linux
+test-all: test-linux
 	CONFIG=debug test-library
 	CONFIG=release test-library
 
 format:
-	@swift format \
+	swift format \
 		--ignore-unparsable-files \
 		--in-place \
 		--recursive \
@@ -47,7 +47,7 @@ format:
 		./Sources
 
 build-documentation:
-	@swift package \
+	swift package \
 		--allow-writing-to-directory ./docs \
 		generate-documentation \
 		--target Validations \
@@ -57,7 +57,7 @@ build-documentation:
 		--output-path ./docs
 
 preview-documentation:
-	@swift package \
+	swift package \
 		--disable-sandbox \
 		preview-documentation \
 		--target Validations
