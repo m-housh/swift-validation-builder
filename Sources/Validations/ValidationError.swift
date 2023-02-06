@@ -1,6 +1,7 @@
 import Foundation
 
 // TODO: Better labeled error messages?
+// TODO: Inline error messages not working as expected in async contexts.
 
 @usableFromInline
 enum ValidationError: Error {

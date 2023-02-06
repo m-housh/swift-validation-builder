@@ -17,7 +17,7 @@ extension Validators {
 }
 
 extension Validators.SuccessValidator: Validation where ValidationType: Validation {
-  
+
   @inlinable
   public func validate(_ value: Value) throws {
     // do nothing.
@@ -25,7 +25,7 @@ extension Validators.SuccessValidator: Validation where ValidationType: Validati
 }
 
 extension Validators.SuccessValidator: AsyncValidation where ValidationType: AsyncValidation {
-  
+
   @inlinable
   public func validate(_ value: Value) throws {
     // do nothing.
@@ -59,7 +59,7 @@ extension AsyncValidator {
   /// // succeeds
   /// ```
   public static func success() -> Self {
-    Validator.success().async()
+    .init(Validators.SuccessValidator<Self, Value>())
   }
 }
 //public typealias Always = Validators.Success

@@ -50,31 +50,6 @@ extension AsyncValidator where Value == String {
   }
 }
 
-extension String {
-  /// A ``Validation`` that validates a string is a valid email.
-  ///
-  /// **Example**
-  /// ```swift
-  ///
-  /// let emailValidator = String.email()
-  ///
-  /// try emailValidator.validate("blob@example.com") // succeeds.
-  /// try emailValidator.validate("blob.example.com") // fails.
-  ///
-  /// ```
-  ///
-  /// - Parameters:
-  ///   - style: The email style to validate.
-  ///
-  @inlinable
-  public static func email(
-    _ style: Validators.EmailValidator<Validator<String>>.Style = .default
-  ) -> Validators.EmailValidator<Validator<String>> {
-    .init(style: style)
-  }
-
-}
-
 extension Validators {
   /// A ``Validation`` that validates a string is a valid email.
   ///
@@ -122,10 +97,11 @@ extension Validators.EmailValidator: Validation where ValidationType: Validation
         // total length
         Validator.lessThanOrEquals(\.count, 320)
         // length before the @
-        Validator.mapValue(
-          { $0.split(separator: "@")[0].count },
-          with: Int.lessThanOrEquals(64)
-        )
+        Validator.mapValue {
+          $0.split(separator: "@")[0].count
+        } with: {
+          Int.lessThanOrEquals(64)
+        }
       }
     }
   }
@@ -141,10 +117,11 @@ extension Validators.EmailValidator: AsyncValidation where ValidationType: Async
         // total length
         AsyncValidator.lessThanOrEquals(\.count, 320)
         // length before the @
-        AsyncValidator.mapValue(
-          { $0.split(separator: "@")[0].count },
-          with: Int.lessThanOrEquals(64)
-        )
+        AsyncValidator.mapValue {
+          $0.split(separator: "@")[0].count
+        } with: {
+          Int.lessThanOrEquals(64).async()
+        }
       }
     }
   }

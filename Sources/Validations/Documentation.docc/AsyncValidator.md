@@ -13,13 +13,15 @@ This file arranges the static methods on the `AsyncValidator` type for richer do
 
 ### Enumeration Validators
 
-- ``AsyncValidator/case(_:with:file:fileID:line:)``
+- ``AsyncValidator/case(_:with:file:fileID:line:)-2qdop``
+- ``AsyncValidator/case(_:with:file:fileID:line:)-34l5i``
 - ``AsyncValidator/case(_:file:fileID:line:validator:)``
 
 ### Collection Validators
 
 - ``AsyncValidator/contains(_:element:)``
 - ``AsyncValidator/contains(_:_:)``
+- ``AsyncValidator/contains(_:)``
 - ``AsyncValidator/empty()``
 - ``AsyncValidator/notEmpty()``
 
@@ -27,6 +29,10 @@ This file arranges the static methods on the `AsyncValidator` type for richer do
 
 - ``AsyncValidator/equals(_:)``
 - ``AsyncValidator/equals(_:_:)``
+
+### Bool Validators
+
+- ``AsyncValidator/bool(expecting:)``
 
 ### Comparable Validators
 
@@ -63,7 +69,6 @@ This file arranges the static methods on the `AsyncValidator` type for richer do
 
 ### Map Value Validators
 
-- ``AsyncValidator/mapValue(_:with:)-9f0ih``
 - ``AsyncValidator/mapValue(_:with:)-2oyu8``
 - ``AsyncValidator/mapValue(_:with:)-6giyv``
 

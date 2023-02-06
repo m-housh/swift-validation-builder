@@ -20,15 +20,12 @@ for these to be generated properly for the context.
 
 ### Top Level Types
 
-- ``Validators/AccumulatingValidator``
 - ``Validators/BoolValidator``
 - ``Validators/CaseValidator``
 - ``Validators/ComparableValidator``
 - ``Validators/ErrorLabelValidator``
-- ``Validators/OneOfValidator``
 - ``Validators/OptionalValidator``
 - ``Validators/OrValidator``
-- ``Validators/ValidateValidator``
 
 ### Collection Validations
 

@@ -19,7 +19,7 @@ extension Validators {
 }
 
 extension Validators.NotEmptyValidator: Validation where ValidationType: Validation {
-  
+
   public var body: some Validation<Value> {
     Validator.not(.empty())
       .mapError(ValidationError.failed(summary: "Expected to not be empty."))
@@ -27,10 +27,9 @@ extension Validators.NotEmptyValidator: Validation where ValidationType: Validat
 }
 
 extension Validators.NotEmptyValidator: AsyncValidation where ValidationType: AsyncValidation {
-  
+
   public var body: some AsyncValidation<Value> {
-    Validator.notEmpty()
-      .async()
+    AsyncValidator.not(.empty())
       .mapError(ValidationError.failed(summary: "Expected to not be empty."))
   }
 }
@@ -73,24 +72,7 @@ extension AsyncValidator where Value: Collection {
   ///
   @inlinable
   public static func notEmpty() -> Self {
-    .init(Validator.notEmpty())
+    .init(Validators.NotEmptyValidator<Self, Value>())
   }
 }
 
-extension Collection {
-
-  /// Validaties a collection is not empty.
-  ///
-  /// **Example**
-  /// ```swift
-  /// let notEmptyString = String.notEmpty()
-  ///
-  /// try notEmptyString.validate("blob") // succeeds.
-  /// try notEmptyString.validate("") // fails.
-  /// ```
-  ///
-  @inlinable
-  public static func notEmpty() -> Validator<Self> {
-    .notEmpty()
-  }
-}

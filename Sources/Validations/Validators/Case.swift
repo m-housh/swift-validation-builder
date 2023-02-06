@@ -193,6 +193,37 @@ extension AsyncValidator {
     )
   }
 
+  /// Create an enum case validation, using the given ``AsyncValidator`` for the value embedded in the case.
+  ///
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path for the enum.
+  ///   - validator: The ``AsyncValidator`` to use for the embedded value.
+  ///   - file: The file.
+  ///   - fileID: The file id.
+  ///   - line: The line.
+  ///
+  @inlinable
+  public static func `case`<Child>(
+    _ casePath: CasePath<Self.Value, Child>,
+    with validator: AsyncValidator<Child>,
+    file: StaticString = #file,
+    fileID: StaticString = #fileID,
+    line: UInt = #line
+  )
+    -> Self
+  {
+    .init(
+      Validators.CaseValidator.init(
+        casePath,
+        using: validator,
+        file: file,
+        fileID: fileID,
+        line: line
+      )
+    )
+  }
+
   /// Create an enum case validation, using  the result builder syntax for the value embedded in the case.
   ///
   ///

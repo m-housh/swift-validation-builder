@@ -88,25 +88,6 @@ extension Validator where Value: Collection, Value.Element: Equatable {
   }
 }
 
-extension Collection where Element: Equatable {
-
-  /// Create a ``Validators/Contains`` from a `Collection` type.
-  ///
-  /// This primarily used when inside one of the result builder contexts, such as a``ValidationBuilder``.
-  ///
-  /// >  Note: When not inside of a validation builder  context you will need
-  /// >  to mark your validator's type, to get a ``Validator``.
-  /// > `let validator: Validator<String> = String.contains("@")`.
-  ///
-  ///
-  /// - Parameters:
-  ///   - element: The element to validate is in the collection.
-  @inlinable
-  public static func contains(_ element: Element) -> Validator<Self> {
-    .contains(element)
-  }
-}
-
 // MARK: - Async
 extension AsyncValidator {
   /// An ``AsyncValidation`` for if a `Collection` contains a value.
@@ -174,6 +155,24 @@ extension AsyncValidator {
   }
 }
 
+extension AsyncValidator where Value: Collection, Value.Element: Equatable {
+
+  /// Create an ``AsyncValidator`` that validates a `Collection` contains an element.
+  ///
+  /// ```swift
+  /// let hasOneValidator = AsyncValidatorOf<[Int]>.contains(1)
+  ///
+  /// try await hasOneValidator.validate([2, 3, 6, 4, 1]) // success.
+  /// try await hasOneValidator.validate([4, 9, 7, 3]) // fails
+  ///
+  /// ```
+  ///
+  @inlinable
+  public static func contains(_ element: Value.Element) -> Self {
+    .init(Validators.ContainsValidator<Self, Value>(element: element))
+  }
+}
+
 extension Validators {
   /// A ``Validation`` for if a collection contains a value.
   ///
@@ -220,16 +219,9 @@ where
   Value.Element: Equatable,
   ValidationType: AsyncValidation
 {
-  
+
   public var body: some AsyncValidation<Value> {
     Validator.contains(self.element).async()
   }
-
-//  @inlinable
-//  public func validate(_ value: Value) throws {
-//    guard value.contains(element) else {
-//      throw ValidationError.failed(summary: "Does not contain \(element)")
-//    }
-//  }
 
 }

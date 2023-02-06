@@ -4,7 +4,7 @@
 /// **Example**
 /// ```swift
 /// let nonEmptyString = AsyncValidator<String> {
-///   Validators.NotEmtpy()
+///   String.notEmtpy()
 /// }
 ///
 /// try await nonEmptyString.validate("foo") // success.

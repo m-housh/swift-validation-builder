@@ -30,23 +30,7 @@ extension AsyncValidator where Value: Collection {
   /// > written as `let emptyValidator = String.empty()`
   ///
   public static func empty() -> Self {
-    self.init(Validator.empty().async())
-  }
-}
-
-extension Collection {
-  /// Validates a collection is empty.
-  ///
-  /// ```swift
-  ///  let emptyValidator = String.empty()
-  ///
-  ///  try emptyValidator.validate("") // success.
-  ///  try emptyValidator.validate("foo") // fails.
-  ///  ```
-  ///
-  @inlinable
-  public static func empty() -> Validator<Self> {
-    .empty()
+    self.init(Validators.EmptyValidator<Self, Value>())
   }
 }
 
@@ -65,12 +49,11 @@ extension Validators {
 
     public init() {}
 
-    
   }
 }
 
 extension Validators.EmptyValidator: Validation where ValidationType: Validation {
-  
+
   public var body: some Validation<Value> {
     Validator.validate(\.isEmpty, with: true)
       .mapError(ValidationError.failed(summary: "Expected to be empty."))
@@ -78,9 +61,8 @@ extension Validators.EmptyValidator: Validation where ValidationType: Validation
 }
 
 extension Validators.EmptyValidator: AsyncValidation where ValidationType: AsyncValidation {
-  
+
   public var body: some AsyncValidation<Value> {
     Validator.empty().async()
   }
 }
-

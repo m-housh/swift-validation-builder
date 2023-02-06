@@ -1,5 +1,3 @@
-
-
 extension Validator {
 
   @inlinable
@@ -24,9 +22,9 @@ extension AsyncValidator {
 
   @inlinable
   public static func not(
-    @AsyncValidationBuilder<Value> with build: () -> some Validation<Value>
+    @AsyncValidationBuilder<Value> with build: () -> some AsyncValidation<Value>
   ) -> Self {
-    .init(Validators.NotValidator(build()))
+    .not(build())
   }
 
   @inlinable

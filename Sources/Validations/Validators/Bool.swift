@@ -1,10 +1,47 @@
+extension Validator where Value == Bool {
+  
+  /// Create a ``Validator`` that validates a bool matches the given bool.
+  ///
+  /// ```swift
+  ///   let validator = ValidatorOf<Bool>.bool(expecting: true)
+  ///
+  ///   try validator.validate(true) // succeeds.
+  ///   try validator.validate(false) // fails.
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - expecting: The bool to match during validations.
+  @inlinable
+  public static func bool(expecting: Value) -> Self {
+    .init(Validators.BoolValidator<Self, Bool>(expecting: expecting))
+  }
+}
+
+extension AsyncValidator where Value == Bool {
+  
+  /// Create an ``AsyncValidator`` that validates a bool matches the given bool.
+  ///
+  /// ```swift
+  ///   let validator = AsyncValidatorOf<Bool>.bool(expecting: true)
+  ///
+  ///   try validator.validate(true) // succeeds.
+  ///   try validator.validate(false) // fails.
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - expecting: The bool to match during validations.
+  @inlinable
+  public static func bool(expecting: Value) -> Self {
+    .init(Validators.BoolValidator<Self, Bool>(expecting: expecting))
+  }
+}
+
 extension Validators {
 
   /// A ``Validation`` type that validates expressions that can be evaluated to `true` or `false`.
   ///
-  /// This type does not need to be created directly, unless you need to customize the behavor based on
-  /// the underlying state of the value during a call to it's ``BoolValidator/validate(_:)``.  In general
-  /// you will often create this type through `Swift.Bool` type.
+  /// This type is generally not interacted with directly, instead you create it with one of the static methods on
+  /// an ``AsyncValidator`` or ``Validator``, or by using a `Swift.Bool` directly.
   ///
   /// **Example**
   ///
@@ -34,7 +71,7 @@ extension Validators {
   ///
   /// ```
   ///
-  public struct BoolValidator<Value>: Validation {
+  public struct BoolValidator<ValidationType, Value> {
 
     @usableFromInline
     let evaluate: (Value) -> Bool
@@ -57,15 +94,31 @@ extension Validators {
       self.bool = bool
     }
 
-    @inlinable
-    public func validate(_ value: Value) throws {
-      let evaluated = evaluate(value)
 
-      guard evaluated == bool else {
-        throw ValidationError.failed(summary: "Failed bool evaluation, expected \(bool)")
-      }
+
+  }
+}
+
+extension Validators.BoolValidator: Validation where ValidationType: Validation {
+  @inlinable
+  public func validate(_ value: Value) throws {
+    let evaluated = evaluate(value)
+    
+    guard evaluated == bool else {
+      throw ValidationError.failed(summary: "Failed bool evaluation, expected \(bool)")
     }
+  }
+}
 
+extension Validators.BoolValidator: AsyncValidation where ValidationType: AsyncValidation {
+  
+  @inlinable
+  public func validate(_ value: Value) async throws {
+    let evaluated = evaluate(value)
+    
+    guard evaluated == bool else {
+      throw ValidationError.failed(summary: "Failed bool evaluation, expected \(bool)")
+    }
   }
 }
 
@@ -79,23 +132,5 @@ extension Validators.BoolValidator where Value == Bool {
   @inlinable
   public init(expecting bool: Bool) {
     self.init(expecting: bool, evaluate: { $0 })
-  }
-}
-
-extension Bool: Validation {
-  public typealias Value = Swift.Bool
-
-  public var body: some Validation<Self> {
-    self.validator()
-  }
-
-  /// Access a validator for a given `Swift.Bool`.
-  ///
-  /// ```swift
-  /// let isTrueValidator = true.validator()
-  /// ```
-  @inlinable
-  public func validator() -> Validators.BoolValidator<Self> {
-    .init(expecting: self)
   }
 }

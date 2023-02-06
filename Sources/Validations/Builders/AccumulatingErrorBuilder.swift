@@ -50,6 +50,8 @@ public enum AccumulatingErrorBuilder<Value> {
     component
   }
 
+  // MARK: - Async Support
+
   @inlinable
   public static func buildPartialBlock<V: AsyncValidation>(first: V) -> V where V.Value == Value {
     first

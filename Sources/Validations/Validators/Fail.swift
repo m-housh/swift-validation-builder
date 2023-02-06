@@ -26,7 +26,7 @@ extension Validators {
 }
 
 extension Validators.FailingValidator: Validation where ValidationType: Validation {
-  
+
   @inlinable
   public func validate(_ value: ValidationType.Value) throws {
     throw ValidationError.failed(summary: "Fail validation error.")

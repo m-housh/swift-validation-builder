@@ -30,6 +30,10 @@ This file arranges the static methods on the `Validator` type for richer documen
 - ``Validator/equals(_:)``
 - ``Validator/equals(_:_:)``
 
+### Bool Validators
+
+- ``Validator/bool(expecting:)``
+
 ### Comparable Validators
 
 - ``Validator/greaterThan(_:)``

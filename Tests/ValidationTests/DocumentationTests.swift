@@ -86,11 +86,11 @@ final class DocumentationTests: XCTestCase {
       let deeply = Deeply()
     }
     
-    let intValidator = Int.greaterThan(10)
+    let intValidator: ValidatorOf<Int> = Int.greaterThan(10)
     XCTAssertNoThrow(try intValidator.validate(11))
     XCTAssertThrowsError(try intValidator.validate(9))
     
-    let sut2 = Int.greaterThanOrEquals(10)
+    let sut2: ValidatorOf<Int> = Int.greaterThanOrEquals(10)
     XCTAssertNoThrow(try sut2.validate(10))
     XCTAssertThrowsError(try sut2.validate(9))
     
@@ -124,7 +124,7 @@ final class DocumentationTests: XCTestCase {
   }
   
   func test_error_label() throws {
-    let validator = Int.greaterThan(0).errorLabel("My Int", inline: true)
+    let validator: some Validation<Int> = Int.greaterThan(0).errorLabel("My Int", inline: true)
     do {
       try validator.validate(-1)
     } catch {
