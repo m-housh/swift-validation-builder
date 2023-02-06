@@ -16,8 +16,7 @@ test-linux-m1:
 		swift test
 
 test-swift:
-	@swift test \
-		--parallel
+	@swift test
 
 test-all: test-swift test-linux
 
