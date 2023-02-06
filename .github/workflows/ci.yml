@@ -20,7 +20,7 @@ jobs:
     - name: Swift Version
       run: swift --version
     - name: Run ${{ matrix.xcode }} Tests
-      run: CONFIG=${{ matrix.config }} make test-library
+      run: make CONFIG=${{ matrix.config }} test-library
 
   ubuntu:
     name: Ubuntu
@@ -31,4 +31,4 @@ jobs:
         swift-version: 5.7
     - uses: actions/checkout@v3
     - name: Run Tests
-      run: DOCKER_PLATFORM=linux/amd64 make test-linux
+      run: make DOCKER_PLATFORM=linux/amd64 test-linux
