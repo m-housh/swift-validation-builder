@@ -1,0 +1,12 @@
+version: 1
+builder:
+  confits:
+  - platfrom: ios
+    scheme: swift-validations
+  - platform: macos-xcodebuild
+    scheme: swift-validations
+  - platform: tvos
+    scheme: swift-validations
+  - platform: watchos
+    scheme: swift-validations
+  - documentation_targets: [Validations]
