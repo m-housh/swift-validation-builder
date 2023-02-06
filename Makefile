@@ -25,7 +25,7 @@ test-library:
 		xcodebuild test \
 			-configuration $(CONFIG) \
 			-workspace .swiftpm/xcode/package.xcworkspace \
-			-scheme swift-validation-builder \
+			-scheme swift-validations \
 			-destination platform="$$platform" || exit 1; \
 	done;
 
@@ -47,7 +47,7 @@ build-documentation:
 		--target Validations \
 		--disable-indexing \
 		--transform-for-static-hosting \
-		--hosting-base-path swift-validation-builder \
+		--hosting-base-path swift-validations \
 		--output-path ./docs
 
 preview-documentation:

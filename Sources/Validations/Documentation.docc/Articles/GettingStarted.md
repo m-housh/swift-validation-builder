@@ -15,13 +15,13 @@ and specify the `Validations` product in any targets that need access to the lib
 
 let package = Package(
   dependencies: [
-    .package(url: "https://github.com/m-housh/swift-validation-builder", from: "0.2.0")
+    .package(url: "https://github.com/m-housh/swift-validations", from: "0.3.0")
   ],
   targets: [
     .target(
       name: "<target name>",
       dependencies: [
-        .product(name: "Validations", package: "swift-validation-builder")
+        .product(name: "Validations", package: "swift-validations")
       ]
     )
   ]

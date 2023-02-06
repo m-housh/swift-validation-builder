@@ -1,13 +1,15 @@
 # swift-validation-builder
 
-[![CI](https://github.com/m-housh/swift-validation-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/m-housh/swift-validation-builder/actions/workflows/ci.yml)
+[![CI](https://github.com/m-housh/swift-validations/actions/workflows/ci.yml/badge.svg)](https://github.com/m-housh/swift-validations/actions/workflows/ci.yml)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%m-housh%2Fswift-validations%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/m-housh/swift-validations)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%m-housh%2Fswift-validations%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/m-housh/swift-validations)
 
 A swift package for creating validations, using `ResultBuilder` syntax.
 
 ## Additional Resources
 
-- [Github Repo](https://github.com/m-housh/swift-validation-builder)
-- [Documentation](https://m-housh.github.io/swift-validation-builder/documentation/validations)
+- [Github Repo](https://github.com/m-housh/swift-validations)
+- [Documentation](https://m-housh.github.io/swift-validations/documentation/validations)
 
 ## Overview
 
@@ -91,4 +93,4 @@ extension User: Validatable {
 
 ## Documentation
 
-Read the api documentation [here](https://m-housh.github.io/swift-validation-builder/documentation/validations).
+Read the api documentation [here](https://m-housh.github.io/swift-validations/documentation/validations).
