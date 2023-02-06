@@ -1,4 +1,3 @@
-
 // These comparables only return `Validator` types or type-inference doesn't work well, so
 // wrap with `.async()` if an async validation is needed.
 
@@ -19,7 +18,7 @@ extension Equatable {
   static func equals(_ value: Self) -> Validator<Self> {
     .equals(value)
   }
-  
+
 }
 
 // MARK: - Greater Than
@@ -43,7 +42,7 @@ extension Comparable {
   public static func greaterThan(_ value: Self) -> Validator<Self> {
     .greaterThan(\.self, value)
   }
-  
+
   /// Create a ``Validator`` that validates the value is greater than or equal to the given value
   ///
   /// **Example**
@@ -61,7 +60,7 @@ extension Comparable {
   public static func greaterThanOrEquals(_ value: Self) -> Validator<Self> {
     .greaterThanOrEquals(\.self, value)
   }
-  
+
 }
 
 // MARK: - Less Than

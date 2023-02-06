@@ -1,5 +1,5 @@
 extension Validator where Value == Bool {
-  
+
   /// Create a ``Validator`` that validates a bool matches the given bool.
   ///
   /// ```swift
@@ -18,7 +18,7 @@ extension Validator where Value == Bool {
 }
 
 extension AsyncValidator where Value == Bool {
-  
+
   /// Create an ``AsyncValidator`` that validates a bool matches the given bool.
   ///
   /// ```swift
@@ -100,7 +100,7 @@ extension Validators.BoolValidator: Validation where ValidationType: Validation 
   @inlinable
   public func validate(_ value: Value) throws {
     let evaluated = evaluate(value)
-    
+
     guard evaluated == bool else {
       throw ValidationError.failed(summary: "Failed bool evaluation, expected \(bool)")
     }
@@ -108,11 +108,11 @@ extension Validators.BoolValidator: Validation where ValidationType: Validation 
 }
 
 extension Validators.BoolValidator: AsyncValidation where ValidationType: AsyncValidation {
-  
+
   @inlinable
   public func validate(_ value: Value) async throws {
     let evaluated = evaluate(value)
-    
+
     guard evaluated == bool else {
       throw ValidationError.failed(summary: "Failed bool evaluation, expected \(bool)")
     }

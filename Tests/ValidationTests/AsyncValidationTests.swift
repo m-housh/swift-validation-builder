@@ -183,12 +183,12 @@ final class AsyncValidationTests: XCTestCase {
       let two: Int
     }
   
-    let sut = AsyncValidatorOf<Sut>.greaterThanOrEquals(\.one, \.two)
+    let sut = AsyncValidatorOf<Sut>.greaterThanOrEquals(\Sut.one, \.two)
     await XCTAssertNoThrowAsync(try await sut.validate(.init(one: 11, two: 10)))
     await XCTAssertNoThrowAsync(try await sut.validate(.init(one: 11, two: 11)))
     await XCTAssertThrowsAsyncError(try await sut.validate(.init(one: 10, two: 11)))
     
-    let sut2 = AsyncValidatorOf<Sut>.greaterThanOrEquals(11, \.two)
+    let sut2 = AsyncValidatorOf<Sut>.greaterThanOrEquals(11, \Sut.two)
     await XCTAssertNoThrowAsync(try await sut2.validate(.init(one: 11, two: 10)))
     await XCTAssertNoThrowAsync(try await sut2.validate(.init(one: 11, two: 11)))
     await XCTAssertThrowsAsyncError(try await sut2.validate(.init(one: 10, two: 12)))

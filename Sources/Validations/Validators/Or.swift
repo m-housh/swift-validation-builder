@@ -18,14 +18,13 @@ extension Validation {
   public func or<Downstream: Validation>(
     _ validation: Downstream
   )
-  -> some Validation<Value>
-  where Downstream.Value == Self.Value
-  {
+    -> some Validation<Value>
+  where Downstream.Value == Self.Value {
     Validator.oneOf {
       self
       validation
     }
-//    Validators.OrValidator(self, validation)
+    //    Validators.OrValidator(self, validation)
   }
 
   /// Create a ``Validation`` that succeeds if one of the validators passes.
@@ -48,9 +47,8 @@ extension Validation {
   public func or<Downstream: Validation>(
     @ValidationBuilder<Self.Value> _ build: () -> Downstream
   )
-  -> some Validation<Value>
-  where Downstream.Value == Self.Value
-  {
+    -> some Validation<Value>
+  where Downstream.Value == Self.Value {
     self.or(build())
   }
 
@@ -75,7 +73,7 @@ extension Validation {
   public func or(
     _ validation: Validator<Value>
   )
-  -> some Validation<Value>
+    -> some Validation<Value>
   {
     Validator.oneOf {
       self
@@ -107,8 +105,7 @@ extension AsyncValidation {
     _ validation: Downstream
   )
     -> some AsyncValidation<Value>
-  where Downstream.Value == Self.Value
-  {
+  where Downstream.Value == Self.Value {
     AsyncValidator.oneOf {
       self
       validation
@@ -163,8 +160,7 @@ extension AsyncValidation {
     @AsyncValidationBuilder<Self.Value> _ build: () -> Downstream
   )
     -> some AsyncValidation<Value>
-  where Downstream.Value == Self.Value
-  {
+  where Downstream.Value == Self.Value {
     self.or(build())
   }
 

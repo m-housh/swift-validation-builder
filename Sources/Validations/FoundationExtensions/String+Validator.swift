@@ -1,4 +1,3 @@
-
 extension String {
   /// A ``Validation`` that validates a string is a valid email.
   ///
@@ -23,4 +22,3 @@ extension String {
   }
 
 }
-

@@ -1,4 +1,3 @@
-
 extension Bool: Validation {
   public typealias Value = Swift.Bool
 

@@ -122,7 +122,7 @@ extension Validator {
   ) -> Self {
     mapValue(transform, with: builder())
   }
-  
+
   /// Map on the validation value, creating a new validation, where the upstream
   /// value is required in order to create the downstream validation.
   ///
@@ -166,7 +166,7 @@ extension AsyncValidator {
   ) -> Self {
     mapValue(transform, with: builder())
   }
-  
+
   /// Map on the validation value, creating a new validation, where the upstream
   /// value is required in order to create the downstream validation.
   ///
@@ -225,7 +225,7 @@ extension Validators {
       self.transform = transform
       self.downstream = { _ in validator }
     }
-    
+
     @inlinable
     public init(
       _ transform: @escaping (Input) -> Output,

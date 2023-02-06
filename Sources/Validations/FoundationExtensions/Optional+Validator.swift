@@ -1,4 +1,3 @@
-
 extension Optional: Validation where Wrapped: Validation {
 
   @inlinable
@@ -18,4 +17,3 @@ extension Optional: AsyncValidation where Wrapped: AsyncValidation {
     }
   }
 }
-

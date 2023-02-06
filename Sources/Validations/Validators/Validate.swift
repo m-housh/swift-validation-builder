@@ -14,7 +14,7 @@ extension Validator {
   {
     self.mapValue(toChild, with: validator)
   }
-  
+
   /// Create a ``Validator`` that validate a child value, using the given validation.
   ///
   /// - Parameters:
@@ -27,7 +27,7 @@ extension Validator {
   ) -> Self {
     self.mapValue(toChild.value(from:), with: build())
   }
-  
+
   /// Create a ``Validator`` that validate a child value, using the given validation.
   ///
   /// - Parameters:
@@ -42,7 +42,7 @@ extension Validator {
   {
     self.mapValue(toChild.value(from:), with: validator)
   }
-  
+
   /// Create a ``Validator`` that validate a child value, using the child when it's ``Validatable``
   ///
   /// - Parameters:
@@ -69,7 +69,7 @@ extension AsyncValidator {
   {
     self.mapValue(toChild, with: validator)
   }
-  
+
   @inlinable
   public static func validate<Child>(
     _ toChild: KeyPath<Value, Child>,
@@ -95,6 +95,6 @@ extension AsyncValidator {
     -> Self
   {
     self.mapValue(toChild.value(from:), with: toChild.value(from:))
-    
+
   }
 }

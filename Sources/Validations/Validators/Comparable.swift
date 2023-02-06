@@ -65,7 +65,6 @@ extension Validator where Value: Equatable {
   }
 }
 
-
 // MARK: - Greater Than
 extension Validator {
 
@@ -409,8 +408,6 @@ extension Validator where Value: Comparable {
   }
 
 }
-
-
 
 // MARK: - Less Than
 
@@ -761,8 +758,6 @@ extension Validator where Value: Comparable {
   }
 
 }
-
-
 
 // MARK: - Async Support
 
