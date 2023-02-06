@@ -89,26 +89,27 @@ extension User: Validatable {
 
 ### Articles
 
-* <doc:GettingStarted>
+- <doc:GettingStarted>
+- <doc:Validation-Types>
 
 ### Validation Protocols
 
-* ``Validation``
-* ``AsyncValidation``
-* ``Validatable``
-* ``AsyncValidatable``
+- ``Validation``
+- ``AsyncValidation``
+- ``Validatable``
+- ``AsyncValidatable``
 
 ### Concrete Validation Types
 
-* ``Validator``
-* ``AsyncValidator``
-* ``AnyValidator``
-* ``AnyAsyncValidator``
-* ``Validators``
+- ``Validator``
+- ``AsyncValidator``
+- ``AnyValidator``
+- ``AnyAsyncValidator``
+- ``Validators``
 
 ### Builder Types
 
-* ``AccumulatingErrorBuilder``
-* ``AsyncValidationBuilder``
-* ``OneOfBuilder``
-* ``ValidationBuilder``
+- ``AccumulatingErrorBuilder``
+- ``AsyncValidationBuilder``
+- ``OneOfBuilder``
+- ``ValidationBuilder``

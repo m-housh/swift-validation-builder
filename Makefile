@@ -1,3 +1,4 @@
+default: test-swift
 
 test-linux:
 	@docker run --rm \
@@ -15,7 +16,8 @@ test-linux-m1:
 		swift test
 
 test-swift:
-	@swift test
+	@swift test \
+		--parallel
 
 test-all: test-swift test-linux
 
@@ -42,3 +44,5 @@ preview-documentation:
 		--disable-sandbox \
 		preview-documentation \
 		--target Validations
+
+.PHONY: format build-documentation preview-documentation

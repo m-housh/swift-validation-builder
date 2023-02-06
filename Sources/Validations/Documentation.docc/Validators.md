@@ -25,7 +25,6 @@ for these to be generated properly for the context.
 - ``Validators/ComparableValidator``
 - ``Validators/ErrorLabelValidator``
 - ``Validators/OptionalValidator``
-- ``Validators/OrValidator``
 
 ### Collection Validations
 
@@ -61,39 +60,3 @@ These are types that are used to perform `map` operations on existing ``Validati
 - ``Validators/LazyValidator``
 - ``Validators/NotValidator``
 - ``Validators/SuccessValidator``
-
-<!--
-## Type Methods
-
-These methods create concrete versions of some of the top level types.  They infer
-whether to be synchonous or asynchronous based on the context.
-
-### Accumulating Methods
-
-- ``Validators/accumulating(_:)-5uoar``
-- ``Validators/accumulating(_:)-3mf0r``
-
-### Enumeration Case Methods
-
-- ``Validators/case(_:with:file:fileID:line:)-6g15v``
-- ``Validators/case(_:with:file:fileID:line:)-kot0``
-- ``Validators/case(_:file:fileID:line:validator:)-40vzm``
-- ``Validators/case(_:file:fileID:line:validator:)-9svng``
-
-### OneOf Methods
-
-- ``Validators/oneOf(builder:)-6r0e6``
-- ``Validators/oneOf(builder:)-7mxbq``
-
-### Validate Methods
-
-- ``Validators/validate(_:)-70j1m``
-- ``Validators/validate(_:)-364v5``
-- ``Validators/validate(_:with:)-487rc``
-- ``Validators/validate(_:with:)-65q79``
-- ``Validators/validate(_:with:)-8xxlw``
-- ``Validators/validate(_:with:)-7bb70``
-- ``Validators/validate(_:build:)-96v5q``
-- ``Validators/validate(_:build:)-5pnod``
-
--->

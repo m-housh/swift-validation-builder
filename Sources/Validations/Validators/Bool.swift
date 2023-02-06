@@ -93,9 +93,6 @@ extension Validators {
       self.evaluate = evaluate
       self.bool = bool
     }
-
-
-
   }
 }
 

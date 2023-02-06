@@ -74,10 +74,10 @@ Let's look at how we can accomplish the same thing with the `Validations` librar
 let userValidator = ValidatorOf<User> { 
 
   // check the id is greater than 0.
-  Validators.Validate(\.id, with: Int.greaterThan(0))
+  Validator.validate(\.id, with: Int.greaterThan(0))
 
   // check that the name is not an empty string.
-  Validators.Validate(\.name, with: String.notEmpty())
+  Validator.validate(\.name, with: String.notEmpty())
 }
 
 try userValidator.validate(User(id: 1, name: "Blob", isAdmin: false)) // success
@@ -116,10 +116,10 @@ property.
 let adminUserValidator = ValidatorOf<User> {
   
   // make sure that we pass the basic validations.
-  Validators.Validate(\.self, with: userValidator)
+  Validator.validate(\.self, with: userValidator)
 
   // now test that the user is an admin.
-  Validators.Validate(\.isAdmin, with: true)
+  Validator.validate(\.isAdmin, with: true)
 }
 
 try adminUserValidator.validate(User(id: 1, name: "Blob", isAdmin: true)) // success
@@ -134,18 +134,14 @@ validator that is supplied with the library.
 
 ```swift
 
-// You can create using a static method on the `Validator` type.
 let userValidator = ValidatorOf<User>.accumulating { 
-  Validators.Validate(\.id, with: Int.greaterThan(0))
-  Validators.Validate(\.name, with: String.notEmpty())
+  Validator.validate(\.id, with: Int.greaterThan(0))
+  Validator.validate(\.name, with: String.notEmpty())
 }
 
-// Or use the `Accumulating` type directly.
-let adminUserValidator = ValidatorOf<User> { 
-  Validators.Accumulating { 
-    Validators.Validate(\.self, with: userValidator)
-    Validators.Validate(\.isAdmin, with: true)
-  }
+let adminUserValidator = ValidatorOf<User>.accumulating { 
+  Validator.validate(\.self, with: userValidator)
+  Validator.validate(\.isAdmin, with: true)
 }
 
 try adminUserValidator.validate(User(id: 1, name: "Blob", isAdmin: true)) // success
@@ -165,15 +161,15 @@ interface, using result builder syntax as shown above.
 extension User: Validatable {
   
   var body: some Validator<Self> { 
-    Validators.Accumulating { 
-      Validators.Validate(\.id, with: .greaterThan(0))
-      Validators.Validate(\.name, with: .notEmpty())
+    Validator.accumulating { 
+      Validator.validate(\.id, with: .greaterThan(0))
+      Validator.validate(\.name, with: .notEmpty())
     }
   }
 }
 
 let adminUserValidator = ValidatorOf<User>.accumulating { 
-  Validators.Validate(\.self)
-  Validators.Validate(\.isAdmin, with: true)
+  Validator.validate(\.self)
+  Validator.validate(\.isAdmin, with: true)
 }
 ```

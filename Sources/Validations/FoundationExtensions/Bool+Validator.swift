@@ -20,7 +20,7 @@ extension Bool: Validation {
 extension Bool: AsyncValidation {
 
   @inlinable
-  public func validate(_ value: Self) throws {
-    try Validator.bool(expecting: self).validate(value)
+  public func validate(_ value: Self) async throws {
+    try await AsyncValidator.bool(expecting: self).validate(value)
   }
 }

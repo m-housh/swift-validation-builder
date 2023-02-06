@@ -160,4 +160,16 @@ final class DocumentationTests: XCTestCase {
     await XCTAssertNoThrowAsync(try await validator.validate(blob)) // success.
     await XCTAssertThrowsAsyncError(try await validator.validate(notBlob)) // throws.
   }
+  
+  func test_validation_types() async {
+    
+    let intValidator = AsyncValidatorOf<Int> {
+        Int.greaterThan(10)
+        Int.lessThan(20).async()
+    }
+    
+    await XCTAssertNoThrowAsync(try await intValidator.validate(11))
+    await XCTAssertThrowsAsyncError(try await intValidator.validate(9))
+    
+  }
 }

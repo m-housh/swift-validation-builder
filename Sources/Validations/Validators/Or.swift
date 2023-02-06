@@ -17,9 +17,15 @@ extension Validation {
   ///   - validation: The other validator to use.
   public func or<Downstream: Validation>(
     _ validation: Downstream
-  ) -> Validators.OrValidator<Self, Downstream>
-  where Downstream.Value == Self.Value {
-    Validators.OrValidator(self, validation)
+  )
+  -> some Validation<Value>
+  where Downstream.Value == Self.Value
+  {
+    Validator.oneOf {
+      self
+      validation
+    }
+//    Validators.OrValidator(self, validation)
   }
 
   /// Create a ``Validation`` that succeeds if one of the validators passes.
@@ -41,8 +47,10 @@ extension Validation {
   ///   - build: The other validator to use.
   public func or<Downstream: Validation>(
     @ValidationBuilder<Self.Value> _ build: () -> Downstream
-  ) -> Validators.OrValidator<Self, Downstream>
-  where Downstream.Value == Self.Value {
+  )
+  -> some Validation<Value>
+  where Downstream.Value == Self.Value
+  {
     self.or(build())
   }
 
@@ -64,8 +72,15 @@ extension Validation {
   ///
   /// - Parameters:
   ///   - validation: The other ``Validator`` to use.
-  public func or(_ validation: Validator<Value>) -> Validators.OrValidator<Self, Validator<Value>> {
-    Validators.OrValidator(self, validation)
+  public func or(
+    _ validation: Validator<Value>
+  )
+  -> some Validation<Value>
+  {
+    Validator.oneOf {
+      self
+      validation
+    }
   }
 }
 
@@ -91,9 +106,13 @@ extension AsyncValidation {
   public func or<Downstream: AsyncValidation>(
     _ validation: Downstream
   )
-    -> Validators.OrValidator<Self, Downstream>
-  where Downstream.Value == Self.Value {
-    Validators.OrValidator(self, validation)
+    -> some AsyncValidation<Value>
+  where Downstream.Value == Self.Value
+  {
+    AsyncValidator.oneOf {
+      self
+      validation
+    }
   }
 
   /// Create an``AsyncValidation`` that succeeds if one of the validators passes.
@@ -112,11 +131,14 @@ extension AsyncValidation {
   /// - Parameters:
   ///   - validation: The other validator to use.
   public func or(
-    _ validation: Self
+    _ validation: AsyncValidator<Value>
   )
-    -> Validators.OrValidator<Self, Self>
+    -> some AsyncValidation<Value>
   {
-    Validators.OrValidator(self, validation)
+    AsyncValidator.oneOf {
+      self
+      validation
+    }
   }
 
   /// Create an``AsyncValidation`` that succeeds if one of the validators passes.
@@ -140,88 +162,10 @@ extension AsyncValidation {
   public func or<Downstream: AsyncValidation>(
     @AsyncValidationBuilder<Self.Value> _ build: () -> Downstream
   )
-    -> Validators.OrValidator<Self, Downstream>
-  where Downstream.Value == Self.Value {
-    Validators.OrValidator(self, build())
+    -> some AsyncValidation<Value>
+  where Downstream.Value == Self.Value
+  {
+    self.or(build())
   }
 
 }
-
-// MARK: - Validators
-extension Validators {
-  /// A ``Validation`` that succeeds if either of the underlying validators succeed.
-  ///
-  /// This type is generally not interacted with directly, instead use the ``Validation/or(_:)-7e8zk``
-  /// method on a ``Validation`` or the equivalent on an ``AsyncValidation``.
-  ///
-  /// ```swift
-  /// let validator = Int.greaterThan(10).or(.lessThan(5))
-  ///
-  /// try validator.validate(11) // success.
-  /// try validator.validate(9) // fails.
-  ///
-  /// ```
-  ///
-  public struct OrValidator<LhsValidator, RhsValidator> {
-    @usableFromInline
-    let lhs: LhsValidator
-
-    @usableFromInline
-    let rhs: RhsValidator
-
-    @inlinable
-    public init(
-      _ lhs: LhsValidator,
-      _ rhs: RhsValidator
-    ) {
-      self.lhs = lhs
-      self.rhs = rhs
-    }
-  }
-}
-
-extension Validators.OrValidator: Validation
-where
-  LhsValidator: Validation,
-  RhsValidator: Validation,
-  LhsValidator.Value == RhsValidator.Value
-{
-
-  @usableFromInline
-  var validator: some Validation<LhsValidator.Value> {
-    Validator.oneOf {
-      lhs
-      rhs
-    }
-    .mapError(ValidationError.failed(summary: "Did not pass any 'or' validations."))
-  }
-
-  @inlinable
-  public func validate(_ value: LhsValidator.Value) throws {
-    try validator.validate(value)
-  }
-
-}
-
-extension Validators.OrValidator: AsyncValidation
-where
-  LhsValidator: AsyncValidation,
-  RhsValidator: AsyncValidation,
-  LhsValidator.Value == RhsValidator.Value
-{
-
-  @usableFromInline
-  var asyncValidator: some AsyncValidation<LhsValidator.Value> {
-    AsyncValidator.oneOf {
-      lhs
-      rhs
-    }
-    .mapError(ValidationError.failed(summary: "Did not pass any 'or' validations."))
-  }
-
-  @inlinable
-  public func validate(_ value: LhsValidator.Value) async throws {
-    try await asyncValidator.validate(value)
-  }
-}
-
