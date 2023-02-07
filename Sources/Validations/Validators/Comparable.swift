@@ -43,6 +43,110 @@ extension Validator {
       )
     )
   }
+  
+  /// Validates two elements are equal.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.equals(\.count, 10)
+  ///
+  /// try validator.validate(.init(count: 10)) // succeeds.
+  /// try validator.validate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
+  public static func equals<Element: Equatable>(
+    _ lhs: KeyPath<Value,Element>,
+    _ rhs: Element
+  ) -> Self {
+    self.equals(lhs.value(from:), { _ in rhs })
+  }
+  
+  /// Validates two elements are equal.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.equals(\.count, \.deeply.nested.value)
+  ///
+  /// try validator.validate(.init(count: 10)) // succeeds.
+  /// try validator.validate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
+  public static func equals<Element: Equatable>(
+    _ lhs: KeyPath<Value,Element>,
+    _ rhs: KeyPath<Value, Element>
+  ) -> Self {
+    self.equals(lhs.value(from:), rhs.value(from:))
+  }
+  
+  /// Validates two elements are equal, using closures to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = ValidatorOf<Example>.equals({ $0.count }, 10)
+  ///
+  /// try validator.validate(.init(count: 10)) // succeeds.
+  /// try validator.validate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
+  ///
+  @inlinable
+  public static func equals<Element: Equatable>(
+    _ lhs: @escaping (Value) -> Element,
+    _ rhs: Element
+  ) -> Self {
+    self.equals(lhs, { _ in rhs })
+  }
 }
 
 extension Validator where Value: Equatable {
@@ -804,6 +908,110 @@ extension AsyncValidator {
         operatorString: "equal to"
       )
     )
+  }
+    
+  /// Validates two elements are equal, using closures to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = AsyncValidatorOf<Example>.equals(\.count, 10)
+  ///
+  /// try await validator.validate(.init(count: 10)) // succeeds.
+  /// try await validator.validate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
+  public static func equals<Element: Equatable>(
+    _ lhs: KeyPath<Value,Element>,
+    _ rhs: Element
+  ) -> Self {
+    self.equals(lhs.value(from:), { _ in rhs })
+  }
+  
+  /// Validates two elements are equal, using closures to access the elements.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = AsyncValidatorOf<Example>.equals(\.count, \.deeply.nested.value)
+  ///
+  /// try await validator.validate(.init(count: 10)) // succeeds.
+  /// try await validator.validate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
+  public static func equals<Element: Equatable>(
+    _ lhs: KeyPath<Value,Element>,
+    _ rhs: KeyPath<Value, Element>
+  ) -> Self {
+    self.equals(lhs.value(from:), rhs.value(from:))
+  }
+  
+  /// Validates two elements are equal,.
+  ///
+  /// **Example**
+  ///```swift
+  /// struct Deeply {
+  ///   let nested = Nested()
+  ///  struct Nested {
+  ///    let value = 10
+  ///  }
+  /// }
+  ///
+  /// struct Example {
+  ///   let count: Int
+  ///   let deeply: Deeply = Deeply()
+  /// }
+  ///
+  /// let validator = AsyncValidatorOf<Example>.equals({ $0.count }, 10)
+  ///
+  /// try await validator.validate(.init(count: 10)) // succeeds.
+  /// try await validator.validate(.init(count: 9)) // fails.
+  ///
+  ///```
+  ///
+  /// - Parameters:
+  ///   - lhs: Retrieve the left hand side element.
+  ///   - rhs: Retrieve the right hand side element.
+  ///
+  ///
+  @inlinable
+  public static func equals<Element: Equatable>(
+    _ lhs: @escaping (Value) -> Element,
+    _ rhs: Element
+  ) -> Self {
+    self.equals(lhs, { _ in rhs })
   }
 }
 

@@ -28,7 +28,10 @@ This file arranges the static methods on the `AsyncValidator` type for richer do
 ### Equatable Validators
 
 - ``AsyncValidator/equals(_:)``
-- ``AsyncValidator/equals(_:_:)``
+- ``AsyncValidator/equals(_:_:)-54hr``
+- ``AsyncValidator/equals(_:_:)-8afgd``
+- ``AsyncValidator/equals(_:_:)-8cnq9``
+- ``AsyncValidator/equals(_:_:)-4ax2h``
 
 ### Bool Validators
 

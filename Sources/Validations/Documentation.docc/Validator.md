@@ -28,7 +28,10 @@ This file arranges the static methods on the `Validator` type for richer documen
 ### Equatable Validators
 
 - ``Validator/equals(_:)``
-- ``Validator/equals(_:_:)``
+- ``Validator/equals(_:_:)-295k2``
+- ``Validator/equals(_:_:)-4abt0``
+- ``Validator/equals(_:_:)-7xahg``
+- ``Validator/equals(_:_:)-89itd``
 
 ### Bool Validators
 
