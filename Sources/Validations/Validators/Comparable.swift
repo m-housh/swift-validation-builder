@@ -43,7 +43,7 @@ extension Validator {
       )
     )
   }
-  
+
   /// Validates two elements are equal.
   ///
   /// **Example**
@@ -72,12 +72,12 @@ extension Validator {
   ///   - rhs: Retrieve the right hand side element.
   ///
   public static func equals<Element: Equatable>(
-    _ lhs: KeyPath<Value,Element>,
+    _ lhs: KeyPath<Value, Element>,
     _ rhs: Element
   ) -> Self {
     self.equals(lhs.value(from:), { _ in rhs })
   }
-  
+
   /// Validates two elements are equal.
   ///
   /// **Example**
@@ -106,12 +106,12 @@ extension Validator {
   ///   - rhs: Retrieve the right hand side element.
   ///
   public static func equals<Element: Equatable>(
-    _ lhs: KeyPath<Value,Element>,
+    _ lhs: KeyPath<Value, Element>,
     _ rhs: KeyPath<Value, Element>
   ) -> Self {
     self.equals(lhs.value(from:), rhs.value(from:))
   }
-  
+
   /// Validates two elements are equal, using closures to access the elements.
   ///
   /// **Example**
@@ -909,7 +909,7 @@ extension AsyncValidator {
       )
     )
   }
-    
+
   /// Validates two elements are equal, using closures to access the elements.
   ///
   /// **Example**
@@ -938,12 +938,12 @@ extension AsyncValidator {
   ///   - rhs: Retrieve the right hand side element.
   ///
   public static func equals<Element: Equatable>(
-    _ lhs: KeyPath<Value,Element>,
+    _ lhs: KeyPath<Value, Element>,
     _ rhs: Element
   ) -> Self {
     self.equals(lhs.value(from:), { _ in rhs })
   }
-  
+
   /// Validates two elements are equal, using closures to access the elements.
   ///
   /// **Example**
@@ -972,12 +972,12 @@ extension AsyncValidator {
   ///   - rhs: Retrieve the right hand side element.
   ///
   public static func equals<Element: Equatable>(
-    _ lhs: KeyPath<Value,Element>,
+    _ lhs: KeyPath<Value, Element>,
     _ rhs: KeyPath<Value, Element>
   ) -> Self {
     self.equals(lhs.value(from:), rhs.value(from:))
   }
-  
+
   /// Validates two elements are equal,.
   ///
   /// **Example**
