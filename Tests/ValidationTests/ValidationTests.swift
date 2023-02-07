@@ -566,19 +566,34 @@ final class ValidationTests: XCTestCase {
       let email: String
       let foo: String
       
+      enum Labels: String, CustomStringConvertible {
+        case name
+        case email
+        case count
+        
+        var description: String {
+          switch self {
+          case .name, .email:
+            return rawValue.capitalized
+          case .count:
+            return "Name.count"
+          }
+        }
+      }
+      
       var body: some Validation<Self> {
         Validator.accumulating {
           Validator.validate(\.name) {
               Validator.accumulating {
                 String.notEmpty()
                 Validator.validate(\.count, with: .greaterThan(5))
-                  .errorLabel("Name.count", inline: true)
+                  .errorLabel(Labels.count, inline: true)
               }
             }
-              .errorLabel("Name")
+          .errorLabel(Labels.name)
           
           Validator.validate(\.email, with: .email())
-            .errorLabel("Email")
+            .errorLabel(Labels.email)
           
           Validator.validate(\.foo, with: .notEmpty())
         }

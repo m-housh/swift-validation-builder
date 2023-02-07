@@ -105,6 +105,12 @@ extension ValidationError: CustomDebugStringConvertible {
       // sorts unlabeled errors to the top.
       return .manyFailed(
         errors.flatMap(flatten())
+          .compactMap {
+            // remove wrapped errors that don't have a debug description.
+            ($0.error as CustomDebugStringConvertible).debugDescription == ""
+              ? nil
+              : $0
+          }
           .sorted { $0.depth < $1.depth }
           .map { $0.error },
         context
@@ -158,7 +164,11 @@ extension ValidationError: CustomDebugStringConvertible {
     var errors = errors[...]
     while let error = errors.popFirst() {
       guard case let .some((label, context)) = isFailed(error) else {
-        append("\(formatError(error))")
+        let formatted = formatError(error)
+        guard !formatted.isEmpty else {
+          continue
+        }
+        append(formatted)
         continue
       }
       append(format(label: label, context: context))

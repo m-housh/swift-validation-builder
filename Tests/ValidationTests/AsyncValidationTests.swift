@@ -615,19 +615,34 @@ final class AsyncValidationTests: XCTestCase {
       let email: String
       let foo: String
       
+      enum Labels: String, CustomStringConvertible {
+        case name
+        case email
+        case count
+        
+        var description: String {
+          switch self {
+          case .name, .email:
+            return rawValue.capitalized
+          case .count:
+            return "Name.count"
+          }
+        }
+      }
+      
       var body: some AsyncValidation<Self> {
         AsyncValidator.accumulating {
           AsyncValidator.validate(\.name) {
             AsyncValidator.accumulating {
-                String.notEmpty().async()
-                AsyncValidator.validate(\.count, with: .greaterThan(5))
-                  .errorLabel("Name.count", inline: true)
-              }
+              AsyncValidator.notEmpty()
+              AsyncValidator.validate(\.count, with: .greaterThan(5))
+                .errorLabel(Labels.count, inline: true)
             }
-              .errorLabel("Name")
+          }
+          .errorLabel(Labels.name)
           
           AsyncValidator.validate(\.email, with: .email())
-            .errorLabel("Email")
+            .errorLabel(Labels.email)
           
           AsyncValidator.validate(\.foo, with: .notEmpty())
         }

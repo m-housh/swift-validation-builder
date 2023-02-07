@@ -14,10 +14,70 @@ extension Validation {
   /// - Parameters:
   ///   - label: The label to use.
   ///   - inline: Whether to display the label inline with the first error string.
+  @inlinable
   public func errorLabel(_ label: String, inline: Bool = false)
     -> Validators.ErrorLabelValidator<Self>
   {
     .init(label: label, inlineLabel: inline, validator: self)
+  }
+
+  /// Add a label to the error(s) for this ``Validation``.
+  ///
+  /// **Example**
+  /// ```swift
+  /// enum MyErrorLabels: CustomStringConvertible {
+  ///   case myInt
+  ///   case myString
+  ///
+  ///   var description: String {
+  ///     switch self {
+  ///       case .myInt: return "My Int"
+  ///       case .myString: return "My String"
+  ///     }
+  ///   }
+  /// }
+  ///
+  /// let validator = Int.greaterThan(0).errorLabel(MyErrorLabels.myInt, inline: true)
+  ///
+  /// try validator.validate(-1) // fails
+  /// // error = "My Int: -1 is not greater than 0"
+  ///
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - label: The label to use.
+  ///   - inline: Whether to display the label inline with the first error string.
+  @inlinable
+  public func errorLabel<S: CustomStringConvertible>(_ label: S, inline: Bool = false)
+    -> Validators.ErrorLabelValidator<Self>
+  {
+    self.errorLabel(label.description, inline: inline)
+  }
+
+  /// Add a label to the error(s) for this ``Validation``.
+  ///
+  /// **Example**
+  /// ```swift
+  /// enum MyErrorLabels: String {
+  ///   case myInt
+  ///   case myString
+  /// }
+  ///
+  /// let validator = Int.greaterThan(0).errorLabel(MyErrorLabels.myInt, inline: true)
+  ///
+  /// try validator.validate(-1) // fails
+  /// // error = "myInt: -1 is not greater than 0"
+  ///
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - label: The label to use.
+  ///   - inline: Whether to display the label inline with the first error string.
+  @inlinable
+  public func errorLabel<R: RawRepresentable>(with label: R, inline: Bool = false)
+    -> Validators.ErrorLabelValidator<Self>
+  where R.RawValue == String {
+    self.errorLabel(label.rawValue, inline: inline)
   }
 
 }
@@ -37,10 +97,70 @@ extension AsyncValidation {
   /// - Parameters:
   ///   - label: The label to use.
   ///   - inline: Whether to display the label inline with the first error string.
+  @inlinable
   public func errorLabel(_ label: String, inline: Bool = false)
     -> Validators.ErrorLabelValidator<Self>
   {
     .init(label: label, inlineLabel: inline, validator: self)
+  }
+
+  /// Add a label to the error(s) for this ``AsyncValidation``.
+  ///
+  /// **Example**
+  /// ```swift
+  /// enum MyErrorLabels: CustomStringConvertible {
+  ///   case myInt
+  ///   case myString
+  ///
+  ///   var description: String {
+  ///     switch self {
+  ///       case .myInt: return "My Int"
+  ///       case .myString: return "My String"
+  ///     }
+  ///   }
+  /// }
+  ///
+  /// let validator = Int.greaterThan(0).async().errorLabel(MyErrorLabels.myInt, inline: true)
+  ///
+  /// try await validator.validate(-1) // fails
+  /// // error = "My Int: -1 is not greater than 0"
+  ///
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - label: The label to use.
+  ///   - inline: Whether to display the label inline with the first error string.
+  @inlinable
+  public func errorLabel<S: CustomStringConvertible>(_ label: S, inline: Bool = false)
+    -> Validators.ErrorLabelValidator<Self>
+  {
+    self.errorLabel(label.description, inline: inline)
+  }
+
+  /// Add a label to the error(s) for this ``AsyncValidation``.
+  ///
+  /// **Example**
+  /// ```swift
+  /// enum MyErrorLabels: String {
+  ///   case myInt
+  ///   case myString
+  /// }
+  ///
+  /// let validator = Int.greaterThan(0).async().errorLabel(MyErrorLabels.myInt, inline: true)
+  ///
+  /// try validator.validate(-1) // fails
+  /// // error = "myInt: -1 is not greater than 0"
+  ///
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - label: The label to use.
+  ///   - inline: Whether to display the label inline with the first error string.
+  @inlinable
+  public func errorLabel<R: RawRepresentable>(with label: R, inline: Bool = false)
+    -> Validators.ErrorLabelValidator<Self>
+  where R.RawValue == String {
+    self.errorLabel(label.rawValue, inline: inline)
   }
 
 }
@@ -67,13 +187,13 @@ extension Validators {
   ///
   public struct ErrorLabelValidator<Validator> {
 
-    public let label: String
+    public let label: any CustomStringConvertible
     public let inlineLabel: Bool
     public let validator: Validator
 
     @inlinable
     public init(
-      label: String,
+      label: any CustomStringConvertible,
       inlineLabel: Bool,
       validator: Validator
     ) {
@@ -91,7 +211,7 @@ extension Validators.ErrorLabelValidator: Validation where Validator: Validation
     do {
       try self.validator.validate(value)
     } catch {
-      throw ValidationError.failed(label: label, error: error, inlineLabel: inlineLabel)
+      throw ValidationError.failed(label: label.description, error: error, inlineLabel: inlineLabel)
     }
   }
 }
@@ -103,7 +223,7 @@ extension Validators.ErrorLabelValidator: AsyncValidation where Validator: Async
     do {
       try await self.validator.validate(value)
     } catch {
-      throw ValidationError.failed(label: label, error: error)
+      throw ValidationError.failed(label: label.description, error: error)
     }
   }
 }
