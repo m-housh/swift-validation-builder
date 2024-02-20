@@ -1,6 +1,6 @@
 version: 1
 builder:
-  confits:
+  confitg:
   - platfrom: ios
     scheme: swift-validations
   - platform: macos-xcodebuild
