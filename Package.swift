@@ -9,9 +9,9 @@ let package = Package(
     .library(name: "Validations", targets: ["Validations"])
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "0.4.0"),
-    .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "0.6.1"),
-    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay.git", from: "0.8.0"),
+    .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay.git", from: "1.0.0"),
     .package(url: "https://github.com/apple/swift-docc-plugin.git", from: "1.0.0"),
   ],
   targets: [

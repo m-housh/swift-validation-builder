@@ -1,3 +1,5 @@
+import CasePaths
+
 extension Validation {
 
   /// Transforms a ``Validation`` to one that works on an optional.

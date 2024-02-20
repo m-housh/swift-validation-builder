@@ -1,3 +1,5 @@
+import Foundation
+
 extension Validator where Value == String {
 
   /// A ``Validator`` that matches a regular expression pattern for validation.

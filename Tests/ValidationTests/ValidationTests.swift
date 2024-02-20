@@ -11,7 +11,7 @@ final class ValidationTests: XCTestCase {
   
   func test_or_validator() throws {
     let validators = [
-      Validator {
+      Validator<Int> {
         Validator.success()
         Int.greaterThan(10).or(.equals(5))
       },
@@ -230,11 +230,9 @@ final class ValidationTests: XCTestCase {
       case three(Int)
     }
 
-    let sut = Validator.oneOf {
+    let sut = Validator<Sut>.oneOf {
       Validator.case(/Sut.one, with: .greaterThan(0))
-      Validator.case(/Sut.two) {
-        Int.greaterThan(10)
-      }
+      Validator.case(/Sut.two, with: .greaterThan(10))
     }
 
     XCTAssertNoThrow(try sut.validate(.one(1)))
@@ -533,7 +531,7 @@ final class ValidationTests: XCTestCase {
   func test_map() {
     
     let sut = Int.greaterThan(1)
-      .map {
+      .map<String> {
         "\($0)" // convert the int to a string.
       } validation: {
         String.equals("2") // validate the string.
@@ -554,7 +552,7 @@ final class ValidationTests: XCTestCase {
     XCTAssertNoThrow(try sut2.validate(2))
     XCTAssertThrowsError(try sut2.validate(3))
     
-    let sut3 = Int.greaterThan(1).map { Int.equals(2) }
+    let sut3 = Int.greaterThan(1).map<Int> { Int.equals(2) }
     XCTAssertNoThrow(try sut3.validate(2))
     XCTAssertThrowsError(try sut3.validate(3))
     

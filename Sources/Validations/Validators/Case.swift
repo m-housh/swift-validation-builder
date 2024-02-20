@@ -33,7 +33,7 @@ extension Validators {
   public struct CaseValidator<Parent, Child, ChildValidator> {
 
     /// The case path to use to access the child value.
-    public let casePath: CasePath<Parent, Child>
+    public let casePath: AnyCasePath<Parent, Child>
 
     /// The validator to use when we found a child value in the case path.
     public let validator: ChildValidator
@@ -58,7 +58,7 @@ extension Validators {
     ///
     @inlinable
     public init(
-      _ casePath: CasePath<Parent, Child>,
+      _ casePath: AnyCasePath<Parent, Child>,
       using validator: ChildValidator,
       file: StaticString = #file,
       fileID: StaticString = #fileID,
@@ -88,7 +88,7 @@ extension Validator {
   ///
   @inlinable
   public static func `case`<ChildValidator: Validation>(
-    _ casePath: CasePath<Self.Value, ChildValidator.Value>,
+    _ casePath: AnyCasePath<Self.Value, ChildValidator.Value>,
     with validator: ChildValidator,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
@@ -119,7 +119,7 @@ extension Validator {
   ///
   @inlinable
   public static func `case`<Child>(
-    _ casePath: CasePath<Self.Value, Child>,
+    _ casePath: AnyCasePath<Self.Value, Child>,
     with validator: Validator<Child>,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
@@ -149,7 +149,7 @@ extension Validator {
   ///   - validator: The ``Validation`` to use for the embedded value.
   @inlinable
   public static func `case`<ChildValidator: Validation>(
-    _ casePath: CasePath<Self.Value, ChildValidator.Value>,
+    _ casePath: AnyCasePath<Self.Value, ChildValidator.Value>,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line,
@@ -174,7 +174,7 @@ extension AsyncValidator {
   ///
   @inlinable
   public static func `case`<ChildValidator: AsyncValidation>(
-    _ casePath: CasePath<Self.Value, ChildValidator.Value>,
+    _ casePath: AnyCasePath<Self.Value, ChildValidator.Value>,
     with validator: ChildValidator,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
@@ -205,7 +205,7 @@ extension AsyncValidator {
   ///
   @inlinable
   public static func `case`<Child>(
-    _ casePath: CasePath<Self.Value, Child>,
+    _ casePath: AnyCasePath<Self.Value, Child>,
     with validator: AsyncValidator<Child>,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
@@ -235,7 +235,7 @@ extension AsyncValidator {
   ///   - validator: The ``AsyncValidation`` to use for the embedded value.
   @inlinable
   public static func `case`<ChildValidator: AsyncValidation>(
-    _ casePath: CasePath<Self.Value, ChildValidator.Value>,
+    _ casePath: AnyCasePath<Self.Value, ChildValidator.Value>,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line,
