@@ -16,14 +16,15 @@ test-linux:
 		--platform "$(DOCKER_PLATFORM)" \
 		swift:"$(SWIFT_VERSION)-focal" \
 		swift test
-		
+
 test-swift:
 	swift test
-	
+
 test-library:
 	for platform in "$(PLATFORM_IOS)"  "$(PLATFORM_MACOS)" "$(PLATFORM_MAC_CATALYST)" "${PLATFORM_TVOS}" "${PLATFORM_WATCHOS}"; do \
 		xcodebuild test \
 			-configuration $(CONFIG) \
+			-skipMacroValidation \
 			-workspace .swiftpm/xcode/package.xcworkspace \
 			-scheme swift-validations \
 			-destination platform="$$platform" || exit 1; \
