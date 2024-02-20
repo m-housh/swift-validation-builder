@@ -4,12 +4,12 @@ import CustomDump
 @testable import Validations
 
 
-@CasePathable
-enum CasePathTest: Equatable {
-  case one(Int)
-  case two(Int)
-  case three(Int)
-}
+//@CasePathable
+//enum CasePathTest: Equatable {
+//  case one(Int)
+//  case two(Int)
+//  case three(Int)
+//}
 
 final class AsyncValidationTests: XCTestCase {
   
