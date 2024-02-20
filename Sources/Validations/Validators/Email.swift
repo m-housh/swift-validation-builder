@@ -117,11 +117,11 @@ extension Validators.EmailValidator: AsyncValidation where ValidationType: Async
         // total length
         AsyncValidator.lessThanOrEquals(\.count, 320)
         // length before the @
-//        AsyncValidator.mapValue {
-//          $0.split(separator: "@")[0].count
-//        } with: {
-//          Int.lessThanOrEquals(64).async()
-//        }
+        //        AsyncValidator.mapValue {
+        //          $0.split(separator: "@")[0].count
+        //        } with: {
+        //          Int.lessThanOrEquals(64).async()
+        //        }
       }
     }
   }
