@@ -4,7 +4,7 @@ PLATFORM_MAC_CATALYST = macOS,variant=Mac Catalyst
 PLATFORM_TVOS = tvOS Simulator,name=Apple TV
 PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 7 (45mm)
 CONFIG := debug
-SWIFT_VERSION = 5.7
+SWIFT_VERSION = 5.9
 DOCKER_PLATFORM := linux/arm64
 
 default: test-swift
