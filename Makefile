@@ -4,18 +4,18 @@ PLATFORM_MAC_CATALYST = macOS,variant=Mac Catalyst
 PLATFORM_TVOS = tvOS Simulator,name=Apple TV
 PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 7 (45mm)
 CONFIG := debug
-SWIFT_VERSION = 5.9
+SWIFT_VERSION = 5.10
 DOCKER_PLATFORM := linux/arm64
+DOCKER_IMAGE_NAME := "swift-validations"
+DOCKER_TAG := "latest"
 
 default: test-swift
 
-test-linux:
-	docker run --rm \
-		--volume "$(PWD):$(PWD)" \
-		--workdir "$(PWD)" \
-		--platform "$(DOCKER_PLATFORM)" \
-		swift:"$(SWIFT_VERSION)-focal" \
-		swift test
+build-docker:
+	docker build -t "$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)" .
+
+test-linux: build-docker
+	docker run --rm "$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)" make test-swift
 
 test-swift:
 	swift test

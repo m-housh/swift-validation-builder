@@ -216,20 +216,14 @@ final class ValidationTests: XCTestCase {
   }
 
   func test_case() throws {
-    enum Sut: Equatable {
-      case one(Int)
-      case two(Int)
-      case three(Int)
-    }
-
     let sut = Validator<Sut>.oneOf {
-      Validator.case(/Sut.one, with: .greaterThan(0))
-      Validator.case(/Sut.two, with: .greaterThan(10))
+      Validator.case(\.one, with: Int.greaterThan(0))
+      Validator.case(\.two, with: Int.greaterThan(10))
     }
 
-    XCTAssertNoThrow(try sut.validate(.one(1)))
-    XCTAssertNoThrow(try sut.validate(.two(11)))
-    XCTAssertThrowsError(try sut.validate(.three(0)))
+    XCTAssertNoThrow(try sut.validate(Sut.one(1)))
+    XCTAssertNoThrow(try sut.validate(Sut.two(11)))
+    XCTAssertThrowsError(try sut.validate(Sut.three(0)))
   }
 
   func test_oneOF() throws {
@@ -603,4 +597,12 @@ final class ValidationTests: XCTestCase {
 
 extension Int {
   var zero: Int { 0 }
+}
+
+@CasePathable
+@dynamicMemberLookup
+enum Sut: Equatable {
+  case one(Int)
+  case two(Int)
+  case three(Int)
 }
