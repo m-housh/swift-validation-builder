@@ -1,4 +1,4 @@
-extension Validation {
+public extension Validation {
 
   /// Map on the upstream validation value, creating a new validation, where the upstream
   /// value is required in order to create the downstream validation.
@@ -7,7 +7,8 @@ extension Validation {
   ///   - transform: Transform the upstream value to the new downstream value.
   ///   - downstream: The downstream validation to use for the downstream value.
   @inlinable
-  public func map<Downstream: Validation>(
+  func map<Downstream: Validation>(
+    to type: Downstream.Type,
     _ transform: @escaping (Value) -> Downstream.Value,
     @ValidationBuilder<Downstream.Value> validation downstream: @escaping () -> Downstream
   )
@@ -22,7 +23,7 @@ extension Validation {
   /// - Parameters:
   ///   - downstream: The downstream validation to use for the downstream value.
   @inlinable
-  public func map<Downstream: Validation>(
+  func map<Downstream: Validation>(
     _ downstream: @escaping (Value) -> Downstream
   )
     -> Validators.Map<Self, Downstream, Self.Value>
@@ -36,7 +37,7 @@ extension Validation {
   /// - Parameters:
   ///   - downstream: The downstream validation to use for the value.
   @inlinable
-  public func map<Downstream: Validation>(
+  func map<Downstream: Validation>(
     @ValidationBuilder<Downstream.Value> _ downstream: @escaping () -> Downstream
   )
     -> Validators.Map<Self, Downstream, Self.Value>
@@ -46,7 +47,7 @@ extension Validation {
 
 }
 
-extension AsyncValidation {
+public extension AsyncValidation {
   /// Map on the upstream validation value, creating a new validation, where the upstream
   /// value is required in order to create the downstream validation.
   ///
@@ -54,7 +55,7 @@ extension AsyncValidation {
   ///   - transform: Transform the upstream value to the new downstream value.
   ///   - downstream: The downstream validation to use for the downstream value.
   @inlinable
-  public func map<Downstream: AsyncValidation>(
+  func map<Downstream: AsyncValidation>(
     _ transform: @escaping (Value) -> Downstream.Value,
     validation downstream: @escaping () -> Downstream
   )
@@ -69,7 +70,7 @@ extension AsyncValidation {
   /// - Parameters:
   ///   - downstream: The downstream validation to use for the downstream value.
   @inlinable
-  public func map<Downstream: AsyncValidation>(
+  func map<Downstream: AsyncValidation>(
     _ downstream: @escaping (Value) -> Downstream
   )
     -> Validators.Map<Self, Downstream, Self.Value>
@@ -83,7 +84,7 @@ extension AsyncValidation {
   /// - Parameters:
   ///   - downstream: The downstream validation to use for the value.
   @inlinable
-  public func map<Downstream: AsyncValidation>(
+  func map<Downstream: AsyncValidation>(
     _ downstream: @escaping () -> Downstream
   )
     -> Validators.Map<Self, Downstream, Self.Value>
@@ -93,7 +94,7 @@ extension AsyncValidation {
 
 }
 
-extension Validator {
+public extension Validator {
 
   /// Map on the validation value, creating a new validation, where the upstream
   /// value is required in order to create the downstream validation.
@@ -102,7 +103,7 @@ extension Validator {
   ///   - transform: Transform the upstream value to the new downstream value.
   ///   - downstream: The downstream validation to use for the downstream value.
   @inlinable
-  public static func mapValue<Downstream: Validation>(
+  static func mapValue<Downstream: Validation>(
     _ transform: @escaping (Value) -> Downstream.Value,
     with downstream: Downstream
   ) -> Self {
@@ -116,7 +117,7 @@ extension Validator {
   ///   - transform: Transform the upstream value to the new downstream value.
   ///   - builder: The downstream validation to use for the downstream value.
   @inlinable
-  public static func mapValue<Downstream: Validation>(
+  static func mapValue<Downstream: Validation>(
     _ transform: @escaping (Value) -> Downstream.Value,
     @ValidationBuilder<Downstream.Value> with builder: () -> Downstream
   ) -> Self {
@@ -130,7 +131,7 @@ extension Validator {
   ///   - transform: Transform the upstream value to the new downstream value.
   ///   - builder: The downstream validation to use for the downstream value.
   @inlinable
-  public static func mapValue<Downstream: Validation>(
+  static func mapValue<Downstream: Validation>(
     _ transform: @escaping (Value) -> Downstream.Value,
     with builder: @escaping (Value) -> Downstream
   ) -> Self {
@@ -138,7 +139,7 @@ extension Validator {
   }
 }
 
-extension AsyncValidator {
+public extension AsyncValidator {
   /// Map on the validation value, creating a new validation, where the upstream
   /// value is required in order to create the downstream validation.
   ///
@@ -146,7 +147,7 @@ extension AsyncValidator {
   ///   - transform: Transform the upstream value to the new downstream value.
   ///   - downstream: The downstream validation to use for the downstream value.
   @inlinable
-  public static func mapValue<Downstream: AsyncValidation>(
+  static func mapValue<Downstream: AsyncValidation>(
     _ transform: @escaping (Value) -> Downstream.Value,
     with downstream: Downstream
   ) -> Self {
@@ -160,7 +161,7 @@ extension AsyncValidator {
   ///   - transform: Transform the upstream value to the new downstream value.
   ///   - builder: The downstream validation to use for the downstream value.
   @inlinable
-  public static func mapValue<Downstream: AsyncValidation>(
+  static func mapValue<Downstream: AsyncValidation>(
     _ transform: @escaping (Value) -> Downstream.Value,
     @AsyncValidationBuilder<Downstream.Value> with builder: () -> Downstream
   ) -> Self {
@@ -174,7 +175,7 @@ extension AsyncValidator {
   ///   - transform: Transform the upstream value to the new downstream value.
   ///   - builder: The downstream validation to use for the downstream value.
   @inlinable
-  public static func mapValue<Downstream: AsyncValidation>(
+  static func mapValue<Downstream: AsyncValidation>(
     _ transform: @escaping (Value) -> Downstream.Value,
     with builder: @escaping (Value) -> Downstream
   ) -> Self {
@@ -182,14 +183,14 @@ extension AsyncValidator {
   }
 }
 
-extension Validators {
+public extension Validators {
 
   /// A validation that maps on the upstream value, to create a downstream validation.
   ///
   /// This is not interacted with directly, instead you use one of the `map` methods on an ``AsyncValidation`` or
   /// a ``Validation``, such as ``AsyncValidator/map(_:)-9gnjp``.
   ///
-  public struct Map<Upstream, Downstream, Value> {
+  struct Map<Upstream, Downstream, Value> {
 
     public let upstream: Upstream
     public let downstream: (Value) -> Downstream
@@ -212,7 +213,7 @@ extension Validators {
   /// a ``Validation``, or the `mapValue` static methods on an `AsyncValidator` or a `Validator`, such as
   /// ``Validator/mapValue(_:with:)-8xhvp``.
   ///
-  public struct MapValue<Input, Output, Downstream> {
+  struct MapValue<Input, Output, Downstream> {
 
     public let transform: (Input) -> Output
     public let downstream: (Input) -> Downstream
@@ -238,7 +239,7 @@ extension Validators {
 }
 
 extension Validators.Map: Validation
-where
+  where
   Upstream: Validation,
   Downstream: Validation,
   Upstream.Value == Value,
@@ -251,7 +252,7 @@ where
 }
 
 extension Validators.Map: AsyncValidation
-where
+  where
   Upstream: AsyncValidation,
   Downstream: AsyncValidation,
   Upstream.Value == Value, Downstream.Value == Value
@@ -263,7 +264,7 @@ where
 }
 
 extension Validators.MapValue: Validation
-where
+  where
   Downstream: Validation,
   Downstream.Value == Output
 {
@@ -275,7 +276,7 @@ where
 }
 
 extension Validators.MapValue: AsyncValidation
-where
+  where
   Downstream: AsyncValidation,
   Downstream.Value == Output
 {
