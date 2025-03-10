@@ -1,7 +1,7 @@
 import CasePaths
 import XCTestDynamicOverlay
 
-extension Validators {
+public extension Validators {
   /// A ``Validation`` used for validating values that are embedded inside of an enum case.
   ///
   /// We can not ensure that all cases get handled when building validations for enum values, but if the `validate`
@@ -30,7 +30,7 @@ extension Validators {
   ///
   /// ```
   ///
-  public struct CaseValidator<Parent, Child, ChildValidator> {
+  struct CaseValidator<Parent, Child, ChildValidator> where Parent: CasePathable {
 
     /// The case path to use to access the child value.
     public let casePath: AnyCasePath<Parent, Child>
@@ -58,6 +58,21 @@ extension Validators {
     ///
     @inlinable
     public init(
+      _ casePath: CaseKeyPath<Parent, Child>,
+      using validator: ChildValidator,
+      file: StaticString = #file,
+      fileID: StaticString = #fileID,
+      line: UInt = #line
+    ) {
+      self.casePath = AnyCasePath(casePath) /* Parent.allCasePaths[keyPath: casePath] */
+      self.validator = validator
+      self.file = file
+      self.fileID = fileID
+      self.line = line
+    }
+
+    @inlinable
+    public init(
       _ casePath: AnyCasePath<Parent, Child>,
       using validator: ChildValidator,
       file: StaticString = #file,
@@ -74,7 +89,7 @@ extension Validators {
   }
 }
 
-extension Validator {
+public extension Validator {
 
   /// Create an enum case validation, using the given ``Validator`` for the value embedded in the case.
   ///
@@ -87,18 +102,16 @@ extension Validator {
   ///   - line: The line.
   ///
   @inlinable
-  public static func `case`<ChildValidator: Validation>(
-    _ casePath: AnyCasePath<Self.Value, ChildValidator.Value>,
+  static func `case`<ChildValidator: Validation>(
+    _ casePath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, ChildValidator.Value>>,
     with validator: ChildValidator,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
-  )
-    -> Self
-  {
+  ) -> Self where Value: CasePathable {
     .init(
-      Validators.CaseValidator.init(
-        casePath,
+      Validators.CaseValidator(
+        Value.allCasePaths[keyPath: casePath],
         using: validator,
         file: file,
         fileID: fileID,
@@ -118,18 +131,16 @@ extension Validator {
   ///   - line: The line.
   ///
   @inlinable
-  public static func `case`<Child>(
-    _ casePath: AnyCasePath<Self.Value, Child>,
+  static func `case`<Child>(
+    _ casePath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Child>>,
     with validator: Validator<Child>,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
-  )
-    -> Self
-  {
+  ) -> Self where Value: CasePathable {
     .init(
-      Validators.CaseValidator.init(
-        casePath,
+      Validators.CaseValidator(
+        Value.allCasePaths[keyPath: casePath],
         using: validator,
         file: file,
         fileID: fileID,
@@ -137,31 +148,9 @@ extension Validator {
       )
     )
   }
-
-  /// Create an enum case validation, using  the result builder syntax for the value embedded in the case.
-  ///
-  ///
-  /// - Parameters:
-  ///   - casePath: The case path for the enum.
-  ///   - file: The file.
-  ///   - fileID: The file id.
-  ///   - line: The line.
-  ///   - validator: The ``Validation`` to use for the embedded value.
-  @inlinable
-  public static func `case`<ChildValidator: Validation>(
-    _ casePath: AnyCasePath<Self.Value, ChildValidator.Value>,
-    file: StaticString = #file,
-    fileID: StaticString = #fileID,
-    line: UInt = #line,
-    @ValidationBuilder<ChildValidator.Value> validator: @escaping () -> ChildValidator
-  )
-    -> Self
-  {
-    self.case(casePath, with: validator(), file: file, fileID: fileID, line: line)
-  }
 }
 
-extension AsyncValidator {
+public extension AsyncValidator {
   /// Create an enum case validation, using the given ``AsyncValidator`` for the value embedded in the case.
   ///
   ///
@@ -173,18 +162,16 @@ extension AsyncValidator {
   ///   - line: The line.
   ///
   @inlinable
-  public static func `case`<ChildValidator: AsyncValidation>(
-    _ casePath: AnyCasePath<Self.Value, ChildValidator.Value>,
+  static func `case`<ChildValidator: AsyncValidation>(
+    _ casePath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, ChildValidator.Value>>,
     with validator: ChildValidator,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
-  )
-    -> Self
-  {
+  ) -> Self where Value: CasePathable {
     .init(
-      Validators.CaseValidator.init(
-        casePath,
+      Validators.CaseValidator(
+        Value.allCasePaths[keyPath: casePath],
         using: validator,
         file: file,
         fileID: fileID,
@@ -204,18 +191,16 @@ extension AsyncValidator {
   ///   - line: The line.
   ///
   @inlinable
-  public static func `case`<Child>(
-    _ casePath: AnyCasePath<Self.Value, Child>,
+  static func `case`<Child>(
+    _ casePath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Child>>,
     with validator: AsyncValidator<Child>,
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
-  )
-    -> Self
-  {
+  ) -> Self where Value: CasePathable {
     .init(
-      Validators.CaseValidator.init(
-        casePath,
+      Validators.CaseValidator(
+        Value.allCasePaths[keyPath: casePath],
         using: validator,
         file: file,
         fileID: fileID,
@@ -224,31 +209,11 @@ extension AsyncValidator {
     )
   }
 
-  /// Create an enum case validation, using  the result builder syntax for the value embedded in the case.
-  ///
-  ///
-  /// - Parameters:
-  ///   - casePath: The case path for the enum.
-  ///   - file: The file.
-  ///   - fileID: The file id.
-  ///   - line: The line.
-  ///   - validator: The ``AsyncValidation`` to use for the embedded value.
-  @inlinable
-  public static func `case`<ChildValidator: AsyncValidation>(
-    _ casePath: AnyCasePath<Self.Value, ChildValidator.Value>,
-    file: StaticString = #file,
-    fileID: StaticString = #fileID,
-    line: UInt = #line,
-    @AsyncValidationBuilder<ChildValidator.Value> validator: @escaping () -> ChildValidator
-  )
-    -> Self
-  {
-    self.case(casePath, with: validator(), file: file, fileID: fileID, line: line)
-  }
 }
 
 extension Validators.CaseValidator: Validation
-where
+  where
+  Parent: CasePathable,
   ChildValidator: Validation,
   ChildValidator.Value == Child
 {
@@ -256,13 +221,12 @@ where
   @inlinable
   public func validate(_ value: Parent) throws {
     guard let child = casePath.extract(from: value) else {
-      let message = self.errorMessage(value)
+      let message = errorMessage(value)
       if !_XCTIsTesting {
         // Throw a runtime warning, if a case was not handled.
         XCTFail(message, file: file, line: line)
       }
       throw ValidationError.failed(summary: message)
-
     }
 
     try validator.validate(child)
@@ -270,7 +234,8 @@ where
 }
 
 extension Validators.CaseValidator: AsyncValidation
-where
+  where
+  Parent: CasePathable,
   ChildValidator: AsyncValidation,
   ChildValidator.Value == Child
 {
@@ -278,7 +243,7 @@ where
   @inlinable
   public func validate(_ value: Parent) async throws {
     guard let child = casePath.extract(from: value) else {
-      let message = self.errorMessage(value)
+      let message = errorMessage(value)
       if !_XCTIsTesting {
         // Throw a runtime warning, if a case was not handled.
         XCTFail(message, file: file, line: line)
@@ -294,8 +259,8 @@ extension Validators.CaseValidator {
   @usableFromInline
   func errorMessage(_ parent: Parent) -> String {
     """
-      A "Case" validation at "\(self.fileID):\(self.line)" does not handle the current case.
-        
+      A "Case" validation at "\(fileID):\(line)" does not handle the current case.
+
       Current case is: \(parent)
     """
   }

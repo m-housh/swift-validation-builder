@@ -4,7 +4,7 @@ import Foundation
 // TODO: Inline error messages not working as expected in async contexts.
 
 @usableFromInline
-enum ValidationError: Error {
+enum ValidationError: Error, Sendable {
   case failed(ErrorLabel, Context)
   case manyFailed([Error], Context)
 
@@ -30,7 +30,7 @@ enum ValidationError: Error {
   }
 
   @usableFromInline
-  struct Context {
+  struct Context: Sendable {
     let debugDescription: String
     let underlyingError: Error?
 
@@ -45,7 +45,7 @@ enum ValidationError: Error {
   }
 
   @usableFromInline
-  enum ErrorLabel {
+  enum ErrorLabel: Sendable {
     case inline(String)
     case notInline(String)
 
@@ -120,7 +120,7 @@ extension ValidationError: CustomDebugStringConvertible {
 
   @usableFromInline
   var debugDescription: String {
-    switch self.flattened() {
+    switch flattened() {
     case let .failed(label, context):
       return format(label: label, context: context)
     case let .manyFailed(errors, _):
@@ -139,15 +139,13 @@ extension ValidationError: CustomDebugStringConvertible {
 
   @usableFromInline
   func debugDescription(for errors: [Error]) -> String {
-
     func isFailed(_ error: Error) -> (ErrorLabel, Context)? {
       guard let error = error as? ValidationError,
-        case let .failed(label, context) = error
+            case let .failed(label, context) = error
       else {
         return nil
       }
       return (label, context)
-
     }
 
     var description = ""
